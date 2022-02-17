@@ -196,6 +196,7 @@ func TestLeaderElectionInOneRoundRPC2AA(t *testing.T) {
 		}
 
 		if r.State != tt.state {
+			fmt.Println()
 			t.Errorf("#%d: state = %s, want %s", i, r.State, tt.state)
 		}
 		if g := r.Term; g != 1 {
@@ -648,6 +649,11 @@ func TestFollowerAppendEntries2AB(t *testing.T) {
 		},
 	}
 	for i, tt := range tests {
+
+		// if i != 2 {
+		// 	continue
+		// }
+
 		storage := NewMemoryStorage()
 		storage.Append([]pb.Entry{{Term: 1, Index: 1}, {Term: 2, Index: 2}})
 		r := newTestRaft(1, []uint64{1, 2, 3}, 10, 1, storage)
@@ -728,6 +734,10 @@ func TestLeaderSyncFollowerLog2AB(t *testing.T) {
 		},
 	}
 	for i, tt := range tests {
+		// if i != 1 {
+		// 	continue
+		// }
+
 		leadStorage := NewMemoryStorage()
 		leadStorage.Append(ents)
 		lead := newTestRaft(1, []uint64{1, 2, 3}, 10, 1, leadStorage)
@@ -895,12 +905,13 @@ func commitNoopEntry(r *Raft, s *MemoryStorage) {
 		if id == r.id {
 			continue
 		}
-
+		// println(r.Prs[id].Next)
 		r.sendAppend(id)
 	}
 	// simulate the response of MessageType_MsgAppend
 	msgs := r.readMessages()
 	for _, m := range msgs {
+		// println(m.MsgType, len(m.Entries))
 		if m.MsgType != pb.MessageType_MsgAppend || len(m.Entries) != 1 || m.Entries[0].Data != nil {
 			panic("not a message to append noop entry")
 		}

@@ -57,11 +57,14 @@ type Storage interface {
 	// rest of that entry may not be available.
 	Term(i uint64) (uint64, error)
 	// LastIndex returns the index of the last entry in the log.
+	// 返回的是log的Index。
+	// 返回最后一个Entry的Index
 	LastIndex() (uint64, error)
 	// FirstIndex returns the index of the first log entry that is
 	// possibly available via Entries (older entries have been incorporated
 	// into the latest Snapshot; if storage only contains the dummy entry the
 	// first log entry is not available).
+	// 返回 ms.ents[0].Index + 1。当ents为空时，返回的是1
 	FirstIndex() (uint64, error)
 	// Snapshot returns the most recent snapshot.
 	// If snapshot is temporarily unavailable, it should return ErrSnapshotTemporarilyUnavailable,
@@ -88,7 +91,7 @@ type MemoryStorage struct {
 func NewMemoryStorage() *MemoryStorage {
 	return &MemoryStorage{
 		// When starting from scratch populate the list with a dummy entry at term zero.
-		ents:     make([]pb.Entry, 1),
+		ents:     make([]pb.Entry, 1), // note: ents[0]是用做保留的？
 		snapshot: pb.Snapshot{Metadata: &pb.SnapshotMetadata{ConfState: &pb.ConfState{}}},
 	}
 }
@@ -118,7 +121,7 @@ func (ms *MemoryStorage) Entries(lo, hi uint64) ([]pb.Entry, error) {
 		log.Panicf("entries' hi(%d) is out of bound lastindex(%d)", hi, ms.lastIndex())
 	}
 
-	ents := ms.ents[lo-offset : hi-offset]
+	ents := ms.ents[lo-offset : hi-offset] // note： ents的index 和 ms.ents[0].Index
 	if len(ms.ents) == 1 && len(ents) != 0 {
 		// only contains dummy entries.
 		return nil, ErrUnavailable
@@ -159,7 +162,7 @@ func (ms *MemoryStorage) FirstIndex() (uint64, error) {
 }
 
 func (ms *MemoryStorage) firstIndex() uint64 {
-	return ms.ents[0].Index + 1
+	return ms.ents[0].Index + 1 // note: why need to + 1
 }
 
 // Snapshot implements the Storage interface.

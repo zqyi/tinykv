@@ -592,11 +592,14 @@ func TestHandleMessageType_MsgAppend2AB(t *testing.T) {
 	}
 
 	for i, tt := range tests {
+		// if i != 7 {
+		// 	continue
+		// }
+
 		storage := NewMemoryStorage()
 		storage.Append([]pb.Entry{{Index: 1, Term: 1}, {Index: 2, Term: 2}})
 		sm := newTestRaft(1, []uint64{1}, 10, 1, storage)
 		sm.becomeFollower(2, None)
-
 		sm.handleAppendEntries(tt.m)
 		if sm.RaftLog.LastIndex() != tt.wIndex {
 			t.Errorf("#%d: lastIndex = %d, want %d", i, sm.RaftLog.LastIndex(), tt.wIndex)
