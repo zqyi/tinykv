@@ -204,10 +204,10 @@ func newRaft(c *Config) *Raft {
 		raft.RaftLog.applied = c.Applied
 	}
 	// note: peer信息是存在raft.Prs里的 2A是存在了peer里 需要将peer取缔，以防止后续BUG
-	lastIndex := raft.RaftLog.LastIndex()
-	for _, peer := range c.peers {
-		raft.Prs[peer] = &Progress{Next: lastIndex + 1, Match: 0}
-	}
+	// lastIndex := raft.RaftLog.LastIndex()
+	// for _, peer := range c.peers {
+	// 	raft.Prs[peer] = &Progress{Next: lastIndex + 1, Match: 0}
+	// }
 
 	return raft
 }

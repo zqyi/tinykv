@@ -88,8 +88,21 @@ func newLog(storage Storage) *RaftLog {
 // We need to compact the log entries in some point of time like
 // storage compact stabled log entries prevent the log entries
 // grow unlimitedly in memory
+// call by RawNode.Advance()
 func (l *RaftLog) maybeCompact() {
 	// Your Code Here (2C).
+	if len(l.entries) == 0 {
+		return
+	}
+
+	truncatedIndex, _ := l.storage.LastIndex()
+	if of := truncatedIndex - l.entries[0].Index; of > 0 {
+		l.entries = l.entries[of:]
+		if len(l.entries) > 0 {
+			l.offset = l.entries[0].Index
+		}
+	}
+
 }
 
 // unstableEntries return all the unstable entries
