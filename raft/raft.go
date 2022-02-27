@@ -174,9 +174,12 @@ func newRaft(c *Config) *Raft {
 		panic(err.Error())
 	}
 	// Your Code Here (2A).
-	hardState, _, _ := c.Storage.InitialState()
+	hardState, confState, _ := c.Storage.InitialState()
+	if c.peers == nil {
+		c.peers = confState.Nodes
+	}
 
-	return &Raft{
+	raft := &Raft{
 		id:                 c.ID,
 		peers:              c.peers,
 		Term:               hardState.Term,
@@ -194,7 +197,19 @@ func newRaft(c *Config) *Raft {
 		electionElapsed:    0,
 		leadTransferee:     0, // (3A)
 		PendingConfIndex:   0, // (3A)
+		// Prs:                make(map[uint64]*Progress),
 	}
+
+	if c.Applied > 0 {
+		raft.RaftLog.applied = c.Applied
+	}
+	// note: peer信息是存在raft.Prs里的 2A是存在了peer里 需要将peer取缔，以防止后续BUG
+	lastIndex := raft.RaftLog.LastIndex()
+	for _, peer := range c.peers {
+		raft.Prs[peer] = &Progress{Next: lastIndex + 1, Match: 0}
+	}
+
+	return raft
 }
 
 // 广播一次Append
@@ -215,7 +230,7 @@ func (r *Raft) sendAppend(to uint64) bool {
 	prevIndex := r.Prs[to].Next - 1
 	prevLogTerm, err := r.RaftLog.Term(r.Prs[to].Next - 1)
 	if err != nil {
-		log.Errorf("get prevLogTerm false at sendAppend()")
+		log.Errorf("get prevLogTerm false at sendAppend() %s", err)
 		return false
 	}
 
@@ -338,12 +353,14 @@ func (r *Raft) becomeFollower(term uint64, lead uint64) {
 	// Your Code Here (2A).
 	r.Term = term
 	r.Vote = None
-	r.Prs = make(map[uint64]*Progress)
 	r.State = StateFollower
 	r.votes = make(map[uint64]bool)
 	r.Lead = lead
 	r.heartbeatElapsed = 0
 	r.electionElapsed = 0
+
+	// r.Prs = make(map[uint64]*Progress)
+
 }
 
 // becomeCandidate transform this peer's state to candidate
@@ -356,12 +373,13 @@ func (r *Raft) becomeCandidate() {
 
 	//
 	r.Vote = None
-	r.Prs = make(map[uint64]*Progress)
 	r.State = StateCandidate
 	r.votes = make(map[uint64]bool)
 	r.Lead = None
 	r.heartbeatElapsed = 0
 	r.electionElapsed = 0
+
+	// r.Prs = make(map[uint64]*Progress)
 
 }
 
@@ -376,12 +394,10 @@ func (r *Raft) becomeLeader() {
 
 	//
 	r.Vote = None
-	r.Prs = make(map[uint64]*Progress)
-	for _, peer := range r.peers {
-		r.Prs[peer] = &Progress{
-			Match: 0,
-			Next:  r.RaftLog.LastIndex() + 1,
-		}
+	// r.Prs = make(map[uint64]*Progress)
+	for _, prs := range r.Prs {
+		prs.Match = 0
+		prs.Next = r.RaftLog.LastIndex()
 	}
 
 	r.State = StateLeader
@@ -436,8 +452,12 @@ func (r *Raft) Step(m pb.Message) error {
 		r.handleAppendEntries(m)
 	case pb.MessageType_MsgAppendResponse:
 		r.handelAppendResponse(m)
+	default:
+		panic("msg that dont support")
 	}
 
+	// note: 这里返回的err会在peerMsgHandler.proposeRaftCommand()捕获
+	// 考虑是否需要根据执行结果返回err
 	return nil
 }
 

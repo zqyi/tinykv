@@ -345,6 +345,7 @@ func GenericTest(t *testing.T, part string, nclients int, unreliable bool, crash
 }
 
 func TestBasic2B(t *testing.T) {
+	log.SetLevel(log.LOG_LEVEL_DEBUG)
 	// Test: one client (2B) ...
 	GenericTest(t, "2B", 1, false, false, false, -1, false, false)
 }

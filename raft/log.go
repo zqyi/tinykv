@@ -73,7 +73,6 @@ func newLog(storage Storage) *RaftLog {
 	new_entries := make([]pb.Entry, len(temp_entries))
 	copy(new_entries, temp_entries)
 
-	pendingSnapshot, _ := storage.Snapshot()
 	return &RaftLog{
 		storage: storage,
 		//
@@ -82,7 +81,7 @@ func newLog(storage Storage) *RaftLog {
 		stabled:         hi,
 		entries:         new_entries,
 		offset:          lo,
-		pendingSnapshot: &pendingSnapshot,
+		pendingSnapshot: nil,
 	}
 }
 
@@ -97,6 +96,15 @@ func (l *RaftLog) maybeCompact() {
 func (l *RaftLog) unstableEntries() []pb.Entry {
 	// Your Code Here (2A).
 	// entries, _ := l.EntriesBegin(l.stabled + 1) // l.stabled的更新在外部
+	if len(l.entries) == 0 {
+		return nil
+	}
+
+	if (l.stabled+1 < l.offset) ||
+		(l.stabled > l.LastIndex()) {
+		return nil
+	}
+
 	return l.entries[l.stabled+1-l.offset:]
 }
 
@@ -104,7 +112,15 @@ func (l *RaftLog) unstableEntries() []pb.Entry {
 func (l *RaftLog) nextEnts() (ents []pb.Entry) {
 	// Your Code Here (2A).
 	// entries, _ := l.Entries(l.applied+1, l.committed+1)
-	return l.entries[l.applied+1-l.offset : l.committed+1-l.offset]
+	if len(l.entries) == 0 {
+		return nil
+	}
+
+	if l.applied <= l.committed && l.applied+1 >= l.offset && l.committed+1-l.offset <= uint64(len(l.entries)) {
+		return l.entries[l.applied+1-l.offset : l.committed+1-l.offset]
+	} else {
+		return nil
+	}
 }
 
 // append entries to its log
@@ -168,9 +184,19 @@ func (l *RaftLog) appendEntry(entries []pb.Entry) error {
 func (l *RaftLog) LastIndex() uint64 {
 	// Your Code Here (2A).
 	if len(l.entries) == 0 {
-		return 0 // TODO 验证entries长度为0时是否应该返回compact的最后一个Index
+		return l.stabled
 	} else {
 		return l.entries[len(l.entries)-1].Index
+	}
+}
+
+func (l *RaftLog) FirstIndex() uint64 {
+	// Your Code Here (2A).
+	if len(l.entries) == 0 {
+		i, _ := l.storage.FirstIndex()
+		return i - 1
+	} else {
+		return l.entries[0].Index
 	}
 }
 
@@ -182,18 +208,22 @@ func (l *RaftLog) Term(i uint64) (uint64, error) {
 	if i == 0 {
 		return 0, nil
 	}
-	if len(l.entries) == 0 {
-		return 0, ErrCompacted
-	}
 
-	offset := l.entries[0].Index
-	if i < offset {
-		return 0, ErrCompacted
+	if len(l.entries) != 0 && i >= l.offset {
+		if i > l.LastIndex() {
+			return 0, ErrUnavailable
+		}
+		return l.entries[i-l.offset].Term, nil
+	} else {
+		// 在storage拿
+		term, err := l.storage.Term(i)
+		if err == ErrUnavailable && !IsEmptySnap(l.pendingSnapshot) {
+			if i < l.pendingSnapshot.Metadata.Index {
+				err = ErrCompacted
+			}
+		}
+		return term, err
 	}
-	if int(i-offset) >= len(l.entries) {
-		return 0, ErrUnavailable
-	}
-	return l.entries[i-offset].Term, nil
 }
 
 // func (l *RaftLog) EntriesBegin(begin uint64) ([]pb.Entry, error) {
