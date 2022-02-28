@@ -49,7 +49,7 @@ type RaftLog struct {
 	// all entries that have not yet compact.
 	entries []pb.Entry
 
-	// the index of entries[0]
+	// the index of entries[0] even if entries == nil
 	offset uint64
 
 	// the incoming unstable snapshot, if any.
@@ -218,9 +218,9 @@ func (l *RaftLog) Term(i uint64) (uint64, error) {
 	// Your Code Here (2A).
 	// 找到Index对应的Entry 错误使用 errors.New("")
 
-	if i == 0 {
-		return 0, nil
-	}
+	// if i == 0 {
+	// 	return 0, nil
+	// }
 
 	if len(l.entries) != 0 && i >= l.offset {
 		if i > l.LastIndex() {

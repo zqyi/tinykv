@@ -206,7 +206,9 @@ func newRaft(c *Config) *Raft {
 	// note: peer信息是存在raft.Prs里的 2A是存在了peer里 需要将peer取缔，以防止后续BUG
 	lastIndex := raft.RaftLog.LastIndex()
 	for _, peer := range c.peers {
-		raft.Prs[peer] = &Progress{Next: lastIndex + 1, Match: 0}
+		raft.Prs[peer] = &Progress{
+			Next:  lastIndex + 1,
+			Match: 0}
 	}
 
 	return raft
@@ -228,10 +230,12 @@ func (r *Raft) sendAppend(to uint64) bool {
 	// Your Code Here (2A).
 	// 根据Progress来确定要发送哪些Entries
 	prevIndex := r.Prs[to].Next - 1
-	prevLogTerm, err := r.RaftLog.Term(r.Prs[to].Next - 1)
-	if err != nil {
-		log.Errorf("get prevLogTerm false at sendAppend() %s", err)
-		return false
+	prevLogTerm, err := r.RaftLog.Term(prevIndex)
+	if err != nil || prevIndex < r.RaftLog.FirstIndex()-1 {
+		println(len(r.RaftLog.entries), prevIndex, r.RaftLog.FirstIndex())
+		log.Errorf("get prevLogTerm false when sendAppend() %s get index %d", err, prevIndex)
+		panic("get prevLogTerm false when sendAppend()")
+		// return false
 	}
 
 	// 准备 []*Entry
@@ -613,7 +617,8 @@ func (r *Raft) handleAppendEntries(m pb.Message) {
 			To:      m.From,
 			From:    r.id,
 			Term:    r.Term,
-			Reject:  true,
+			// Index:   m.Index + 1, // TODO 验证
+			Reject: true,
 		}
 		r.msgs = append(r.msgs, msg)
 		return
@@ -676,6 +681,7 @@ func (r *Raft) handleAppendEntries(m pb.Message) {
 			To:      m.From,
 			From:    r.id,
 			Term:    r.Term,
+			Index:   m.Index,
 			Commit:  r.RaftLog.committed,
 			Reject:  true,
 		}
@@ -689,6 +695,7 @@ func (r *Raft) handleAppendEntries(m pb.Message) {
 			To:      m.From,
 			From:    r.id,
 			Term:    r.Term,
+			Index:   m.Index,
 			Commit:  r.RaftLog.committed,
 			Reject:  true,
 		}
@@ -715,9 +722,13 @@ func (r *Raft) handelAppendResponse(m pb.Message) {
 				// 考虑推进commit
 				r.tryCommit()
 			} else {
-				// 失败append
-				r.Prs[m.From].Next--
-				r.sendAppend(m.From)
+				// 失败append m.Index的entry Term 匹配失败
+				// 当 m.Index >= Next时 不需要发送append
+				if r.Prs[m.From].Next > m.Index {
+					// 当 m.Index >= Next时 不需要发送append
+					r.Prs[m.From].Next = m.Index
+					r.sendAppend(m.From)
+				}
 			}
 		}
 	}
