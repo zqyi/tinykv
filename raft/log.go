@@ -184,7 +184,11 @@ func (l *RaftLog) appendEntry(entries []pb.Entry) error {
 func (l *RaftLog) LastIndex() uint64 {
 	// Your Code Here (2A).
 	if len(l.entries) == 0 {
-		return l.stabled
+		lastIndex, err := l.storage.LastIndex()
+		if err != nil {
+			panic(err)
+		}
+		return lastIndex
 	} else {
 		return l.entries[len(l.entries)-1].Index
 	}
