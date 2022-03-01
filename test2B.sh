@@ -8,7 +8,7 @@ clearFunc() {
 		fi
 	done
 }
-echo -e "\n" > result.txt
+echo -e "\n" > result
 for ((i = 1; i <= 150; i++)); do
 	# check_results=$(make project2b)
 	check_results=$( go test -v -run TestPersistPartitionUnreliable2B ./kv/test_raftstore )
@@ -16,9 +16,9 @@ for ((i = 1; i <= 150; i++)); do
 	$(go clean -testcache)
 	clearFunc
 	if [[ $check_results =~ "FAIL" ]]; then
-		echo "$check_results" >> result.txt
+		echo "$check_results" >> result
 		clearFunc
 		break
 	fi
-	echo "$i" >> result.txt
+	echo "$i" >> result
 done

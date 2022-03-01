@@ -529,30 +529,37 @@ func (r *Raft) handleRequestVote(m pb.Message) {
 		r.becomeFollower(m.Term, None) // note: Term更高的请求投票，此时不知道leader
 	}
 
-	// switch r.State {
-	// case StateFollower:
-	// 根据规则投票
-	lastIndex := r.RaftLog.LastIndex()
-	lastTerm, _ := r.RaftLog.Term(lastIndex)
-	// note: 一个Term内只会投一次票
-	if (r.Vote == None || r.Vote == m.From) && ((lastTerm < m.LogTerm) || (lastTerm == m.LogTerm && lastIndex <= m.Index)) {
-		// 同意投票
-		// 特殊情况：当leader或candidate收到term相同但日志更新的请求时 转换为fllower
-		if r.State == StateLeader || r.State == StateCandidate {
-			// term相等 且日志更新
-			r.becomeFollower(m.Term, m.From)
+	switch r.State {
+	case StateFollower:
+		// 根据规则投票
+		lastIndex := r.RaftLog.LastIndex()
+		lastTerm, _ := r.RaftLog.Term(lastIndex)
+		// note: 一个Term内只会投一次票
+		if (r.Vote == None || r.Vote == m.From) && ((lastTerm < m.LogTerm) || (lastTerm == m.LogTerm && lastIndex <= m.Index)) {
+			// 同意投票
+			r.Vote = m.From
+			msg := pb.Message{
+				MsgType: pb.MessageType_MsgRequestVoteResponse,
+				To:      m.From,
+				From:    r.id,
+				Term:    r.Term,
+				Reject:  false,
+			}
+			// fmt.Printf("%d vote %d", r.id, m.From)
+			r.msgs = append(r.msgs, msg)
+		} else {
+			// 拒绝投票
+			msg := pb.Message{
+				MsgType: pb.MessageType_MsgRequestVoteResponse,
+				To:      m.From,
+				From:    r.id,
+				Term:    r.Term,
+				Reject:  true,
+			}
+			// fmt.Printf("%d reject %d as index %d vs %d indexTerm %d vs %d, or aready vote to %d \n", r.id, m.From, lastIndex, m.Index, lastTerm, m.LogTerm, r.Vote)
+			r.msgs = append(r.msgs, msg)
 		}
-		r.Vote = m.From
-		msg := pb.Message{
-			MsgType: pb.MessageType_MsgRequestVoteResponse,
-			To:      m.From,
-			From:    r.id,
-			Term:    r.Term,
-			Reject:  false,
-		}
-		// fmt.Printf("%d vote %d", r.id, m.From)
-		r.msgs = append(r.msgs, msg)
-	} else {
+	case StateCandidate, StateLeader:
 		// 拒绝投票
 		msg := pb.Message{
 			MsgType: pb.MessageType_MsgRequestVoteResponse,
@@ -561,21 +568,9 @@ func (r *Raft) handleRequestVote(m pb.Message) {
 			Term:    r.Term,
 			Reject:  true,
 		}
-		// fmt.Printf("%d reject %d as index %d vs %d indexTerm %d vs %d, or aready vote to %d \n", r.id, m.From, lastIndex, m.Index, lastTerm, m.LogTerm, r.Vote)
+		// fmt.Printf("%d reject %d as its leader or candidate \n", r.id, m.From)
 		r.msgs = append(r.msgs, msg)
 	}
-	// case StateCandidate, StateLeader:
-	// 	// 拒绝投票
-	// 	msg := pb.Message{
-	// 		MsgType: pb.MessageType_MsgRequestVoteResponse,
-	// 		To:      m.From,
-	// 		From:    r.id,
-	// 		Term:    r.Term,
-	// 		Reject:  true,
-	// 	}
-	// 	// fmt.Printf("%d reject %d as its leader or candidate \n", r.id, m.From)
-	// 	r.msgs = append(r.msgs, msg)
-	// }
 }
 
 func (r *Raft) handleRequestVoteResponse(m pb.Message) {
