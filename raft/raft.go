@@ -339,7 +339,7 @@ func (r *Raft) tick() {
 			// 一次选举超时后会重置一个随机的选举超时时间
 			r.electionElapsed = 0
 			// r.electionTimeout = rand.Intn(1) + r.orgElectionTimeout
-			r.electionTimeout = rand.Intn(2*r.orgElectionTimeout) + r.orgElectionTimeout
+			r.electionTimeout = rand.Intn(5*r.orgElectionTimeout) + r.orgElectionTimeout
 			// 发送MessageType_MsgHup 给自己
 			msg := pb.Message{
 				MsgType: pb.MessageType_MsgHup,
