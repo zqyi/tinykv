@@ -200,6 +200,9 @@ func newRaft(c *Config) *Raft {
 		// Prs:                make(map[uint64]*Progress),
 	}
 
+	// rand.Seed(time.Now().Unix())
+	raft.electionTimeout = rand.Intn(raft.orgElectionTimeout) + raft.orgElectionTimeout
+
 	if c.Applied > 0 {
 		raft.RaftLog.applied = c.Applied
 	}
@@ -338,8 +341,7 @@ func (r *Raft) tick() {
 		if r.electionElapsed == r.electionTimeout {
 			// 一次选举超时后会重置一个随机的选举超时时间
 			r.electionElapsed = 0
-			// r.electionTimeout = rand.Intn(1) + r.orgElectionTimeout
-			r.electionTimeout = rand.Intn(5*r.orgElectionTimeout) + r.orgElectionTimeout
+			r.electionTimeout = rand.Intn(2*r.orgElectionTimeout) + r.orgElectionTimeout
 			// 发送MessageType_MsgHup 给自己
 			msg := pb.Message{
 				MsgType: pb.MessageType_MsgHup,
@@ -390,6 +392,7 @@ func (r *Raft) becomeCandidate() {
 
 // becomeLeader transform this peer's state to leader
 func (r *Raft) becomeLeader() {
+	log.Infof("node %d becomeLeader at term %d", r.id, r.Term)
 	// Your Code Here (2A).
 
 	// // 直接append一个空条目
@@ -492,6 +495,7 @@ func (r *Raft) handleInternalHup(m pb.Message) {
 			log.Errorf("get lastLogTerm false at Hup")
 		}
 		// 向每个peer发送请求投票 除了自己
+		msgs := []pb.Message{}
 		for _, peer := range r.peers {
 			if peer != r.id {
 				msg := pb.Message{
@@ -502,9 +506,11 @@ func (r *Raft) handleInternalHup(m pb.Message) {
 					LogTerm: logTerm,
 					Index:   r.RaftLog.LastIndex(),
 				}
-				r.msgs = append(r.msgs, msg)
+				msgs = append(msgs, msg)
 			}
 		}
+		log.Infof("node %d begin Hup at term %d", r.id, r.Term)
+		r.msgs = append(r.msgs, msgs...)
 	}
 }
 
@@ -522,7 +528,7 @@ func (r *Raft) handleRequestVote(m pb.Message) {
 			Reject:  true,
 		}
 		r.msgs = append(r.msgs, msg)
-		// fmt.Printf("%d reject %d as node term %d vs %d \n", r.id, m.From, m.Term, m.Term)
+		log.Infof("%s %d reject %d as term, node term: %d vs %d, lastIndex: %d vs %d, voto: %dn", r.State.String(), r.id, m.From, m.Term, m.Term, r.RaftLog.LastIndex(), m.Index, r.Vote)
 		return
 	} else if m.Term > r.Term {
 		// Term大于自己的，则更新Term。并切换为跟随者
@@ -533,7 +539,10 @@ func (r *Raft) handleRequestVote(m pb.Message) {
 	case StateFollower:
 		// 根据规则投票
 		lastIndex := r.RaftLog.LastIndex()
-		lastTerm, _ := r.RaftLog.Term(lastIndex)
+		lastTerm, err := r.RaftLog.Term(lastIndex)
+		if err != nil {
+			panic("get term faild when handleRequestVote")
+		}
 		// note: 一个Term内只会投一次票
 		if (r.Vote == None || r.Vote == m.From) && ((lastTerm < m.LogTerm) || (lastTerm == m.LogTerm && lastIndex <= m.Index)) {
 			// 同意投票
@@ -545,7 +554,7 @@ func (r *Raft) handleRequestVote(m pb.Message) {
 				Term:    r.Term,
 				Reject:  false,
 			}
-			// fmt.Printf("%d vote %d", r.id, m.From)
+			log.Infof("%s %d vote %d ,node term: %d vs %d, lastIndex: %d vs %d, lastTerm %d vs %d, voto: %dn", r.State.String(), r.id, m.From, m.Term, m.Term, r.RaftLog.LastIndex(), m.Index, lastTerm, m.LogTerm, r.Vote)
 			r.msgs = append(r.msgs, msg)
 		} else {
 			// 拒绝投票
@@ -556,7 +565,7 @@ func (r *Raft) handleRequestVote(m pb.Message) {
 				Term:    r.Term,
 				Reject:  true,
 			}
-			// fmt.Printf("%d reject %d as index %d vs %d indexTerm %d vs %d, or aready vote to %d \n", r.id, m.From, lastIndex, m.Index, lastTerm, m.LogTerm, r.Vote)
+			log.Infof("%s %d reject %d as log ,node term: %d vs %d, lastIndex: %d vs %d, lastTerm %d vs %d, voto: %dn", r.State.String(), r.id, m.From, m.Term, m.Term, r.RaftLog.LastIndex(), m.Index, lastTerm, m.LogTerm, r.Vote)
 			r.msgs = append(r.msgs, msg)
 		}
 	case StateCandidate, StateLeader:
@@ -568,7 +577,7 @@ func (r *Raft) handleRequestVote(m pb.Message) {
 			Term:    r.Term,
 			Reject:  true,
 		}
-		// fmt.Printf("%d reject %d as its leader or candidate \n", r.id, m.From)
+		log.Infof("%s %d reject %d as not fllower,node term: %d vs %d, lastIndex: %d vs %d, voto: %dn", r.State.String(), r.id, m.From, m.Term, m.Term, r.RaftLog.LastIndex(), m.Index, r.Vote)
 		r.msgs = append(r.msgs, msg)
 	}
 }
