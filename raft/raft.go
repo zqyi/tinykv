@@ -16,6 +16,7 @@ package raft
 
 import (
 	"errors"
+	"fmt"
 	"math/rand"
 
 	"github.com/pingcap-incubator/tinykv/log"
@@ -234,11 +235,18 @@ func (r *Raft) sendAppend(to uint64) bool {
 	// 根据Progress来确定要发送哪些Entries
 	prevIndex := r.Prs[to].Next - 1
 	prevLogTerm, err := r.RaftLog.Term(prevIndex)
-	if err != nil || prevIndex < r.RaftLog.FirstIndex()-1 {
+	if err != nil && prevIndex < r.RaftLog.FirstIndex()-1 {
+		panic("log.Term has problem")
+	}
+	if err == ErrCompacted {
+		// 发送snapshot
+		r.sendSnapshot(to)
+		return true
+	} else if err != nil {
+		// ErrUnavailable
 		println(len(r.RaftLog.entries), prevIndex, r.RaftLog.FirstIndex())
 		log.Errorf("get prevLogTerm false when sendAppend() %s get index %d", err, prevIndex)
 		panic("get prevLogTerm false when sendAppend()")
-		// return false
 	}
 
 	// 准备 []*Entry
@@ -258,7 +266,31 @@ func (r *Raft) sendAppend(to uint64) bool {
 		Commit:  r.RaftLog.committed,
 	}
 	r.msgs = append(r.msgs, msg)
-	return false
+	return true
+}
+
+func (r *Raft) sendSnapshot(to uint64) bool {
+	// Log.pendingSnapsohot不为空表示当前节点有未应用的Snapshot
+	var snapshot pb.Snapshot
+	var err error = nil
+	if IsEmptySnap(r.RaftLog.pendingSnapshot) {
+		snapshot, err = r.RaftLog.storage.Snapshot()
+	} else {
+		snapshot = *r.RaftLog.pendingSnapshot
+	}
+	if err != nil {
+		return false
+	}
+
+	msg := pb.Message{
+		MsgType:  pb.MessageType_MsgSnapshot,
+		From:     r.id,
+		To:       to,
+		Term:     r.Term,
+		Snapshot: &snapshot,
+	}
+	r.msgs = append(r.msgs, msg)
+	return true
 }
 
 func (r *Raft) bcastHeatbeat() {
@@ -403,9 +435,15 @@ func (r *Raft) becomeLeader() {
 	//
 	r.Vote = None
 	// r.Prs = make(map[uint64]*Progress)
-	for _, prs := range r.Prs {
-		prs.Match = 0
-		prs.Next = r.RaftLog.LastIndex() + 1
+	for peer, prs := range r.Prs {
+		if peer == r.id {
+			prs.Match = r.RaftLog.LastIndex()
+			prs.Next = r.RaftLog.LastIndex() + 1
+		} else {
+
+			prs.Match = 0
+			prs.Next = r.RaftLog.LastIndex() + 1
+		}
 	}
 
 	r.State = StateLeader
@@ -460,6 +498,8 @@ func (r *Raft) Step(m pb.Message) error {
 		r.handleAppendEntries(m)
 	case pb.MessageType_MsgAppendResponse:
 		r.handelAppendResponse(m)
+	case pb.MessageType_MsgSnapshot:
+		r.handleSnapshot(m)
 	default:
 		panic("msg that dont support")
 	}
@@ -768,6 +808,64 @@ func (r *Raft) handelAppendResponse(m pb.Message) {
 	}
 }
 
+// handleSnapshot handle Snapshot RPC request
+func (r *Raft) handleSnapshot(m pb.Message) {
+	// Your Code Here (2C).
+	metadata := m.Snapshot.Metadata
+	// 验证Snapshot是否过时
+	if m.Term < r.Term || metadata.Index <= r.RaftLog.committed {
+		log.Info(fmt.Sprintf("%d [commit: %d] ignored snapshot [index: %d, term: %d]",
+			r.id, r.RaftLog.committed, metadata.Index, metadata.Term))
+		return
+	}
+
+	log.Info(fmt.Sprintf("%d [commit: %d] restored snapshot [index: %d, term: %d]",
+		r.id, r.RaftLog.committed, metadata.Index, metadata.Term))
+
+	r.becomeFollower(m.Term, m.From)
+	r.RaftLog.applied = metadata.Index
+	r.RaftLog.committed = metadata.Index
+	r.RaftLog.stabled = metadata.Index
+	r.RaftLog.offset = metadata.Index + 1
+
+	// 修改entries
+	if metadata.Index > r.RaftLog.LastIndex() {
+		r.RaftLog.entries = []pb.Entry{}
+	} else if metadata.Index >= r.RaftLog.FirstIndex() {
+		r.RaftLog.entries = r.RaftLog.entries[metadata.Index-r.RaftLog.FirstIndex():]
+	}
+
+	// 修改Prs
+	r.Prs = make(map[uint64]*Progress)
+	for _, peer := range metadata.ConfState.Nodes {
+		if peer == r.id {
+			r.Prs[peer] = &Progress{
+				Match: r.RaftLog.LastIndex(),
+				Next:  r.RaftLog.LastIndex() + 1,
+			}
+		} else {
+			r.Prs[peer] = &Progress{
+				Match: 0,
+				Next:  r.RaftLog.LastIndex() + 1,
+			}
+		}
+	}
+
+	r.RaftLog.pendingSnapshot = m.Snapshot
+
+	// 用AppendResponse回复
+	msg := pb.Message{
+		MsgType: pb.MessageType_MsgAppendResponse,
+		To:      m.From,
+		From:    r.id,
+		Term:    r.Term,
+		Index:   r.RaftLog.LastIndex(),
+		Commit:  r.RaftLog.committed,
+		Reject:  false,
+	}
+	r.msgs = append(r.msgs, msg)
+}
+
 // handleHeartbeat handle Heartbeat RPC request
 func (r *Raft) handleHeartbeat(m pb.Message) {
 	// Your Code Here (2A).
@@ -878,11 +976,6 @@ func (r *Raft) handleMsgPropose(m pb.Message) {
 		// 发起给其他服务器
 		r.bcastAppend()
 	}
-}
-
-// handleSnapshot handle Snapshot RPC request
-func (r *Raft) handleSnapshot(m pb.Message) {
-	// Your Code Here (2C).
 }
 
 func (r *Raft) softState() *SoftState {

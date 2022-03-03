@@ -290,25 +290,6 @@ func (d *peerMsgHandler) proposeRaftCommand(msg *raft_cmdpb.RaftCmdRequest, cb *
 
 	switch {
 	case msg.AdminRequest == nil:
-		// for _, req := range msg.Requests {
-		// CheckKeyInRegion
-		// var key []byte
-		// switch req.CmdType {
-		// case raft_cmdpb.CmdType_Get:
-		// 	key = req.Get.Key
-		// case raft_cmdpb.CmdType_Put:
-		// 	key = req.Put.Key
-		// case raft_cmdpb.CmdType_Delete:
-		// 	key = req.Delete.Key
-		// default:
-		// 	panic("cant handle this CmdType Now")
-		// }
-		// err := util.CheckKeyInRegion(key,d.Region())
-		// if err != nil {
-		// 	cb.Done(ErrResp(err))
-		// }
-		// }
-
 		// get date
 		date, err := msg.Marshal()
 		if err != nil {

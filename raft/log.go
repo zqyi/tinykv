@@ -94,13 +94,11 @@ func (l *RaftLog) maybeCompact() {
 	if len(l.entries) == 0 {
 		return
 	}
-
-	truncatedIndex, _ := l.storage.LastIndex()
-	if of := truncatedIndex - l.entries[0].Index; of > 0 {
+	// 根据storage来Compact
+	truncatedIndex, _ := l.storage.FirstIndex()
+	if of := truncatedIndex - l.entries[0].Index; of > 0 && of < uint64(len(l.entries)) {
 		l.entries = l.entries[of:]
-		if len(l.entries) > 0 {
-			l.offset = l.entries[0].Index
-		}
+		l.offset = truncatedIndex
 	}
 
 }
@@ -190,6 +188,7 @@ func (l *RaftLog) appendEntry(entries []pb.Entry) error {
 			}
 		}
 	}
+	l.maybeCompact()
 	return nil
 }
 
