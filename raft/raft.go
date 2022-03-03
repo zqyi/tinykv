@@ -326,7 +326,7 @@ func (r *Raft) tick() {
 	switch r.State {
 	case StateLeader:
 		r.heartbeatElapsed++
-		if r.heartbeatElapsed == r.heartbeatTimeout {
+		if r.heartbeatElapsed >= r.heartbeatTimeout {
 			r.heartbeatElapsed = 0
 			// 发送MessageType_MsgBeat 给自己
 			msg := pb.Message{
@@ -338,7 +338,7 @@ func (r *Raft) tick() {
 		}
 	case StateCandidate, StateFollower:
 		r.electionElapsed++
-		if r.electionElapsed == r.electionTimeout {
+		if r.electionElapsed >= r.electionTimeout {
 			// 一次选举超时后会重置一个随机的选举超时时间
 			r.electionElapsed = 0
 			r.electionTimeout = rand.Intn(2*r.orgElectionTimeout) + r.orgElectionTimeout
@@ -532,8 +532,17 @@ func (r *Raft) handleRequestVote(m pb.Message) {
 		return
 	} else if m.Term > r.Term {
 		// Term大于自己的，则更新Term。并切换为跟随者
-		r.becomeFollower(m.Term, None) // note: Term更高的请求投票，此时不知道leader
+		// r.becomeFollower 但是 不重置选举超时
+		r.Term = m.Term
+		r.Vote = None
+		r.State = StateFollower
+		r.votes = make(map[uint64]bool)
+		r.Lead = None
+		// r.heartbeatElapsed = 0
+		// r.electionElapsed = 0
 	}
+
+	// TODO 虽然term更大，但日志不新，则不重置计时
 
 	switch r.State {
 	case StateFollower:
@@ -546,6 +555,10 @@ func (r *Raft) handleRequestVote(m pb.Message) {
 		// note: 一个Term内只会投一次票
 		if (r.Vote == None || r.Vote == m.From) && ((lastTerm < m.LogTerm) || (lastTerm == m.LogTerm && lastIndex <= m.Index)) {
 			// 同意投票
+			// 同意投票时重置选举超时
+			r.heartbeatElapsed = 0
+			r.electionElapsed = 0
+			//
 			r.Vote = m.From
 			msg := pb.Message{
 				MsgType: pb.MessageType_MsgRequestVoteResponse,
@@ -558,6 +571,10 @@ func (r *Raft) handleRequestVote(m pb.Message) {
 			r.msgs = append(r.msgs, msg)
 		} else {
 			// 拒绝投票
+			// // 因日志而拒绝投票后随机选择新的选举超时
+			// if (lastTerm < m.LogTerm) || (lastTerm == m.LogTerm && lastIndex <= m.Index) {
+			// 	r.electionTimeout = rand.Intn(r.orgElectionTimeout) + 1
+			// }
 			msg := pb.Message{
 				MsgType: pb.MessageType_MsgRequestVoteResponse,
 				To:      m.From,
@@ -592,6 +609,7 @@ func (r *Raft) handleRequestVoteResponse(m pb.Message) {
 	}
 
 	if r.State == StateCandidate {
+		r.electionElapsed = 0
 		// 统计票数
 		r.votes[m.From] = !m.Reject
 		voteCount := 0
@@ -648,6 +666,7 @@ func (r *Raft) handleAppendEntries(m pb.Message) {
 		} else if r.State == StateFollower {
 			// 当Follower收到相等的心跳或Appdend时，会修改lead
 			r.Lead = m.From
+			r.electionElapsed = 0
 		}
 	}
 
@@ -775,6 +794,7 @@ func (r *Raft) handleHeartbeat(m pb.Message) {
 		} else if r.State == StateFollower {
 			// 当Follower收到相等的心跳或Appdend时，会修改lead
 			r.Lead = m.From
+			r.electionElapsed = 0
 		}
 	}
 
