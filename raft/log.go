@@ -188,7 +188,6 @@ func (l *RaftLog) appendEntry(entries []pb.Entry) error {
 			}
 		}
 	}
-	l.maybeCompact()
 	return nil
 }
 
@@ -196,11 +195,18 @@ func (l *RaftLog) appendEntry(entries []pb.Entry) error {
 func (l *RaftLog) LastIndex() uint64 {
 	// Your Code Here (2A).
 	if len(l.entries) == 0 {
+		// 在Snapshot拿一个
+		snapShotIndex := uint64(0)
+		if l.pendingSnapshot != nil {
+			snapShotIndex = l.pendingSnapshot.Metadata.Index
+		}
+
+		// 在Storage拿一个
 		lastIndex, err := l.storage.LastIndex()
 		if err != nil {
 			panic(err)
 		}
-		return lastIndex
+		return max(lastIndex, snapShotIndex)
 	} else {
 		return l.entries[len(l.entries)-1].Index
 	}
@@ -231,7 +237,15 @@ func (l *RaftLog) Term(i uint64) (uint64, error) {
 		}
 		return l.entries[i-l.offset].Term, nil
 	} else {
-		// 在storage拿
+		// 在未应用的Snapshot拿
+		if l.pendingSnapshot != nil {
+			snapshotMetadata := l.pendingSnapshot.Metadata
+			if i == snapshotMetadata.Index {
+				return snapshotMetadata.Term, nil
+			}
+		}
+
+		// Snapshot没拿到，最后在storage拿
 		term, err := l.storage.Term(i)
 		if err == ErrUnavailable && !IsEmptySnap(l.pendingSnapshot) {
 			if i < l.pendingSnapshot.Metadata.Index {
@@ -240,6 +254,7 @@ func (l *RaftLog) Term(i uint64) (uint64, error) {
 		}
 		return term, err
 	}
+
 }
 
 // func (l *RaftLog) EntriesBegin(begin uint64) ([]pb.Entry, error) {

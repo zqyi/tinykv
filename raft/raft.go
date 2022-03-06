@@ -114,8 +114,8 @@ type Progress struct {
 type Raft struct {
 	id uint64
 
-	// peers contains the IDs of all nodes (including self) in the raft cluster.
-	peers []uint64
+	// // peers contains the IDs of all nodes (including self) in the raft cluster.
+	// peers []uint64
 
 	Term uint64
 	Vote uint64
@@ -182,7 +182,6 @@ func newRaft(c *Config) *Raft {
 
 	raft := &Raft{
 		id:                 c.ID,
-		peers:              c.peers,
 		Term:               hardState.Term,
 		Vote:               hardState.Vote,
 		RaftLog:            newLog(c.Storage),
@@ -220,11 +219,18 @@ func newRaft(c *Config) *Raft {
 
 // 广播一次Append
 func (r *Raft) bcastAppend() bool {
-	for _, peer := range r.peers {
+
+	for peer := range r.Prs {
 		if peer != r.id {
 			r.sendAppend(peer)
 		}
 	}
+
+	// for _, peer := range r.peers {
+	// 	if peer != r.id {
+	// 		r.sendAppend(peer)
+	// 	}
+	// }
 	return false
 }
 
@@ -235,9 +241,9 @@ func (r *Raft) sendAppend(to uint64) bool {
 	// 根据Progress来确定要发送哪些Entries
 	prevIndex := r.Prs[to].Next - 1
 	prevLogTerm, err := r.RaftLog.Term(prevIndex)
-	if err != nil && prevIndex < r.RaftLog.FirstIndex()-1 {
-		panic("log.Term has problem")
-	}
+	// if err != nil && prevIndex < r.RaftLog.FirstIndex()-1 {
+	// 	panic(err)
+	// }
 	if err == ErrCompacted {
 		// 发送snapshot
 		r.sendSnapshot(to)
@@ -294,7 +300,7 @@ func (r *Raft) sendSnapshot(to uint64) bool {
 }
 
 func (r *Raft) bcastHeatbeat() {
-	for _, peer := range r.peers {
+	for peer := range r.Prs {
 		if peer != r.id {
 			r.sendHeartbeat(peer) // 发送心跳
 		}
@@ -335,7 +341,7 @@ func (r *Raft) tryCommit() {
 				count++
 			}
 		}
-		if count > len(r.peers)/2 {
+		if count > len(r.Prs)/2 {
 			term, _ := r.RaftLog.Term(i)
 			if term == r.Term && r.RaftLog.committed != i {
 				// 只能commit自己的term
@@ -424,7 +430,7 @@ func (r *Raft) becomeCandidate() {
 
 // becomeLeader transform this peer's state to leader
 func (r *Raft) becomeLeader() {
-	log.Infof("node %d becomeLeader at term %d", r.id, r.Term)
+	// log.Infof("node %d becomeLeader at term %d", r.id, r.Term)
 	// Your Code Here (2A).
 
 	// // 直接append一个空条目
@@ -522,7 +528,7 @@ func (r *Raft) handleInternalHup(m pb.Message) {
 		// 开始新的一轮选举
 
 		// 处理单机的情况。不用发Msg
-		if len(r.peers) == 1 {
+		if len(r.Prs) == 1 {
 			r.becomeLeader()
 		}
 
@@ -536,7 +542,7 @@ func (r *Raft) handleInternalHup(m pb.Message) {
 		}
 		// 向每个peer发送请求投票 除了自己
 		msgs := []pb.Message{}
-		for _, peer := range r.peers {
+		for peer := range r.Prs {
 			if peer != r.id {
 				msg := pb.Message{
 					MsgType: pb.MessageType_MsgRequestVote,
@@ -549,7 +555,7 @@ func (r *Raft) handleInternalHup(m pb.Message) {
 				msgs = append(msgs, msg)
 			}
 		}
-		log.Infof("node %d begin Hup at term %d", r.id, r.Term)
+		// log.Infof("node %d begin Hup at term %d", r.id, r.Term)
 		r.msgs = append(r.msgs, msgs...)
 	}
 }
@@ -568,7 +574,7 @@ func (r *Raft) handleRequestVote(m pb.Message) {
 			Reject:  true,
 		}
 		r.msgs = append(r.msgs, msg)
-		log.Infof("%s %d reject %d as term, node term: %d vs %d, lastIndex: %d vs %d, voto: %dn", r.State.String(), r.id, m.From, m.Term, m.Term, r.RaftLog.LastIndex(), m.Index, r.Vote)
+		// log.Infof("%s %d reject %d as term, node term: %d vs %d, lastIndex: %d vs %d, voto: %dn", r.State.String(), r.id, m.From, m.Term, m.Term, r.RaftLog.LastIndex(), m.Index, r.Vote)
 		return
 	} else if m.Term > r.Term {
 		// Term大于自己的，则更新Term。并切换为跟随者
@@ -607,7 +613,7 @@ func (r *Raft) handleRequestVote(m pb.Message) {
 				Term:    r.Term,
 				Reject:  false,
 			}
-			log.Infof("%s %d vote %d ,node term: %d vs %d, lastIndex: %d vs %d, lastTerm %d vs %d, voto: %dn", r.State.String(), r.id, m.From, m.Term, m.Term, r.RaftLog.LastIndex(), m.Index, lastTerm, m.LogTerm, r.Vote)
+			// log.Infof("%s %d vote %d ,node term: %d vs %d, lastIndex: %d vs %d, lastTerm %d vs %d, voto: %dn", r.State.String(), r.id, m.From, m.Term, m.Term, r.RaftLog.LastIndex(), m.Index, lastTerm, m.LogTerm, r.Vote)
 			r.msgs = append(r.msgs, msg)
 		} else {
 			// 拒绝投票
@@ -622,7 +628,7 @@ func (r *Raft) handleRequestVote(m pb.Message) {
 				Term:    r.Term,
 				Reject:  true,
 			}
-			log.Infof("%s %d reject %d as log ,node term: %d vs %d, lastIndex: %d vs %d, lastTerm %d vs %d, voto: %dn", r.State.String(), r.id, m.From, m.Term, m.Term, r.RaftLog.LastIndex(), m.Index, lastTerm, m.LogTerm, r.Vote)
+			// log.Infof("%s %d reject %d as log ,node term: %d vs %d, lastIndex: %d vs %d, lastTerm %d vs %d, voto: %dn", r.State.String(), r.id, m.From, m.Term, m.Term, r.RaftLog.LastIndex(), m.Index, lastTerm, m.LogTerm, r.Vote)
 			r.msgs = append(r.msgs, msg)
 		}
 	case StateCandidate, StateLeader:
@@ -634,7 +640,7 @@ func (r *Raft) handleRequestVote(m pb.Message) {
 			Term:    r.Term,
 			Reject:  true,
 		}
-		log.Infof("%s %d reject %d as not fllower,node term: %d vs %d, lastIndex: %d vs %d, voto: %dn", r.State.String(), r.id, m.From, m.Term, m.Term, r.RaftLog.LastIndex(), m.Index, r.Vote)
+		// log.Infof("%s %d reject %d as not fllower,node term: %d vs %d, lastIndex: %d vs %d, voto: %dn", r.State.String(), r.id, m.From, m.Term, m.Term, r.RaftLog.LastIndex(), m.Index, r.Vote)
 		r.msgs = append(r.msgs, msg)
 	}
 }
@@ -657,11 +663,11 @@ func (r *Raft) handleRequestVoteResponse(m pb.Message) {
 
 		for _, vote := range r.votes {
 			if vote {
-				if voteCount++; voteCount > (len(r.peers) / 2) {
+				if voteCount++; voteCount > (len(r.Prs) / 2) {
 					r.becomeLeader()
 				}
 			} else {
-				if rejectCount++; rejectCount > (len(r.peers) / 2) {
+				if rejectCount++; rejectCount > (len(r.Prs) / 2) {
 					r.becomeFollower(r.Term, None)
 				}
 			}
@@ -714,7 +720,6 @@ func (r *Raft) handleAppendEntries(m pb.Message) {
 	// append
 	term, err := r.RaftLog.Term(m.Index) // Index不存在则err
 	if err == nil && term == m.LogTerm {
-		// println("匹配上")
 		// 匹配上
 
 		// 转换一下
@@ -741,7 +746,7 @@ func (r *Raft) handleAppendEntries(m pb.Message) {
 		r.msgs = append(r.msgs, msg)
 	} else if err == nil && term != m.LogTerm {
 		// index够长，但term不对
-		// println("index够长，但term不对")
+
 		// // 删除
 		// offset := m.Index - r.RaftLog.entries[0].Index - 1
 		// if r.RaftLog.stabled >= offset {
@@ -762,7 +767,6 @@ func (r *Raft) handleAppendEntries(m pb.Message) {
 		r.msgs = append(r.msgs, msg)
 	} else {
 		// index不够长
-		// println("index不够长")
 		// 回复
 		msg := pb.Message{
 			MsgType: pb.MessageType_MsgAppendResponse,
@@ -823,17 +827,19 @@ func (r *Raft) handleSnapshot(m pb.Message) {
 		r.id, r.RaftLog.committed, metadata.Index, metadata.Term))
 
 	r.becomeFollower(m.Term, m.From)
-	r.RaftLog.applied = metadata.Index
-	r.RaftLog.committed = metadata.Index
-	r.RaftLog.stabled = metadata.Index
-	r.RaftLog.offset = metadata.Index + 1
 
 	// 修改entries
 	if metadata.Index > r.RaftLog.LastIndex() {
 		r.RaftLog.entries = []pb.Entry{}
 	} else if metadata.Index >= r.RaftLog.FirstIndex() {
 		r.RaftLog.entries = r.RaftLog.entries[metadata.Index-r.RaftLog.FirstIndex():]
+
 	}
+
+	r.RaftLog.applied = metadata.Index
+	r.RaftLog.committed = metadata.Index
+	r.RaftLog.stabled = metadata.Index
+	r.RaftLog.offset = metadata.Index + 1
 
 	// 修改Prs
 	r.Prs = make(map[uint64]*Progress)
@@ -934,7 +940,6 @@ func (r *Raft) handleHeartbeatResponse(m pb.Message) {
 
 func (r *Raft) handleMsgPropose(m pb.Message) {
 	// 不考虑收到更小的Term
-
 	switch r.State {
 	case StateFollower:
 		// 转发
@@ -957,7 +962,7 @@ func (r *Raft) handleMsgPropose(m pb.Message) {
 		r.RaftLog.appendEntry(entries)
 
 		// 额外处理单机的情况
-		if len(r.peers) == 1 {
+		if len(r.Prs) == 1 {
 			r.RaftLog.committed = r.RaftLog.LastIndex()
 			return
 		}

@@ -237,6 +237,8 @@ func (rn *RawNode) Advance(rd Ready) {
 			rn.Raft.RaftLog.pendingSnapshot = nil
 		}
 	}
+
+	rn.Raft.RaftLog.maybeCompact()
 }
 
 // GetProgress return the Progress of this node and its peers, if this
