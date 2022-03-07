@@ -165,6 +165,7 @@ type Raft struct {
 	// configuration change (if any). Config changes are only allowed to
 	// be proposed if the leader's applied index is greater than this
 	// value.
+	// In a short, 记录上次ConfChange的Index，接下来的ConfChange必须在该Index已经被Apply之后Propose
 	// (Used in 3A conf change)
 	PendingConfIndex uint64
 }
@@ -225,12 +226,6 @@ func (r *Raft) bcastAppend() bool {
 			r.sendAppend(peer)
 		}
 	}
-
-	// for _, peer := range r.peers {
-	// 	if peer != r.id {
-	// 		r.sendAppend(peer)
-	// 	}
-	// }
 	return false
 }
 
@@ -403,6 +398,7 @@ func (r *Raft) becomeFollower(term uint64, lead uint64) {
 	r.Lead = lead
 	r.heartbeatElapsed = 0
 	r.electionElapsed = 0
+	r.leadTransferee = 0
 
 	// r.Prs = make(map[uint64]*Progress)
 
@@ -423,6 +419,7 @@ func (r *Raft) becomeCandidate() {
 	r.Lead = None
 	r.heartbeatElapsed = 0
 	r.electionElapsed = 0
+	r.leadTransferee = 0
 
 	// r.Prs = make(map[uint64]*Progress)
 
@@ -457,6 +454,7 @@ func (r *Raft) becomeLeader() {
 	r.Lead = r.id
 	r.heartbeatElapsed = 0
 	r.electionElapsed = 0
+	r.leadTransferee = 0
 	// NOTE: Leader should propose a noop entry on its term
 
 	msg := pb.Message{
@@ -506,6 +504,10 @@ func (r *Raft) Step(m pb.Message) error {
 		r.handelAppendResponse(m)
 	case pb.MessageType_MsgSnapshot:
 		r.handleSnapshot(m)
+	case pb.MessageType_MsgTransferLeader:
+		r.handleMsgTransferLeader(m)
+	case pb.MessageType_MsgTimeoutNow:
+		r.handleMsgTimeoutNow(m)
 	default:
 		panic("msg that dont support")
 	}
@@ -796,7 +798,12 @@ func (r *Raft) handelAppendResponse(m pb.Message) {
 				// 成功append
 				r.Prs[m.From].Match = m.Index
 				r.Prs[m.From].Next = r.RaftLog.LastIndex() + 1 // TODO 验证怎么更新Next
-				// r.Prs[m.From].Next = m.Index + 1
+
+				//transferLeader判断
+				if m.From == r.leadTransferee && m.Index == r.RaftLog.LastIndex() {
+					r.transferLeader()
+					return
+				}
 				// 考虑推进commit
 				r.tryCommit()
 			} else {
@@ -952,7 +959,18 @@ func (r *Raft) handleMsgPropose(m pb.Message) {
 		if len(m.Entries) != 1 {
 			log.Errorf("Leader should only Propose Entry once a time!")
 		}
-		// append entries to its log
+		// Leader正在进行转移，停止接受propose
+		if r.leadTransferee != None {
+			return
+		}
+
+		// 如果上次ConfChange没有Apply，则不能将这次Propose
+		if m.Entries[0].EntryType == pb.EntryType_EntryConfChange &&
+			r.PendingConfIndex < r.RaftLog.applied {
+			return
+		}
+
+		// 终于能够Propose. append entries to its log
 		entries := make([]pb.Entry, len(m.Entries))
 		for i := range entries {
 			entries[i] = *m.Entries[i]
@@ -981,6 +999,37 @@ func (r *Raft) handleMsgPropose(m pb.Message) {
 		// 发起给其他服务器
 		r.bcastAppend()
 	}
+}
+
+func (r *Raft) handleMsgTransferLeader(m pb.Message) {
+	// 被转移者
+	r.leadTransferee = m.From
+
+	// 在AppendResponse判断是否合格
+	r.sendAppend(m.From)
+}
+
+// call by Raft.handelAppendResponse()
+func (r *Raft) transferLeader() {
+	msg := pb.Message{
+		MsgType: pb.MessageType_MsgTimeoutNow,
+		To:      r.leadTransferee,
+		From:    r.id,
+		Term:    r.Term,
+	}
+	r.msgs = append(r.msgs, msg)
+
+	r.becomeFollower(r.Term, None)
+}
+
+func (r *Raft) handleMsgTimeoutNow(m pb.Message) {
+	// 发送MessageType_MsgHup 给自己
+	msg := pb.Message{
+		MsgType: pb.MessageType_MsgHup,
+		To:      r.id,
+		From:    r.id,
+	}
+	r.Step(msg) // 直接传递给Step()
 }
 
 func (r *Raft) softState() *SoftState {

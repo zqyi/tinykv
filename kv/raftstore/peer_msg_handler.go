@@ -97,55 +97,62 @@ func (d *peerMsgHandler) HandleRaftReady() {
 // modify kv_data by entry.data (applyCommittedEntry)
 func (d *peerMsgHandler) applyCommittedEntry(entry *pb.Entry) {
 
-	if entry.EntryType == pb.EntryType_EntryConfChange {
-		panic("EntryType_EntryConfChange dont imply")
-	}
-	// entry.EntryType == pb.EntryType_EntryNormal
-	// transfer data to msg
-	msg := &raft_cmdpb.RaftCmdRequest{}
-	err := msg.Unmarshal(entry.Data)
-	if err != nil {
-		panic(err)
-	}
-
-	switch {
-	case msg.AdminRequest == nil:
-		if len(msg.Requests) == 0 {
-			return
+	switch entry.EntryType {
+	case pb.EntryType_EntryNormal:
+		// transfer data to msg
+		msg := &raft_cmdpb.RaftCmdRequest{}
+		err := msg.Unmarshal(entry.Data)
+		if err != nil {
+			panic(err)
 		}
-		kvWB := new(engine_util.WriteBatch)
-		// apply
-		for _, req := range msg.Requests {
+
+		switch {
+		case msg.AdminRequest == nil:
+			if len(msg.Requests) == 0 {
+				return
+			}
+			kvWB := new(engine_util.WriteBatch)
+			// apply
+			for _, req := range msg.Requests {
+				switch req.CmdType {
+				case raft_cmdpb.CmdType_Get:
+				case raft_cmdpb.CmdType_Put:
+					kvWB.SetCF(req.Put.Cf, req.Put.Key, req.Put.Value)
+				case raft_cmdpb.CmdType_Delete:
+					kvWB.DeleteCF(req.Delete.Cf, req.Delete.Key)
+				case raft_cmdpb.CmdType_Snap:
+					// panic("snap")
+				default:
+					panic("invalid raftCmdRequest Type")
+				}
+			}
+
+			kvWB.MustWriteToDB(d.peerStorage.Engines.Kv)
+		case msg.AdminRequest != nil:
+			req := msg.AdminRequest
 			switch req.CmdType {
-			case raft_cmdpb.CmdType_Get:
-			case raft_cmdpb.CmdType_Put:
-				kvWB.SetCF(req.Put.Cf, req.Put.Key, req.Put.Value)
-			case raft_cmdpb.CmdType_Delete:
-				kvWB.DeleteCF(req.Delete.Cf, req.Delete.Key)
-			case raft_cmdpb.CmdType_Snap:
-				// panic("snap")
+			case raft_cmdpb.AdminCmdType_CompactLog:
+				compactLog := req.GetCompactLog()
+				if compactLog.CompactIndex >= d.peerStorage.truncatedIndex() {
+					kvWB := new(engine_util.WriteBatch)
+					d.peerStorage.applyState.TruncatedState.Index = compactLog.CompactIndex
+					d.peerStorage.applyState.TruncatedState.Term = compactLog.CompactTerm
+					kvWB.SetMeta(meta.ApplyStateKey(d.regionId), d.peerStorage.applyState)
+					kvWB.MustWriteToDB(d.peerStorage.Engines.Kv)
+					d.ScheduleCompactLog(compactLog.CompactIndex)
+				}
 			default:
-				panic("invalid raftCmdRequest Type")
+				panic("dont finish it")
 			}
 		}
-
-		kvWB.MustWriteToDB(d.peerStorage.Engines.Kv)
-	case msg.AdminRequest != nil:
-		req := msg.AdminRequest
-		switch req.CmdType {
-		case raft_cmdpb.AdminCmdType_CompactLog:
-			compactLog := req.GetCompactLog()
-			if compactLog.CompactIndex >= d.peerStorage.truncatedIndex() {
-				kvWB := new(engine_util.WriteBatch)
-				d.peerStorage.applyState.TruncatedState.Index = compactLog.CompactIndex
-				d.peerStorage.applyState.TruncatedState.Term = compactLog.CompactTerm
-				kvWB.SetMeta(meta.ApplyStateKey(d.regionId), d.peerStorage.applyState)
-				kvWB.MustWriteToDB(d.peerStorage.Engines.Kv)
-				d.ScheduleCompactLog(compactLog.CompactIndex)
-			}
-		default:
-			panic("dont finish it")
+	case pb.EntryType_EntryConfChange:
+		cc := pb.ConfChange{}
+		if err := cc.Unmarshal(entry.Data); err != nil {
+			panic(err)
 		}
+		newConfState := d.peer.RaftGroup.ApplyConfChange(cc)
+		_ = newConfState
+		// TODO persiste RegionLocalState
 	}
 }
 
@@ -319,6 +326,8 @@ func (d *peerMsgHandler) proposeRaftCommand(msg *raft_cmdpb.RaftCmdRequest, cb *
 		//propose
 		err = d.RaftGroup.Propose(date)
 		if err != nil {
+			// TODO 考虑领导者转移时，主动停止接受新的propose
+			// 需不需要在这里Callback，或者等客户端超时
 			panic(err)
 		}
 	case msg.AdminRequest != nil:
