@@ -152,7 +152,9 @@ func (d *peerMsgHandler) applyCommittedEntry(entry *pb.Entry) {
 		}
 		newConfState := d.peer.RaftGroup.ApplyConfChange(cc)
 		_ = newConfState
-		// TODO persiste RegionLocalState
+		// TODO 持久化 RegionLocalState
+		// kvWB := new(engine_util.WriteBatch)
+		// d.peerStorage.region.Peers
 	}
 }
 

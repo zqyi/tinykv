@@ -1208,7 +1208,6 @@ func TestCommitAfterRemoveNode3A(t *testing.T) {
 		t.Fatalf("unexpected committed entries: %v", ents)
 	}
 	ccIndex := r.RaftLog.LastIndex()
-
 	// While the config change is pending, make another proposal.
 	r.Step(pb.Message{
 		MsgType: pb.MessageType_MsgPropose,
@@ -1224,6 +1223,7 @@ func TestCommitAfterRemoveNode3A(t *testing.T) {
 		Index:   ccIndex,
 		Term:    r.Term,
 	})
+
 	ents := nextEnts(r, s)
 	if len(ents) != 2 {
 		t.Fatalf("expected two committed entries, got %v", ents)

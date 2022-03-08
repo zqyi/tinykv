@@ -801,7 +801,7 @@ func (r *Raft) handelAppendResponse(m pb.Message) {
 
 				//transferLeader判断
 				if m.From == r.leadTransferee && m.Index == r.RaftLog.LastIndex() {
-					r.transferLeader()
+					r.transferLeader(m.From)
 					return
 				}
 				// 考虑推进commit
@@ -964,10 +964,14 @@ func (r *Raft) handleMsgPropose(m pb.Message) {
 			return
 		}
 
-		// 如果上次ConfChange没有Apply，则不能将这次Propose
-		if m.Entries[0].EntryType == pb.EntryType_EntryConfChange &&
-			r.PendingConfIndex < r.RaftLog.applied {
-			return
+		// 处理 ConfChange
+		if m.Entries[0].EntryType == pb.EntryType_EntryConfChange {
+			if r.PendingConfIndex <= r.RaftLog.applied {
+				r.PendingConfIndex = r.RaftLog.LastIndex() + 1
+			} else {
+				// 如果上次ConfChange没有Apply，则不能将这次Propose
+				return
+			}
 		}
 
 		// 终于能够Propose. append entries to its log
@@ -1002,15 +1006,27 @@ func (r *Raft) handleMsgPropose(m pb.Message) {
 }
 
 func (r *Raft) handleMsgTransferLeader(m pb.Message) {
-	// 被转移者
-	r.leadTransferee = m.From
+	switch r.State {
+	case StateLeader:
+		if _, ok := r.Prs[m.From]; !ok {
+			// 被转移者不合法
+			return
+		}
+		// 被转移者
+		r.leadTransferee = m.From
 
-	// 在AppendResponse判断是否合格
-	r.sendAppend(m.From)
+		// 在AppendResponse判断是否合格
+		r.sendAppend(m.From)
+	case StateCandidate, StateFollower:
+		// 发给了非Leader 转发
+		m.To = r.Lead
+		r.msgs = append(r.msgs, m)
+	}
+
 }
 
 // call by Raft.handelAppendResponse()
-func (r *Raft) transferLeader() {
+func (r *Raft) transferLeader(to uint64) {
 	msg := pb.Message{
 		MsgType: pb.MessageType_MsgTimeoutNow,
 		To:      r.leadTransferee,
@@ -1023,6 +1039,11 @@ func (r *Raft) transferLeader() {
 }
 
 func (r *Raft) handleMsgTimeoutNow(m pb.Message) {
+	// 判断自己在不在Prs中
+	if _, ok := r.Prs[r.id]; !ok {
+		return
+	}
+
 	// 发送MessageType_MsgHup 给自己
 	msg := pb.Message{
 		MsgType: pb.MessageType_MsgHup,
@@ -1050,9 +1071,17 @@ func (r *Raft) hardState() pb.HardState {
 // addNode add a new node to raft group
 func (r *Raft) addNode(id uint64) {
 	// Your Code Here (3A).
+	progress := &Progress{
+		Match: 0,
+		Next:  r.RaftLog.LastIndex() + 1,
+	}
+	r.Prs[id] = progress
 }
 
 // removeNode remove a node from raft group
 func (r *Raft) removeNode(id uint64) {
 	// Your Code Here (3A).
+	delete(r.Prs, id)
+	delete(r.votes, id)
+	r.tryCommit()
 }
