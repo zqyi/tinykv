@@ -84,6 +84,7 @@ func (m *storeMeta) getOverlapRegions(region *metapb.Region) []*metapb.Region {
 	return overlaps
 }
 
+// 封装当前raftstore的信息
 type GlobalContext struct {
 	cfg                  *config.Config
 	engine               *engine_util.Engines

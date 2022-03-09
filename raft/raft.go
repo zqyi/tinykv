@@ -427,7 +427,7 @@ func (r *Raft) becomeCandidate() {
 
 // becomeLeader transform this peer's state to leader
 func (r *Raft) becomeLeader() {
-	// log.Infof("node %d becomeLeader at term %d", r.id, r.Term)
+	log.Errorf("node %d becomeLeader at term %d", r.id, r.Term)
 	// Your Code Here (2A).
 
 	// // 直接append一个空条目
@@ -730,6 +730,7 @@ func (r *Raft) handleAppendEntries(m pb.Message) {
 			entries[i] = *m.Entries[i]
 		}
 		r.RaftLog.appendEntry(entries)
+		log.Errorf("%d append entry from %d to %d", r.id, m.Index, r.RaftLog.LastIndex())
 
 		// 推进commit
 		if m.Commit > r.RaftLog.committed {
@@ -1012,6 +1013,11 @@ func (r *Raft) handleMsgTransferLeader(m pb.Message) {
 			// 被转移者不合法
 			return
 		}
+		if m.From == r.id {
+			// 已经是Leader了
+			return
+		}
+
 		// 被转移者
 		r.leadTransferee = m.From
 
