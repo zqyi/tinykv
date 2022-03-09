@@ -150,11 +150,49 @@ func (d *peerMsgHandler) applyCommittedEntry(entry *pb.Entry) {
 		if err := cc.Unmarshal(entry.Data); err != nil {
 			panic(err)
 		}
-		newConfState := d.peer.RaftGroup.ApplyConfChange(cc)
-		_ = newConfState
-		// TODO 持久化 RegionLocalState
-		// kvWB := new(engine_util.WriteBatch)
-		// d.peerStorage.region.Peers
+
+		// 检测ConfChange是否已经执行过
+		// TODO
+
+		// 改变 RegionLocalState，包括 RegionEpoch 和 Region 中的Peers
+		// 并持久化
+		regionState := d.peerStorage.region
+		switch cc.ChangeType {
+		case pb.ConfChangeType_AddNode:
+			// 向peer增加 cc.NodeID
+			newPeer := metapb.Peer{Id: cc.NodeId, StoreId: cc.NodeId}
+			//check
+			for _, peer := range regionState.Peers {
+				if peer.StoreId == d.storeID() {
+					panic("add a duplicate peer")
+				}
+			}
+			regionState.Peers = append(regionState.Peers, &newPeer)
+		case pb.ConfChangeType_RemoveNode:
+			// 如果删除的是自己
+			if cc.NodeId == d.storeID() {
+				d.destroyPeer()
+				return
+			}
+			// 从peer中删除
+			for i, peer := range regionState.Peers {
+				if peer.StoreId == cc.NodeId {
+					regionState.Peers = append(regionState.Peers[:i], regionState.Peers[i+1:]...)
+					break
+				}
+			}
+		}
+		regionState.RegionEpoch.ConfVer++
+
+		kvWB := new(engine_util.WriteBatch)
+		meta.WriteRegionState(kvWB, regionState, rspb.PeerState_Normal)
+		kvWB.MustWriteToDB(d.peerStorage.Engines.Kv)
+
+		// 更新 GlobalContext 的 storeMeta 中的 region 状态
+		d.ctx.storeMeta.regions[d.regionId] = regionState
+
+		// 调用 raft.RawNode 的 ApplyConfChange()
+		d.peer.RaftGroup.ApplyConfChange(cc)
 	}
 }
 
@@ -341,6 +379,19 @@ func (d *peerMsgHandler) proposeRaftCommand(msg *raft_cmdpb.RaftCmdRequest, cb *
 			}
 			if err = d.RaftGroup.Propose(data); err != nil {
 				panic(err)
+			}
+		case raft_cmdpb.AdminCmdType_TransferLeader:
+			d.RaftGroup.TransferLeader(msg.AdminRequest.TransferLeader.Peer.Id)
+			// note: 无需Callback
+			if cb != nil {
+				panic("TransferLeader need callback")
+			}
+		case raft_cmdpb.AdminCmdType_ChangePeer:
+			changeRequest := msg.AdminRequest.ChangePeer
+			cc := pb.ConfChange{ChangeType: changeRequest.ChangeType, NodeId: changeRequest.Peer.GetId()}
+			d.RaftGroup.ProposeConfChange(cc)
+			if cb != nil {
+				panic("Confchange need callback")
 			}
 		default:
 			panic("dont finish it!")
