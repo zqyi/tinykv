@@ -10,12 +10,13 @@ clearFunc() {
 }
 echo -e "\n" > result
 for ((i = 1; i <= 150; i++)); do
-	check_results=$(make project2c)
-	# check_results=$( go test -v -run TestOnePartition2B ./kv/test_raftstore )
+	# check_results=$(make project2c)
+	check_results=$( go test -v -run TestBasicConfChange3B ./kv/test_raftstore )
 	# check_results=$( go test -v ./scheduler/server -check.f  TestRegionNotUpdate3C )     
 	$(go clean -testcache)
 	clearFunc
 	if [[ $check_results =~ "FAIL" ]]; then
+		# echo "fail" >> result
 		echo "$check_results" >> result
 		clearFunc
 		break

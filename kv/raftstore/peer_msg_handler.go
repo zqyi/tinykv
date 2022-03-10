@@ -64,8 +64,10 @@ func (d *peerMsgHandler) HandleRaftReady() {
 	}
 	if applySnapResult != nil {
 		d.peerStorage.SetRegion(applySnapResult.Region)
+
 		d.ctx.storeMeta.Lock()
 		d.ctx.storeMeta.regions[d.Region().Id] = d.Region()
+		d.ctx.storeMeta.regionRanges.ReplaceOrInsert(&regionItem{region: applySnapResult.Region})
 		d.ctx.storeMeta.Unlock()
 	}
 
@@ -79,8 +81,11 @@ func (d *peerMsgHandler) HandleRaftReady() {
 			d.applyCommittedEntry(&entry)
 			// callback if neccessary （每执行一条log进行一次callback）
 			d.maybeCallbackEntry(&entry)
-
+			if d.stopped {
+				return
+			}
 		}
+
 		// 2.2 modify apply_state once a ready
 		kvWB := new(engine_util.WriteBatch)
 		d.peerStorage.applyState.AppliedIndex = ready.CommittedEntries[len(ready.CommittedEntries)-1].Index
@@ -162,9 +167,6 @@ func (d *peerMsgHandler) applyCommittedEntry(entry *pb.Entry) {
 			panic(err)
 		}
 
-		// fmt.Printf("%v apply conf change, %s %d \n", d.Tag, cc.ChangeType.String(), cc.NodeId)
-		// log.Errorf("%v apply conf change, %s %d", d.Tag, cc.ChangeType.String(), cc.NodeId)
-
 		// 调用 raft.RawNode 的 ApplyConfChange()
 		d.peer.RaftGroup.ApplyConfChange(cc)
 
@@ -184,7 +186,9 @@ func (d *peerMsgHandler) applyCommittedEntry(entry *pb.Entry) {
 
 				regionState.RegionEpoch.ConfVer++
 				kvWB := new(engine_util.WriteBatch)
+				log.Errorf("store %v WriteRegionState rspb.PeerState_Normal", d.Tag)
 				meta.WriteRegionState(kvWB, regionState, rspb.PeerState_Normal)
+				kvWB.MustWriteToDB(d.peerStorage.Engines.Kv)
 			}
 		case pb.ConfChangeType_RemoveNode:
 			kvWB := new(engine_util.WriteBatch)
@@ -193,7 +197,9 @@ func (d *peerMsgHandler) applyCommittedEntry(entry *pb.Entry) {
 				// 如果删除的是自己
 				kvWB.DeleteMeta(meta.ApplyStateKey(d.regionId))
 				kvWB.MustWriteToDB(d.peerStorage.Engines.Kv)
-				d.destroyPeer()
+				if d.MaybeDestroy() {
+					d.destroyPeer()
+				}
 				return
 			case cc.NodeId != d.PeerId():
 				// 如果删除的不是自己
@@ -202,6 +208,7 @@ func (d *peerMsgHandler) applyCommittedEntry(entry *pb.Entry) {
 				deleteFromRegion(regionState, cc.NodeId)
 
 				regionState.RegionEpoch.ConfVer++
+				log.Errorf("store %v WriteRegionState rspb.PeerState_Normal", d.Tag)
 				meta.WriteRegionState(kvWB, regionState, rspb.PeerState_Normal)
 				kvWB.MustWriteToDB(d.peerStorage.Engines.Kv)
 			}
@@ -210,10 +217,8 @@ func (d *peerMsgHandler) applyCommittedEntry(entry *pb.Entry) {
 		// 更新 GlobalContext 的 storeMeta 中的 region 状态
 		d.ctx.storeMeta.Lock()
 		d.ctx.storeMeta.regions[d.Region().Id] = d.Region()
+		d.ctx.storeMeta.regionRanges.ReplaceOrInsert(&regionItem{region: d.Region()})
 		d.ctx.storeMeta.Unlock()
-
-		// TODO: 验证实际作用，可能是为了快速同步Region信息
-		// d.onSchedulerHeartbeatTick()
 	}
 }
 
@@ -726,7 +731,7 @@ func (d *peerMsgHandler) destroyPeer() {
 	meta := d.ctx.storeMeta
 	meta.Lock()
 	defer meta.Unlock()
-	isInitialized := d.isInitialized()
+	isInitialized := d.isInitialized() // bool(len(ps.region.Peers) > 0)
 	if err := d.Destroy(d.ctx.engine, false); err != nil {
 		// If not panic here, the peer will be recreated in the next restart,
 		// then it will be gc again. But if some overlap region is created
@@ -736,6 +741,7 @@ func (d *peerMsgHandler) destroyPeer() {
 	}
 	d.ctx.router.close(regionID)
 	d.stopped = true
+	// 在该store上删除该Region
 	if isInitialized && meta.regionRanges.Delete(&regionItem{region: d.Region()}) == nil {
 		panic(d.Tag + " meta corruption detected")
 	}
@@ -743,6 +749,7 @@ func (d *peerMsgHandler) destroyPeer() {
 		panic(d.Tag + " meta corruption detected")
 	}
 	delete(meta.regions, regionID)
+	log.Infof("%s destroy finished", d.Tag)
 }
 
 func (d *peerMsgHandler) findSiblingRegion() (result *metapb.Region) {

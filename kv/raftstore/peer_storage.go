@@ -375,13 +375,22 @@ func (ps *PeerStorage) ApplySnapshot(snapshot *eraftpb.Snapshot, kvWB *engine_ut
 	ps.applyState.TruncatedState.Index = snapshot.Metadata.Index
 	ps.applyState.TruncatedState.Term = snapshot.Metadata.Term
 	ps.snapState.StateType = snap.SnapState_Applying
-
-	kvWB.SetMeta(meta.ApplyStateKey(ps.region.GetId()), ps.applyState)
-	meta.WriteRegionState(kvWB, snapData.Region, rspb.PeerState_Normal)
-	ch := make(chan bool)
-	ps.snapState = snap.SnapState{
-		StateType: snap.SnapState_Applying,
+	if ps.region.GetId() != snapData.Region.GetId() {
+		panic("debug it")
 	}
+
+	if err := kvWB.SetMeta(meta.ApplyStateKey(ps.region.GetId()), ps.applyState); err != nil {
+		panic(err)
+	}
+	if err := raftWB.SetMeta(meta.RaftStateKey(snapData.Region.GetId()), ps.raftState); err != nil {
+		panic(err)
+	}
+
+	log.Errorf("store %v WriteRegionState rspb.PeerState_Normal", ps.Tag)
+	meta.WriteRegionState(kvWB, snapData.Region, rspb.PeerState_Normal)
+
+	ch := make(chan bool, 1)
+
 	ps.regionSched <- &runner.RegionTaskApply{
 		RegionId: ps.region.Id,
 		Notifier: ch,
@@ -394,6 +403,7 @@ func (ps *PeerStorage) ApplySnapshot(snapshot *eraftpb.Snapshot, kvWB *engine_ut
 	if !success {
 		return nil, nil
 	}
+
 	result := &ApplySnapResult{PrevRegion: ps.region, Region: snapData.Region}
 	log.Debug(fmt.Sprintf("%v apply snapshot for region %v with state %v ok", ps.Tag, snapData.Region, ps.applyState))
 	return result, nil
