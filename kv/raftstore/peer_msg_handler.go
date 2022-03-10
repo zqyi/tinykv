@@ -62,7 +62,12 @@ func (d *peerMsgHandler) HandleRaftReady() {
 	if err != nil {
 		panic(err)
 	}
-	_ = applySnapResult // 预留操作
+	if applySnapResult != nil {
+		d.peerStorage.SetRegion(applySnapResult.Region)
+		d.ctx.storeMeta.Lock()
+		d.ctx.storeMeta.regions[d.Region().Id] = d.Region()
+		d.ctx.storeMeta.Unlock()
+	}
 
 	// 2.applying committed entries(modify kv_date and apply_state)
 	if len(ready.CommittedEntries) != 0 {
@@ -157,7 +162,11 @@ func (d *peerMsgHandler) applyCommittedEntry(entry *pb.Entry) {
 			panic(err)
 		}
 
-		log.Errorf("%v apply conf change, %s %d", d.Tag, cc.ChangeType.String(), cc.NodeId)
+		// fmt.Printf("%v apply conf change, %s %d \n", d.Tag, cc.ChangeType.String(), cc.NodeId)
+		// log.Errorf("%v apply conf change, %s %d", d.Tag, cc.ChangeType.String(), cc.NodeId)
+
+		// 调用 raft.RawNode 的 ApplyConfChange()
+		d.peer.RaftGroup.ApplyConfChange(cc)
 
 		regionState := d.peerStorage.region
 		// 改变 RegionLocalState，包括 RegionEpoch 和 Region 中的Peers
@@ -166,12 +175,12 @@ func (d *peerMsgHandler) applyCommittedEntry(entry *pb.Entry) {
 		case pb.ConfChangeType_AddNode:
 			// 向peer增加 cc.NodeID
 			if !isPeerExists(regionState, cc.NodeId) {
-				newPeer := metapb.Peer{
+				newPeer := &metapb.Peer{
 					Id:      cc.NodeId,
 					StoreId: msg.AdminRequest.ChangePeer.Peer.StoreId,
 				}
-				regionState.Peers = append(regionState.Peers, &newPeer)
-				d.insertPeerCache(&newPeer)
+				regionState.Peers = append(regionState.Peers, newPeer)
+				d.insertPeerCache(newPeer)
 
 				regionState.RegionEpoch.ConfVer++
 				kvWB := new(engine_util.WriteBatch)
@@ -179,12 +188,13 @@ func (d *peerMsgHandler) applyCommittedEntry(entry *pb.Entry) {
 			}
 		case pb.ConfChangeType_RemoveNode:
 			kvWB := new(engine_util.WriteBatch)
-
 			switch {
 			case cc.NodeId == d.PeerId():
 				// 如果删除的是自己
 				kvWB.DeleteMeta(meta.ApplyStateKey(d.regionId))
+				kvWB.MustWriteToDB(d.peerStorage.Engines.Kv)
 				d.destroyPeer()
+				return
 			case cc.NodeId != d.PeerId():
 				// 如果删除的不是自己
 				d.removePeerCache(cc.NodeId)
@@ -192,16 +202,15 @@ func (d *peerMsgHandler) applyCommittedEntry(entry *pb.Entry) {
 				deleteFromRegion(regionState, cc.NodeId)
 
 				regionState.RegionEpoch.ConfVer++
+				meta.WriteRegionState(kvWB, regionState, rspb.PeerState_Normal)
+				kvWB.MustWriteToDB(d.peerStorage.Engines.Kv)
 			}
-			meta.WriteRegionState(kvWB, regionState, rspb.PeerState_Normal)
-			kvWB.MustWriteToDB(d.peerStorage.Engines.Kv)
 		}
 
 		// 更新 GlobalContext 的 storeMeta 中的 region 状态
-		d.ctx.storeMeta.regions[d.regionId] = regionState
-
-		// 调用 raft.RawNode 的 ApplyConfChange()
-		d.peer.RaftGroup.ApplyConfChange(cc)
+		d.ctx.storeMeta.Lock()
+		d.ctx.storeMeta.regions[d.Region().Id] = d.Region()
+		d.ctx.storeMeta.Unlock()
 
 		// TODO: 验证实际作用，可能是为了快速同步Region信息
 		// d.onSchedulerHeartbeatTick()
@@ -415,7 +424,7 @@ func (d *peerMsgHandler) proposeRaftCommand(msg *raft_cmdpb.RaftCmdRequest, cb *
 		//propose
 		err = d.RaftGroup.Propose(date)
 		if err != nil {
-			// TODO 考虑领导者转移时，主动停止接受新的propose
+			// TODO: 考虑领导者转移时，主动停止接受新的propose
 			// 需不需要在这里Callback，或者等客户端超时
 			panic(err)
 		}

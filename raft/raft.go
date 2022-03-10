@@ -730,12 +730,14 @@ func (r *Raft) handleAppendEntries(m pb.Message) {
 			entries[i] = *m.Entries[i]
 		}
 		r.RaftLog.appendEntry(entries)
-		log.Errorf("%d append entry from %d to %d", r.id, m.Index, r.RaftLog.LastIndex())
+		// log.Errorf("%d append entry from %d to %d", r.id, m.Index, r.RaftLog.LastIndex())
 
 		// 推进commit
 		if m.Commit > r.RaftLog.committed {
 			r.RaftLog.committed = min(min(m.Commit, m.Index+uint64(len(m.Entries))), r.RaftLog.LastIndex())
 		}
+		// log.Errorf("%d commit %d", r.id, r.RaftLog.committed)
+
 		// 回复
 		msg := pb.Message{
 			MsgType: pb.MessageType_MsgAppendResponse,
@@ -912,6 +914,7 @@ func (r *Raft) handleHeartbeat(m pb.Message) {
 
 	// TODO 验证：根据心跳带的LeaderCommit信息，将日志条目应用到本地的状态机中
 	r.RaftLog.committed = min(m.Commit, r.RaftLog.LastIndex())
+	// log.Errorf("%d commit %d", r.id, r.RaftLog.committed)
 
 	// 回应心跳
 	msg := pb.Message{
@@ -1081,12 +1084,20 @@ func (r *Raft) addNode(id uint64) {
 		Match: 0,
 		Next:  r.RaftLog.LastIndex() + 1,
 	}
-	r.Prs[id] = progress
+	if _, ok := r.Prs[id]; !ok {
+		r.Prs[id] = progress
+	}
 }
 
 // removeNode remove a node from raft group
 func (r *Raft) removeNode(id uint64) {
 	// Your Code Here (3A).
+
+	if r.id == id {
+		log.Errorf("%d remove self at Raft.removeNode()", r.id)
+		r.Prs = make(map[uint64]*Progress)
+		return
+	}
 	delete(r.Prs, id)
 	delete(r.votes, id)
 	r.tryCommit()
