@@ -41,9 +41,9 @@ func newPeerMsgHandler(peer *peer, ctx *GlobalContext) *peerMsgHandler {
 	}
 }
 
-// persisting log entries,
-// applying committed entries and
 // sending raft messages to other peers through the network
+// persisting log entries,
+// applying committed entries
 func (d *peerMsgHandler) HandleRaftReady() {
 	if d.stopped {
 		return
@@ -56,6 +56,11 @@ func (d *peerMsgHandler) HandleRaftReady() {
 	}
 	// get the ready
 	ready := d.peer.RaftGroup.Ready()
+
+	// 0.sending raft messages to other peers through the network
+	if len(ready.Messages) != 0 {
+		d.Send(d.ctx.trans, ready.Messages)
+	}
 
 	// 1.persisting log entries (modify raft_log and raft_state)
 	applySnapResult, err := d.peer.peerStorage.SaveReadyState(&ready)
@@ -94,10 +99,6 @@ func (d *peerMsgHandler) HandleRaftReady() {
 			panic(err)
 		}
 		kvWB.MustWriteToDB(d.peerStorage.Engines.Kv)
-	}
-	// 3.sending raft messages to other peers through the network
-	if len(ready.Messages) != 0 {
-		d.Send(d.ctx.trans, ready.Messages)
 	}
 
 	// advance
@@ -355,7 +356,8 @@ func (d *peerMsgHandler) HandleMsg(msg message.Msg) {
 		d.onTick()
 	case message.MsgTypeSplitRegion:
 		split := msg.Data.(*message.MsgSplitRegion)
-		log.Infof("%s on split with %v", d.Tag, split.SplitKey)
+		// log.Infof("%s on split with %v", d.Tag, split.SplitKey)
+		log.Errorf("%s on split with %v", d.Tag, split.SplitKey)
 		d.onPrepareSplitRegion(split.RegionEpoch, split.SplitKey, split.Callback)
 	case message.MsgTypeRegionApproximateSize:
 		d.onApproximateRegionSize(msg.Data.(uint64))
@@ -461,14 +463,19 @@ func (d *peerMsgHandler) proposeRaftCommand(msg *raft_cmdpb.RaftCmdRequest, cb *
 				Context:    context,
 			}
 
+			err := d.RaftGroup.ProposeConfChange(cc)
+			if err != nil {
+				// 回复拒绝Callback
+				cb.Done(ErrResp(&util.ErrStaleCommand{}))
+				return
+			}
+
 			proposal := &proposal{
 				index: d.nextProposalIndex(),
 				term:  d.Term(),
 				cb:    cb,
 			}
 			d.proposals = append(d.proposals, proposal)
-
-			d.RaftGroup.ProposeConfChange(cc)
 		default:
 			panic("dont finish it!")
 		}

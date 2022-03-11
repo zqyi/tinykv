@@ -120,6 +120,25 @@ func (rn *RawNode) ProposeConfChange(cc pb.ConfChange) error {
 	if err != nil {
 		return err
 	}
+
+	// 如果只有两个节点，且remove leader，则拒绝propose，并transferleader
+	if cc.ChangeType == pb.ConfChangeType_RemoveNode &&
+		cc.NodeId == rn.Raft.id &&
+		rn.Raft.State == StateLeader &&
+		len(rn.Raft.Prs) == 2 {
+		// transferLeader
+
+		var to uint64
+		for peer := range rn.Raft.Prs {
+			if peer != rn.Raft.id {
+				to = peer
+			}
+		}
+		msg := pb.Message{From: to, To: rn.Raft.id, MsgType: pb.MessageType_MsgTransferLeader}
+		rn.Raft.Step(msg)
+		return errors.New("remove Leader but only two peers")
+	}
+
 	ent := pb.Entry{EntryType: pb.EntryType_EntryConfChange, Data: data}
 	return rn.Raft.Step(pb.Message{
 		MsgType: pb.MessageType_MsgPropose,
