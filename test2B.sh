@@ -9,9 +9,10 @@ clearFunc() {
 	done
 }
 echo -e "\n" > result
-for ((i = 1; i <= 150; i++)); do
-	# check_results=$(make project2c)
-	check_results=$( go test -v -run TestConfChangeRecover3B ./kv/test_raftstore )
+for ((i = 1; i <= 100; i++)); do
+	echo "round $i"
+	check_results=$(make project3b)
+	# check_results=$( go test -v -run TestConfChangeRecoverManyClients3B ./kv/test_raftstore )
 	# check_results=$( go test -v ./scheduler/server -check.f  TestRegionNotUpdate3C )     
 	$(go clean -testcache)
 	clearFunc
@@ -22,7 +23,6 @@ for ((i = 1; i <= 150; i++)); do
 		# break
 	fi
 	echo "$i" >> result
-
 	# echo "$check_results" > ./test3b/out-"$i".log
 
 done
