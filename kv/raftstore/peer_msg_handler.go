@@ -87,7 +87,7 @@ func (d *peerMsgHandler) HandleRaftReady() {
 
 			// 检查msg是否过时
 			if err := d.checkRegionAndMaybeyCallback(&entry, d.Region()); err != nil {
-				log.Errorf("checkEntry when apply err %s", err)
+				// log.Errorf("checkEntry when apply err %s", err)
 				continue
 			}
 
@@ -163,7 +163,10 @@ func (d *peerMsgHandler) applyCommittedEntry(entry *pb.Entry) {
 					d.ScheduleCompactLog(compactLog.CompactIndex)
 				}
 			case raft_cmdpb.AdminCmdType_Split:
-				log.Errorf("%v apply split begin, split key %d, StartKey %d, EndKey %d", d.Tag, req.Split.SplitKey, d.Region().StartKey, d.Region().EndKey)
+				log.Errorf("%v apply split begin, split key %d, StartKey %d, EndKey %d", d.Tag,
+					req.Split.SplitKey,
+					d.Region().StartKey,
+					d.Region().EndKey)
 				splitReq := req.Split
 				kvWB := new(engine_util.WriteBatch)
 				// 1. 修改旧Region信息

@@ -427,7 +427,7 @@ func (r *Raft) becomeCandidate() {
 
 // becomeLeader transform this peer's state to leader
 func (r *Raft) becomeLeader() {
-	log.Errorf("node %d becomeLeader at term %d", r.id, r.Term)
+	log.Errorf("node %d becomeLeader at term %d with index %d", r.id, r.Term, r.RaftLog.LastIndex())
 	// Your Code Here (2A).
 
 	// // 直接append一个空条目
