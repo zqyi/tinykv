@@ -172,7 +172,7 @@ func (d *storeWorker) onRaftMessage(msg *rspb.RaftMessage) error {
 		// Target tombstone peer doesn't exist, so ignore it.
 		return nil
 	}
-	log.Errorf("store %d checkMsg at regionID %d", d.storeState.id, regionID)
+	// log.Errorf("store %d checkMsg at regionID %d", d.storeState.id, regionID)
 	ok, err := d.checkMsg(msg)
 	if err != nil {
 		return err
@@ -180,7 +180,7 @@ func (d *storeWorker) onRaftMessage(msg *rspb.RaftMessage) error {
 	if ok {
 		return nil
 	}
-	log.Errorf("store %d maybeCreate peer at regionID %d", d.storeState.id, regionID)
+	log.Errorf("store %d maybeCreate peer %d at regionID %d", d.storeState.id, msg.ToPeer.Id, regionID)
 	created, err := d.maybeCreatePeer(regionID, msg)
 	if err != nil {
 		return err

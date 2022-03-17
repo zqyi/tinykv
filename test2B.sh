@@ -9,7 +9,7 @@ clearFunc() {
 	done
 }
 echo -e "\n" > result
-for ((i = 1; i <= 100; i++)); do
+for ((i = 1; i <= 10; i++)); do
 	echo "round $i"
 	check_results=$(make project3b)
 	# check_results=$( go test -v -run TestConfChangeRecoverManyClients3B ./kv/test_raftstore )

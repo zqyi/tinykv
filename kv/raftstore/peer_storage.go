@@ -386,7 +386,7 @@ func (ps *PeerStorage) ApplySnapshot(snapshot *eraftpb.Snapshot, kvWB *engine_ut
 		panic(err)
 	}
 
-	log.Errorf("store %v WriteRegionState rspb.PeerState_Normal", ps.Tag)
+	// log.Errorf("store %v WriteRegionState rspb.PeerState_Normal", ps.Tag)
 	meta.WriteRegionState(kvWB, snapData.Region, rspb.PeerState_Normal)
 
 	ch := make(chan bool, 1)

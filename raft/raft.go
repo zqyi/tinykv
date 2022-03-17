@@ -839,11 +839,12 @@ func (r *Raft) handleSnapshot(m pb.Message) {
 	r.becomeFollower(m.Term, m.From)
 
 	// 修改entries
-	if metadata.Index > r.RaftLog.LastIndex() {
-		r.RaftLog.entries = []pb.Entry{}
-	} else if metadata.Index >= r.RaftLog.FirstIndex() {
-		r.RaftLog.entries = r.RaftLog.entries[metadata.Index-r.RaftLog.FirstIndex():]
-
+	if len(r.RaftLog.entries) > 0 {
+		if metadata.Index > r.RaftLog.LastIndex() {
+			r.RaftLog.entries = []pb.Entry{}
+		} else if metadata.Index >= r.RaftLog.FirstIndex() {
+			r.RaftLog.entries = r.RaftLog.entries[metadata.Index-r.RaftLog.FirstIndex():]
+		}
 	}
 
 	r.RaftLog.applied = metadata.Index
@@ -1094,7 +1095,7 @@ func (r *Raft) removeNode(id uint64) {
 	// Your Code Here (3A).
 
 	if r.id == id {
-		log.Errorf("%d remove self at Raft.removeNode()", r.id)
+		// log.Errorf("%d remove self at Raft.removeNode()", r.id)
 		r.Prs = make(map[uint64]*Progress)
 		return
 	}
