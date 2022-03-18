@@ -167,6 +167,10 @@ func (d *peerMsgHandler) applyCommittedEntry(entry *pb.Entry) {
 					req.Split.SplitKey,
 					d.Region().StartKey,
 					d.Region().EndKey)
+
+				if nil != util.CheckKeyInRegionExclusive(req.Split.SplitKey, d.Region()) {
+					panic("check key error when apply")
+				}
 				splitReq := req.Split
 				kvWB := new(engine_util.WriteBatch)
 				// 1. 修改旧Region信息
@@ -490,6 +494,7 @@ func (d *peerMsgHandler) checkRegionAndMaybeyCallback(entry *pb.Entry, region *m
 				d.maybeCallbackEntryWithResponse(entry, ErrResp(&util.ErrStaleCommand{}))
 				return err
 			}
+
 		}
 	}
 
@@ -583,10 +588,10 @@ func (d *peerMsgHandler) proposeRaftCommand(msg *raft_cmdpb.RaftCmdRequest, cb *
 		}
 
 		// 检查Region版本,和key是否在Region内
-		if err := util.CheckRegionEpoch(msg, d.Region(), true); err != nil {
-			cb.Done(ErrResp(err))
-			return
-		}
+		// if err := util.CheckRegionEpoch(msg, d.Region(), true); err != nil {
+		// 	cb.Done(ErrResp(err))
+		// 	return
+		// }
 
 		for _, req := range msg.Requests {
 			var key []byte
@@ -673,6 +678,10 @@ func (d *peerMsgHandler) proposeRaftCommand(msg *raft_cmdpb.RaftCmdRequest, cb *
 			if err := util.CheckRegionEpoch(msg, d.Region(), true); err != nil {
 				cb.Done(ErrResp(err))
 				return
+			}
+
+			if util.CheckKeyInRegionExclusive(splitReq.SplitKey, d.Region()) != nil {
+				panic("check error")
 			}
 
 			log.Errorf("%v propose split msg, msg: %d %d local region: %d %d", d.Tag, msg.Header.RegionEpoch.ConfVer, msg.Header.RegionEpoch.Version,
