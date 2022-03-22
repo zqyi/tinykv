@@ -234,7 +234,10 @@ func (r *Raft) bcastAppend() bool {
 func (r *Raft) sendAppend(to uint64) bool {
 	// Your Code Here (2A).
 	// 根据Progress来确定要发送哪些Entries
-	prevIndex := r.Prs[to].Next - 1
+	prevIndex := uint64(0)
+	if r.Prs[to].Next > 0 {
+		prevIndex = r.Prs[to].Next - 1
+	}
 	prevLogTerm, err := r.RaftLog.Term(prevIndex)
 	// if err != nil && prevIndex < r.RaftLog.FirstIndex()-1 {
 	// 	panic(err)
