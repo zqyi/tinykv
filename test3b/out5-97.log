@@ -1,0 +1,1011 @@
+rm -rf /tmp/*test-raftstore*
+# GO111MODULE=on go test -v --count=1 --parallel=1 -p=1 ./kv/test_raftstore -run ^TestTransferLeader3B|| true
+# GO111MODULE=on go test -v --count=1 --parallel=1 -p=1 ./kv/test_raftstore -run ^TestBasicConfChange3B|| true
+# GO111MODULE=on go test -v --count=1 --parallel=1 -p=1 ./kv/test_raftstore -run ^TestConfChangeRecover3B|| true
+# GO111MODULE=on go test -v --count=1 --parallel=1 -p=1 ./kv/test_raftstore -run ^TestConfChangeRecoverManyClients3B|| true
+# GO111MODULE=on go test -v --count=1 --parallel=1 -p=1 ./kv/test_raftstore -run ^TestConfChangeUnreliable3B|| true
+# GO111MODULE=on go test -v --count=1 --parallel=1 -p=1 ./kv/test_raftstore -run ^TestConfChangeUnreliableRecover3B|| true
+# GO111MODULE=on go test -v --count=1 --parallel=1 -p=1 ./kv/test_raftstore -run ^TestConfChangeSnapshotUnreliableRecover3B|| true
+# GO111MODULE=on go test -v --count=1 --parallel=1 -p=1 ./kv/test_raftstore -run ^TestConfChangeSnapshotUnreliableRecoverConcurrentPartition3B|| true
+# GO111MODULE=on go test -v --count=1 --parallel=1 -p=1 ./kv/test_raftstore -run ^TestOneSplit3B|| true
+# GO111MODULE=on go test -v --count=1 --parallel=1 -p=1 ./kv/test_raftstore -run ^TestSplitRecover3B|| true
+GO111MODULE=on go test -v --count=1 --parallel=1 -p=1 ./kv/test_raftstore -run ^TestSplitRecoverManyClients3B|| true
+=== RUN   TestSplitRecoverManyClients3B
+2022/03/22 20:11:52.707894 node.go:193: [0;37m[info] start raft store node, storeID: 1[0m
+2022/03/22 20:11:52.708350 peer.go:41: [0;37m[info] region id:1 region_epoch:<conf_ver:1 version:1 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 > peers:<id:5 store_id:5 >  create peer with ID 1[0m
+2022/03/22 20:11:52.708443 raftstore.go:175: [0;37m[info] start store 1, region_count 1, tombstone_count 0, takes 265.931µs[0m
+2022/03/22 20:11:52.708962 node.go:193: [0;37m[info] start raft store node, storeID: 2[0m
+2022/03/22 20:11:52.709083 peer.go:41: [0;37m[info] region id:1 region_epoch:<conf_ver:1 version:1 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 > peers:<id:5 store_id:5 >  create peer with ID 2[0m
+2022/03/22 20:11:52.709136 raftstore.go:175: [0;37m[info] start store 2, region_count 1, tombstone_count 0, takes 94.454µs[0m
+2022/03/22 20:11:52.709605 node.go:193: [0;37m[info] start raft store node, storeID: 3[0m
+2022/03/22 20:11:52.709709 peer.go:41: [0;37m[info] region id:1 region_epoch:<conf_ver:1 version:1 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 > peers:<id:5 store_id:5 >  create peer with ID 3[0m
+2022/03/22 20:11:52.709780 raftstore.go:175: [0;37m[info] start store 3, region_count 1, tombstone_count 0, takes 103.678µs[0m
+2022/03/22 20:11:52.710202 node.go:193: [0;37m[info] start raft store node, storeID: 4[0m
+2022/03/22 20:11:52.710302 peer.go:41: [0;37m[info] region id:1 region_epoch:<conf_ver:1 version:1 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 > peers:<id:5 store_id:5 >  create peer with ID 4[0m
+2022/03/22 20:11:52.710383 raftstore.go:175: [0;37m[info] start store 4, region_count 1, tombstone_count 0, takes 112.326µs[0m
+2022/03/22 20:11:52.710841 node.go:193: [0;37m[info] start raft store node, storeID: 5[0m
+2022/03/22 20:11:52.710948 peer.go:41: [0;37m[info] region id:1 region_epoch:<conf_ver:1 version:1 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 > peers:<id:5 store_id:5 >  create peer with ID 5[0m
+2022/03/22 20:11:52.711014 raftstore.go:175: [0;37m[info] start store 5, region_count 1, tombstone_count 0, takes 102.128µs[0m
+2022/03/22 20:11:53.313100 raft.go:433: [0;31m[error] node 1 becomeLeader at term 6 with index 5[0m
+2022/03/22 20:11:53.873825 peer_msg_handler.go:573: [0;31m[error] [region 1] 1 on split with [49 56 32 48 48 48 48 48 48 48 48][0m
+2022/03/22 20:11:53.917813 peer_msg_handler.go:736: [0;31m[error] [region 1] 1 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:11:53.937036 peer_msg_handler.go:573: [0;31m[error] [region 1] 1 on split with [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:11:53.942397 peer_msg_handler.go:257: [0;31m[error] [region 1] 1 apply split begin, split key [49 56 32 48 48 48 48 48 48 48 48], StartKey [], EndKey [][0m
+2022/03/22 20:11:53.942563 peer.go:41: [0;37m[info] region id:6 start_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:7 store_id:1 > peers:<id:8 store_id:2 > peers:<id:9 store_id:3 > peers:<id:10 store_id:4 > peers:<id:11 store_id:5 >  create peer with ID 7[0m
+2022/03/22 20:11:53.945094 peer_msg_handler.go:257: [0;31m[error] [region 1] 3 apply split begin, split key [49 56 32 48 48 48 48 48 48 48 48], StartKey [], EndKey [][0m
+2022/03/22 20:11:53.945142 peer_msg_handler.go:257: [0;31m[error] [region 1] 2 apply split begin, split key [49 56 32 48 48 48 48 48 48 48 48], StartKey [], EndKey [][0m
+2022/03/22 20:11:53.945193 peer.go:41: [0;37m[info] region id:6 start_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:7 store_id:1 > peers:<id:8 store_id:2 > peers:<id:9 store_id:3 > peers:<id:10 store_id:4 > peers:<id:11 store_id:5 >  create peer with ID 9[0m
+2022/03/22 20:11:53.945294 peer.go:41: [0;37m[info] region id:6 start_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:7 store_id:1 > peers:<id:8 store_id:2 > peers:<id:9 store_id:3 > peers:<id:10 store_id:4 > peers:<id:11 store_id:5 >  create peer with ID 8[0m
+2022/03/22 20:11:53.953397 peer_msg_handler.go:257: [0;31m[error] [region 1] 4 apply split begin, split key [49 56 32 48 48 48 48 48 48 48 48], StartKey [], EndKey [][0m
+2022/03/22 20:11:53.953473 peer.go:41: [0;37m[info] region id:6 start_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:7 store_id:1 > peers:<id:8 store_id:2 > peers:<id:9 store_id:3 > peers:<id:10 store_id:4 > peers:<id:11 store_id:5 >  create peer with ID 10[0m
+2022/03/22 20:11:53.958794 peer_msg_handler.go:257: [0;31m[error] [region 1] 5 apply split begin, split key [49 56 32 48 48 48 48 48 48 48 48], StartKey [], EndKey [][0m
+2022/03/22 20:11:53.958798 peer_msg_handler.go:322: [0;31m[error] [region 1] 1 apply split finished[0m
+2022/03/22 20:11:53.958904 peer.go:41: [0;37m[info] region id:6 start_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:7 store_id:1 > peers:<id:8 store_id:2 > peers:<id:9 store_id:3 > peers:<id:10 store_id:4 > peers:<id:11 store_id:5 >  create peer with ID 11[0m
+2022/03/22 20:11:53.961433 peer_msg_handler.go:322: [0;31m[error] [region 1] 2 apply split finished[0m
+2022/03/22 20:11:53.961473 peer_msg_handler.go:322: [0;31m[error] [region 1] 3 apply split finished[0m
+2022/03/22 20:11:53.964107 peer_msg_handler.go:736: [0;31m[error] [region 1] 1 propose split msg, msg: 1 2 local region: 1 2[0m
+2022/03/22 20:11:53.969528 peer_msg_handler.go:322: [0;31m[error] [region 1] 4 apply split finished[0m
+2022/03/22 20:11:53.975021 peer_msg_handler.go:322: [0;31m[error] [region 1] 5 apply split finished[0m
+2022/03/22 20:11:53.980432 peer_msg_handler.go:257: [0;31m[error] [region 1] 1 apply split begin, split key [49 53 32 48 48 48 48 48 48 48 49], StartKey [], EndKey [49 56 32 48 48 48 48 48 48 48 48][0m
+2022/03/22 20:11:53.980550 peer.go:41: [0;37m[info] region id:12 start_key:"15 00000001" end_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:13 store_id:1 > peers:<id:14 store_id:2 > peers:<id:15 store_id:3 > peers:<id:16 store_id:4 > peers:<id:17 store_id:5 >  create peer with ID 13[0m
+2022/03/22 20:11:53.983085 peer_msg_handler.go:257: [0;31m[error] [region 1] 2 apply split begin, split key [49 53 32 48 48 48 48 48 48 48 49], StartKey [], EndKey [49 56 32 48 48 48 48 48 48 48 48][0m
+2022/03/22 20:11:53.983090 peer_msg_handler.go:257: [0;31m[error] [region 1] 3 apply split begin, split key [49 53 32 48 48 48 48 48 48 48 49], StartKey [], EndKey [49 56 32 48 48 48 48 48 48 48 48][0m
+2022/03/22 20:11:53.983186 peer.go:41: [0;37m[info] region id:12 start_key:"15 00000001" end_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:13 store_id:1 > peers:<id:14 store_id:2 > peers:<id:15 store_id:3 > peers:<id:16 store_id:4 > peers:<id:17 store_id:5 >  create peer with ID 14[0m
+2022/03/22 20:11:53.983291 peer.go:41: [0;37m[info] region id:12 start_key:"15 00000001" end_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:13 store_id:1 > peers:<id:14 store_id:2 > peers:<id:15 store_id:3 > peers:<id:16 store_id:4 > peers:<id:17 store_id:5 >  create peer with ID 15[0m
+2022/03/22 20:11:53.985726 peer_msg_handler.go:257: [0;31m[error] [region 1] 5 apply split begin, split key [49 53 32 48 48 48 48 48 48 48 49], StartKey [], EndKey [49 56 32 48 48 48 48 48 48 48 48][0m
+2022/03/22 20:11:53.985793 peer.go:41: [0;37m[info] region id:12 start_key:"15 00000001" end_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:13 store_id:1 > peers:<id:14 store_id:2 > peers:<id:15 store_id:3 > peers:<id:16 store_id:4 > peers:<id:17 store_id:5 >  create peer with ID 17[0m
+2022/03/22 20:11:53.991191 peer_msg_handler.go:257: [0;31m[error] [region 1] 4 apply split begin, split key [49 53 32 48 48 48 48 48 48 48 49], StartKey [], EndKey [49 56 32 48 48 48 48 48 48 48 48][0m
+2022/03/22 20:11:53.991255 peer.go:41: [0;37m[info] region id:12 start_key:"15 00000001" end_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:13 store_id:1 > peers:<id:14 store_id:2 > peers:<id:15 store_id:3 > peers:<id:16 store_id:4 > peers:<id:17 store_id:5 >  create peer with ID 16[0m
+2022/03/22 20:11:53.996696 peer_msg_handler.go:322: [0;31m[error] [region 1] 1 apply split finished[0m
+2022/03/22 20:11:53.996713 peer_msg_handler.go:322: [0;31m[error] [region 1] 3 apply split finished[0m
+2022/03/22 20:11:53.999197 peer_msg_handler.go:322: [0;31m[error] [region 1] 2 apply split finished[0m
+2022/03/22 20:11:54.001986 peer_msg_handler.go:322: [0;31m[error] [region 1] 5 apply split finished[0m
+2022/03/22 20:11:54.006819 peer_msg_handler.go:322: [0;31m[error] [region 1] 4 apply split finished[0m
+2022/03/22 20:11:54.461997 raft.go:433: [0;31m[error] node 8 becomeLeader at term 6 with index 5[0m
+2022/03/22 20:11:54.481546 raft.go:433: [0;31m[error] node 17 becomeLeader at term 6 with index 5[0m
+2022/03/22 20:11:59.103971 peer_msg_handler.go:573: [0;31m[error] [region 6] 8 on split with [52 32 48 48 48 48 48 48 48 48][0m
+2022/03/22 20:11:59.145678 peer_msg_handler.go:736: [0;31m[error] [region 6] 8 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:11:59.170786 peer_msg_handler.go:257: [0;31m[error] [region 6] 8 apply split begin, split key [52 32 48 48 48 48 48 48 48 48], StartKey [49 56 32 48 48 48 48 48 48 48 48], EndKey [][0m
+2022/03/22 20:11:59.170934 peer.go:41: [0;37m[info] region id:18 start_key:"4 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:19 store_id:1 > peers:<id:20 store_id:2 > peers:<id:21 store_id:3 > peers:<id:22 store_id:4 > peers:<id:23 store_id:5 >  create peer with ID 20[0m
+2022/03/22 20:11:59.178102 peer_msg_handler.go:257: [0;31m[error] [region 6] 7 apply split begin, split key [52 32 48 48 48 48 48 48 48 48], StartKey [49 56 32 48 48 48 48 48 48 48 48], EndKey [][0m
+2022/03/22 20:11:59.178176 peer.go:41: [0;37m[info] region id:18 start_key:"4 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:19 store_id:1 > peers:<id:20 store_id:2 > peers:<id:21 store_id:3 > peers:<id:22 store_id:4 > peers:<id:23 store_id:5 >  create peer with ID 19[0m
+2022/03/22 20:11:59.185412 peer_msg_handler.go:257: [0;31m[error] [region 6] 11 apply split begin, split key [52 32 48 48 48 48 48 48 48 48], StartKey [49 56 32 48 48 48 48 48 48 48 48], EndKey [][0m
+2022/03/22 20:11:59.185515 peer_msg_handler.go:322: [0;31m[error] [region 6] 8 apply split finished[0m
+2022/03/22 20:11:59.185525 peer.go:41: [0;37m[info] region id:18 start_key:"4 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:19 store_id:1 > peers:<id:20 store_id:2 > peers:<id:21 store_id:3 > peers:<id:22 store_id:4 > peers:<id:23 store_id:5 >  create peer with ID 23[0m
+2022/03/22 20:11:59.187887 peer_msg_handler.go:257: [0;31m[error] [region 6] 9 apply split begin, split key [52 32 48 48 48 48 48 48 48 48], StartKey [49 56 32 48 48 48 48 48 48 48 48], EndKey [][0m
+2022/03/22 20:11:59.187949 peer.go:41: [0;37m[info] region id:18 start_key:"4 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:19 store_id:1 > peers:<id:20 store_id:2 > peers:<id:21 store_id:3 > peers:<id:22 store_id:4 > peers:<id:23 store_id:5 >  create peer with ID 21[0m
+2022/03/22 20:11:59.187969 peer_msg_handler.go:257: [0;31m[error] [region 6] 10 apply split begin, split key [52 32 48 48 48 48 48 48 48 48], StartKey [49 56 32 48 48 48 48 48 48 48 48], EndKey [][0m
+2022/03/22 20:11:59.188061 peer.go:41: [0;37m[info] region id:18 start_key:"4 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:19 store_id:1 > peers:<id:20 store_id:2 > peers:<id:21 store_id:3 > peers:<id:22 store_id:4 > peers:<id:23 store_id:5 >  create peer with ID 22[0m
+2022/03/22 20:11:59.192876 peer_msg_handler.go:322: [0;31m[error] [region 6] 7 apply split finished[0m
+2022/03/22 20:11:59.199684 peer_msg_handler.go:322: [0;31m[error] [region 6] 11 apply split finished[0m
+2022/03/22 20:11:59.202109 peer_msg_handler.go:322: [0;31m[error] [region 6] 10 apply split finished[0m
+2022/03/22 20:11:59.202199 peer_msg_handler.go:322: [0;31m[error] [region 6] 9 apply split finished[0m
+2022/03/22 20:11:59.204634 peer_msg_handler.go:573: [0;31m[error] [region 6] 8 on split with [51 32 48 48 48 48 48 48 48 50][0m
+2022/03/22 20:11:59.208899 test_test.go:272: [0;33m[warning] shutdown servers
+[0m
+2022/03/22 20:11:59.208927 node.go:198: [0;37m[info] stop raft store thread, storeID: 1[0m
+2022/03/22 20:11:59.218210 peer_msg_handler.go:736: [0;31m[error] [region 6] 8 propose split msg, msg: 1 2 local region: 1 2[0m
+2022/03/22 20:11:59.230409 peer_msg_handler.go:257: [0;31m[error] [region 6] 8 apply split begin, split key [51 32 48 48 48 48 48 48 48 50], StartKey [49 56 32 48 48 48 48 48 48 48 48], EndKey [52 32 48 48 48 48 48 48 48 48][0m
+2022/03/22 20:11:59.230486 peer.go:41: [0;37m[info] region id:24 start_key:"3 00000002" end_key:"4 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:25 store_id:1 > peers:<id:26 store_id:2 > peers:<id:27 store_id:3 > peers:<id:28 store_id:4 > peers:<id:29 store_id:5 >  create peer with ID 26[0m
+2022/03/22 20:11:59.233671 peer_msg_handler.go:257: [0;31m[error] [region 6] 9 apply split begin, split key [51 32 48 48 48 48 48 48 48 50], StartKey [49 56 32 48 48 48 48 48 48 48 48], EndKey [52 32 48 48 48 48 48 48 48 48][0m
+2022/03/22 20:11:59.233720 peer_msg_handler.go:257: [0;31m[error] [region 6] 7 apply split begin, split key [51 32 48 48 48 48 48 48 48 50], StartKey [49 56 32 48 48 48 48 48 48 48 48], EndKey [52 32 48 48 48 48 48 48 48 48][0m
+2022/03/22 20:11:59.233786 peer.go:41: [0;37m[info] region id:24 start_key:"3 00000002" end_key:"4 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:25 store_id:1 > peers:<id:26 store_id:2 > peers:<id:27 store_id:3 > peers:<id:28 store_id:4 > peers:<id:29 store_id:5 >  create peer with ID 25[0m
+2022/03/22 20:11:59.233729 peer.go:41: [0;37m[info] region id:24 start_key:"3 00000002" end_key:"4 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:25 store_id:1 > peers:<id:26 store_id:2 > peers:<id:27 store_id:3 > peers:<id:28 store_id:4 > peers:<id:29 store_id:5 >  create peer with ID 27[0m
+2022/03/22 20:11:59.235496 peer_msg_handler.go:257: [0;31m[error] [region 6] 10 apply split begin, split key [51 32 48 48 48 48 48 48 48 50], StartKey [49 56 32 48 48 48 48 48 48 48 48], EndKey [52 32 48 48 48 48 48 48 48 48][0m
+2022/03/22 20:11:59.235529 peer_msg_handler.go:257: [0;31m[error] [region 6] 11 apply split begin, split key [51 32 48 48 48 48 48 48 48 50], StartKey [49 56 32 48 48 48 48 48 48 48 48], EndKey [52 32 48 48 48 48 48 48 48 48][0m
+2022/03/22 20:11:59.235564 peer.go:41: [0;37m[info] region id:24 start_key:"3 00000002" end_key:"4 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:25 store_id:1 > peers:<id:26 store_id:2 > peers:<id:27 store_id:3 > peers:<id:28 store_id:4 > peers:<id:29 store_id:5 >  create peer with ID 28[0m
+2022/03/22 20:11:59.235574 peer.go:41: [0;37m[info] region id:24 start_key:"3 00000002" end_key:"4 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:25 store_id:1 > peers:<id:26 store_id:2 > peers:<id:27 store_id:3 > peers:<id:28 store_id:4 > peers:<id:29 store_id:5 >  create peer with ID 29[0m
+2022/03/22 20:11:59.239312 peer_msg_handler.go:322: [0;31m[error] [region 6] 8 apply split finished[0m
+2022/03/22 20:11:59.240793 peer_msg_handler.go:322: [0;31m[error] [region 6] 9 apply split finished[0m
+2022/03/22 20:11:59.240851 peer_msg_handler.go:322: [0;31m[error] [region 6] 7 apply split finished[0m
+2022/03/22 20:11:59.242588 peer_msg_handler.go:322: [0;31m[error] [region 6] 10 apply split finished[0m
+2022/03/22 20:11:59.242637 peer_msg_handler.go:322: [0;31m[error] [region 6] 11 apply split finished[0m
+2022/03/22 20:11:59.248417 node.go:198: [0;37m[info] stop raft store thread, storeID: 2[0m
+2022/03/22 20:11:59.248459 node.go:198: [0;37m[info] stop raft store thread, storeID: 3[0m
+2022/03/22 20:11:59.248514 node.go:198: [0;37m[info] stop raft store thread, storeID: 4[0m
+2022/03/22 20:11:59.248572 node.go:198: [0;37m[info] stop raft store thread, storeID: 5[0m
+2022/03/22 20:11:59.748875 test_test.go:279: [0;33m[warning] restart servers
+[0m
+2022/03/22 20:11:59.749535 node.go:193: [0;37m[info] start raft store node, storeID: 1[0m
+2022/03/22 20:11:59.749763 peer.go:41: [0;37m[info] region id:1 end_key:"15 00000001" region_epoch:<conf_ver:1 version:3 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 > peers:<id:5 store_id:5 >  create peer with ID 1[0m
+2022/03/22 20:11:59.749938 peer.go:41: [0;37m[info] region id:6 start_key:"18 00000000" end_key:"3 00000002" region_epoch:<conf_ver:1 version:3 > peers:<id:7 store_id:1 > peers:<id:8 store_id:2 > peers:<id:9 store_id:3 > peers:<id:10 store_id:4 > peers:<id:11 store_id:5 >  create peer with ID 7[0m
+2022/03/22 20:11:59.750047 peer.go:41: [0;37m[info] region id:12 start_key:"15 00000001" end_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:13 store_id:1 > peers:<id:14 store_id:2 > peers:<id:15 store_id:3 > peers:<id:16 store_id:4 > peers:<id:17 store_id:5 >  create peer with ID 13[0m
+2022/03/22 20:11:59.750136 peer.go:41: [0;37m[info] region id:18 start_key:"4 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:19 store_id:1 > peers:<id:20 store_id:2 > peers:<id:21 store_id:3 > peers:<id:22 store_id:4 > peers:<id:23 store_id:5 >  create peer with ID 19[0m
+2022/03/22 20:11:59.750227 peer.go:41: [0;37m[info] region id:24 start_key:"3 00000002" end_key:"4 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:25 store_id:1 > peers:<id:26 store_id:2 > peers:<id:27 store_id:3 > peers:<id:28 store_id:4 > peers:<id:29 store_id:5 >  create peer with ID 25[0m
+2022/03/22 20:11:59.750278 raftstore.go:175: [0;37m[info] start store 1, region_count 5, tombstone_count 0, takes 611.072µs[0m
+2022/03/22 20:11:59.750811 node.go:193: [0;37m[info] start raft store node, storeID: 2[0m
+2022/03/22 20:11:59.750919 peer.go:41: [0;37m[info] region id:1 end_key:"15 00000001" region_epoch:<conf_ver:1 version:3 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 > peers:<id:5 store_id:5 >  create peer with ID 2[0m
+2022/03/22 20:11:59.751069 peer.go:41: [0;37m[info] region id:6 start_key:"18 00000000" end_key:"3 00000002" region_epoch:<conf_ver:1 version:3 > peers:<id:7 store_id:1 > peers:<id:8 store_id:2 > peers:<id:9 store_id:3 > peers:<id:10 store_id:4 > peers:<id:11 store_id:5 >  create peer with ID 8[0m
+2022/03/22 20:11:59.751192 peer.go:41: [0;37m[info] region id:12 start_key:"15 00000001" end_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:13 store_id:1 > peers:<id:14 store_id:2 > peers:<id:15 store_id:3 > peers:<id:16 store_id:4 > peers:<id:17 store_id:5 >  create peer with ID 14[0m
+2022/03/22 20:11:59.751281 peer.go:41: [0;37m[info] region id:18 start_key:"4 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:19 store_id:1 > peers:<id:20 store_id:2 > peers:<id:21 store_id:3 > peers:<id:22 store_id:4 > peers:<id:23 store_id:5 >  create peer with ID 20[0m
+2022/03/22 20:11:59.751357 peer.go:41: [0;37m[info] region id:24 start_key:"3 00000002" end_key:"4 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:25 store_id:1 > peers:<id:26 store_id:2 > peers:<id:27 store_id:3 > peers:<id:28 store_id:4 > peers:<id:29 store_id:5 >  create peer with ID 26[0m
+2022/03/22 20:11:59.751410 raftstore.go:175: [0;37m[info] start store 2, region_count 5, tombstone_count 0, takes 531.134µs[0m
+2022/03/22 20:11:59.751912 node.go:193: [0;37m[info] start raft store node, storeID: 3[0m
+2022/03/22 20:11:59.752026 peer.go:41: [0;37m[info] region id:1 end_key:"15 00000001" region_epoch:<conf_ver:1 version:3 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 > peers:<id:5 store_id:5 >  create peer with ID 3[0m
+2022/03/22 20:11:59.752168 peer.go:41: [0;37m[info] region id:6 start_key:"18 00000000" end_key:"3 00000002" region_epoch:<conf_ver:1 version:3 > peers:<id:7 store_id:1 > peers:<id:8 store_id:2 > peers:<id:9 store_id:3 > peers:<id:10 store_id:4 > peers:<id:11 store_id:5 >  create peer with ID 9[0m
+2022/03/22 20:11:59.752260 peer.go:41: [0;37m[info] region id:12 start_key:"15 00000001" end_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:13 store_id:1 > peers:<id:14 store_id:2 > peers:<id:15 store_id:3 > peers:<id:16 store_id:4 > peers:<id:17 store_id:5 >  create peer with ID 15[0m
+2022/03/22 20:11:59.752339 peer.go:41: [0;37m[info] region id:18 start_key:"4 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:19 store_id:1 > peers:<id:20 store_id:2 > peers:<id:21 store_id:3 > peers:<id:22 store_id:4 > peers:<id:23 store_id:5 >  create peer with ID 21[0m
+2022/03/22 20:11:59.752421 peer.go:41: [0;37m[info] region id:24 start_key:"3 00000002" end_key:"4 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:25 store_id:1 > peers:<id:26 store_id:2 > peers:<id:27 store_id:3 > peers:<id:28 store_id:4 > peers:<id:29 store_id:5 >  create peer with ID 27[0m
+2022/03/22 20:11:59.752472 raftstore.go:175: [0;37m[info] start store 3, region_count 5, tombstone_count 0, takes 496.924µs[0m
+2022/03/22 20:11:59.753008 node.go:193: [0;37m[info] start raft store node, storeID: 4[0m
+2022/03/22 20:11:59.753116 peer.go:41: [0;37m[info] region id:1 end_key:"15 00000001" region_epoch:<conf_ver:1 version:3 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 > peers:<id:5 store_id:5 >  create peer with ID 4[0m
+2022/03/22 20:11:59.753246 peer.go:41: [0;37m[info] region id:6 start_key:"18 00000000" end_key:"3 00000002" region_epoch:<conf_ver:1 version:3 > peers:<id:7 store_id:1 > peers:<id:8 store_id:2 > peers:<id:9 store_id:3 > peers:<id:10 store_id:4 > peers:<id:11 store_id:5 >  create peer with ID 10[0m
+2022/03/22 20:11:59.753389 peer.go:41: [0;37m[info] region id:12 start_key:"15 00000001" end_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:13 store_id:1 > peers:<id:14 store_id:2 > peers:<id:15 store_id:3 > peers:<id:16 store_id:4 > peers:<id:17 store_id:5 >  create peer with ID 16[0m
+2022/03/22 20:11:59.753479 peer.go:41: [0;37m[info] region id:18 start_key:"4 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:19 store_id:1 > peers:<id:20 store_id:2 > peers:<id:21 store_id:3 > peers:<id:22 store_id:4 > peers:<id:23 store_id:5 >  create peer with ID 22[0m
+2022/03/22 20:11:59.753555 peer.go:41: [0;37m[info] region id:24 start_key:"3 00000002" end_key:"4 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:25 store_id:1 > peers:<id:26 store_id:2 > peers:<id:27 store_id:3 > peers:<id:28 store_id:4 > peers:<id:29 store_id:5 >  create peer with ID 28[0m
+2022/03/22 20:11:59.753617 raftstore.go:175: [0;37m[info] start store 4, region_count 5, tombstone_count 0, takes 540.835µs[0m
+2022/03/22 20:11:59.754183 node.go:193: [0;37m[info] start raft store node, storeID: 5[0m
+2022/03/22 20:11:59.754284 peer.go:41: [0;37m[info] region id:1 end_key:"15 00000001" region_epoch:<conf_ver:1 version:3 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 > peers:<id:5 store_id:5 >  create peer with ID 5[0m
+2022/03/22 20:11:59.754437 peer.go:41: [0;37m[info] region id:6 start_key:"18 00000000" end_key:"3 00000002" region_epoch:<conf_ver:1 version:3 > peers:<id:7 store_id:1 > peers:<id:8 store_id:2 > peers:<id:9 store_id:3 > peers:<id:10 store_id:4 > peers:<id:11 store_id:5 >  create peer with ID 11[0m
+2022/03/22 20:11:59.754549 peer.go:41: [0;37m[info] region id:12 start_key:"15 00000001" end_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:13 store_id:1 > peers:<id:14 store_id:2 > peers:<id:15 store_id:3 > peers:<id:16 store_id:4 > peers:<id:17 store_id:5 >  create peer with ID 17[0m
+2022/03/22 20:11:59.754650 peer.go:41: [0;37m[info] region id:18 start_key:"4 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:19 store_id:1 > peers:<id:20 store_id:2 > peers:<id:21 store_id:3 > peers:<id:22 store_id:4 > peers:<id:23 store_id:5 >  create peer with ID 23[0m
+2022/03/22 20:11:59.754724 peer.go:41: [0;37m[info] region id:24 start_key:"3 00000002" end_key:"4 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:25 store_id:1 > peers:<id:26 store_id:2 > peers:<id:27 store_id:3 > peers:<id:28 store_id:4 > peers:<id:29 store_id:5 >  create peer with ID 29[0m
+2022/03/22 20:11:59.754768 raftstore.go:175: [0;37m[info] start store 5, region_count 5, tombstone_count 0, takes 521.274µs[0m
+2022/03/22 20:12:00.254268 raft.go:433: [0;31m[error] node 20 becomeLeader at term 6 with index 5[0m
+2022/03/22 20:12:00.280537 raft.go:433: [0;31m[error] node 28 becomeLeader at term 6 with index 5[0m
+2022/03/22 20:12:00.282743 raft.go:433: [0;31m[error] node 9 becomeLeader at term 7 with index 18[0m
+2022/03/22 20:12:00.310656 raft.go:433: [0;31m[error] node 13 becomeLeader at term 7 with index 9[0m
+2022/03/22 20:12:00.375716 raft.go:433: [0;31m[error] node 5 becomeLeader at term 7 with index 79[0m
+2022/03/22 20:12:03.753935 peer_msg_handler.go:573: [0;31m[error] [region 18] 20 on split with [54 32 48 48 48 48 48 48 48 52][0m
+2022/03/22 20:12:03.786950 peer_msg_handler.go:736: [0;31m[error] [region 18] 20 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:12:03.787025 peer_msg_handler.go:573: [0;31m[error] [region 18] 20 on split with [54 32 48 48 48 48 48 48 48 52][0m
+2022/03/22 20:12:03.889865 peer_msg_handler.go:736: [0;31m[error] [region 18] 20 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:12:03.895374 peer_msg_handler.go:257: [0;31m[error] [region 18] 20 apply split begin, split key [54 32 48 48 48 48 48 48 48 52], StartKey [52 32 48 48 48 48 48 48 48 48], EndKey [][0m
+2022/03/22 20:12:03.895518 peer.go:41: [0;37m[info] region id:30 start_key:"6 00000004" region_epoch:<conf_ver:1 version:1 > peers:<id:31 store_id:1 > peers:<id:32 store_id:2 > peers:<id:33 store_id:3 > peers:<id:34 store_id:4 > peers:<id:35 store_id:5 >  create peer with ID 32[0m
+2022/03/22 20:12:03.905676 peer_msg_handler.go:257: [0;31m[error] [region 18] 19 apply split begin, split key [54 32 48 48 48 48 48 48 48 52], StartKey [52 32 48 48 48 48 48 48 48 48], EndKey [][0m
+2022/03/22 20:12:03.905762 peer_msg_handler.go:257: [0;31m[error] [region 18] 21 apply split begin, split key [54 32 48 48 48 48 48 48 48 52], StartKey [52 32 48 48 48 48 48 48 48 48], EndKey [][0m
+2022/03/22 20:12:03.905848 peer.go:41: [0;37m[info] region id:30 start_key:"6 00000004" region_epoch:<conf_ver:1 version:1 > peers:<id:31 store_id:1 > peers:<id:32 store_id:2 > peers:<id:33 store_id:3 > peers:<id:34 store_id:4 > peers:<id:35 store_id:5 >  create peer with ID 33[0m
+2022/03/22 20:12:03.905868 peer.go:41: [0;37m[info] region id:30 start_key:"6 00000004" region_epoch:<conf_ver:1 version:1 > peers:<id:31 store_id:1 > peers:<id:32 store_id:2 > peers:<id:33 store_id:3 > peers:<id:34 store_id:4 > peers:<id:35 store_id:5 >  create peer with ID 31[0m
+2022/03/22 20:12:03.910968 peer_msg_handler.go:322: [0;31m[error] [region 18] 20 apply split finished[0m
+2022/03/22 20:12:03.921518 peer_msg_handler.go:322: [0;31m[error] [region 18] 21 apply split finished[0m
+2022/03/22 20:12:03.921546 peer_msg_handler.go:322: [0;31m[error] [region 18] 19 apply split finished[0m
+2022/03/22 20:12:03.929988 peer_msg_handler.go:573: [0;31m[error] [region 18] 20 on split with [54 32 48 48 48 48 48 48 48 51][0m
+2022/03/22 20:12:03.930077 peer_msg_handler.go:257: [0;31m[error] [region 18] 22 apply split begin, split key [54 32 48 48 48 48 48 48 48 52], StartKey [52 32 48 48 48 48 48 48 48 48], EndKey [][0m
+2022/03/22 20:12:03.930184 peer.go:41: [0;37m[info] region id:30 start_key:"6 00000004" region_epoch:<conf_ver:1 version:1 > peers:<id:31 store_id:1 > peers:<id:32 store_id:2 > peers:<id:33 store_id:3 > peers:<id:34 store_id:4 > peers:<id:35 store_id:5 >  create peer with ID 34[0m
+2022/03/22 20:12:03.946577 peer_msg_handler.go:322: [0;31m[error] [region 18] 22 apply split finished[0m
+2022/03/22 20:12:03.949502 peer_msg_handler.go:257: [0;31m[error] [region 18] 23 apply split begin, split key [54 32 48 48 48 48 48 48 48 52], StartKey [52 32 48 48 48 48 48 48 48 48], EndKey [][0m
+2022/03/22 20:12:03.949614 peer.go:41: [0;37m[info] region id:30 start_key:"6 00000004" region_epoch:<conf_ver:1 version:1 > peers:<id:31 store_id:1 > peers:<id:32 store_id:2 > peers:<id:33 store_id:3 > peers:<id:34 store_id:4 > peers:<id:35 store_id:5 >  create peer with ID 35[0m
+2022/03/22 20:12:03.965275 peer_msg_handler.go:322: [0;31m[error] [region 18] 23 apply split finished[0m
+2022/03/22 20:12:03.989480 peer_msg_handler.go:736: [0;31m[error] [region 18] 20 propose split msg, msg: 1 2 local region: 1 2[0m
+2022/03/22 20:12:04.064313 peer_msg_handler.go:257: [0;31m[error] [region 18] 20 apply split begin, split key [54 32 48 48 48 48 48 48 48 51], StartKey [52 32 48 48 48 48 48 48 48 48], EndKey [54 32 48 48 48 48 48 48 48 52][0m
+2022/03/22 20:12:04.064416 peer.go:41: [0;37m[info] region id:42 start_key:"6 00000003" end_key:"6 00000004" region_epoch:<conf_ver:1 version:1 > peers:<id:43 store_id:1 > peers:<id:44 store_id:2 > peers:<id:45 store_id:3 > peers:<id:46 store_id:4 > peers:<id:47 store_id:5 >  create peer with ID 44[0m
+2022/03/22 20:12:04.081156 peer_msg_handler.go:322: [0;31m[error] [region 18] 20 apply split finished[0m
+2022/03/22 20:12:04.109428 peer_msg_handler.go:257: [0;31m[error] [region 18] 23 apply split begin, split key [54 32 48 48 48 48 48 48 48 51], StartKey [52 32 48 48 48 48 48 48 48 48], EndKey [54 32 48 48 48 48 48 48 48 52][0m
+2022/03/22 20:12:04.109559 peer.go:41: [0;37m[info] region id:42 start_key:"6 00000003" end_key:"6 00000004" region_epoch:<conf_ver:1 version:1 > peers:<id:43 store_id:1 > peers:<id:44 store_id:2 > peers:<id:45 store_id:3 > peers:<id:46 store_id:4 > peers:<id:47 store_id:5 >  create peer with ID 47[0m
+2022/03/22 20:12:04.126784 peer_msg_handler.go:322: [0;31m[error] [region 18] 23 apply split finished[0m
+2022/03/22 20:12:04.132511 peer_msg_handler.go:257: [0;31m[error] [region 18] 21 apply split begin, split key [54 32 48 48 48 48 48 48 48 51], StartKey [52 32 48 48 48 48 48 48 48 48], EndKey [54 32 48 48 48 48 48 48 48 52][0m
+2022/03/22 20:12:04.132612 peer.go:41: [0;37m[info] region id:42 start_key:"6 00000003" end_key:"6 00000004" region_epoch:<conf_ver:1 version:1 > peers:<id:43 store_id:1 > peers:<id:44 store_id:2 > peers:<id:45 store_id:3 > peers:<id:46 store_id:4 > peers:<id:47 store_id:5 >  create peer with ID 45[0m
+2022/03/22 20:12:04.153133 peer_msg_handler.go:322: [0;31m[error] [region 18] 21 apply split finished[0m
+2022/03/22 20:12:04.155850 peer_msg_handler.go:257: [0;31m[error] [region 18] 19 apply split begin, split key [54 32 48 48 48 48 48 48 48 51], StartKey [52 32 48 48 48 48 48 48 48 48], EndKey [54 32 48 48 48 48 48 48 48 52][0m
+2022/03/22 20:12:04.155949 peer.go:41: [0;37m[info] region id:42 start_key:"6 00000003" end_key:"6 00000004" region_epoch:<conf_ver:1 version:1 > peers:<id:43 store_id:1 > peers:<id:44 store_id:2 > peers:<id:45 store_id:3 > peers:<id:46 store_id:4 > peers:<id:47 store_id:5 >  create peer with ID 43[0m
+2022/03/22 20:12:04.169909 peer_msg_handler.go:257: [0;31m[error] [region 18] 22 apply split begin, split key [54 32 48 48 48 48 48 48 48 51], StartKey [52 32 48 48 48 48 48 48 48 48], EndKey [54 32 48 48 48 48 48 48 48 52][0m
+2022/03/22 20:12:04.169985 peer.go:41: [0;37m[info] region id:42 start_key:"6 00000003" end_key:"6 00000004" region_epoch:<conf_ver:1 version:1 > peers:<id:43 store_id:1 > peers:<id:44 store_id:2 > peers:<id:45 store_id:3 > peers:<id:46 store_id:4 > peers:<id:47 store_id:5 >  create peer with ID 46[0m
+2022/03/22 20:12:04.175241 peer_msg_handler.go:322: [0;31m[error] [region 18] 19 apply split finished[0m
+2022/03/22 20:12:04.185807 peer_msg_handler.go:322: [0;31m[error] [region 18] 22 apply split finished[0m
+2022/03/22 20:12:04.555893 raft.go:433: [0;31m[error] node 33 becomeLeader at term 6 with index 5[0m
+2022/03/22 20:12:04.834865 raft.go:433: [0;31m[error] node 47 becomeLeader at term 6 with index 5[0m
+2022/03/22 20:12:08.979419 test_test.go:272: [0;33m[warning] shutdown servers
+[0m
+2022/03/22 20:12:08.979464 node.go:198: [0;37m[info] stop raft store thread, storeID: 1[0m
+2022/03/22 20:12:09.098536 node.go:198: [0;37m[info] stop raft store thread, storeID: 2[0m
+2022/03/22 20:12:09.145401 node.go:198: [0;37m[info] stop raft store thread, storeID: 3[0m
+2022/03/22 20:12:09.189165 node.go:198: [0;37m[info] stop raft store thread, storeID: 4[0m
+2022/03/22 20:12:09.194115 node.go:198: [0;37m[info] stop raft store thread, storeID: 5[0m
+2022/03/22 20:12:09.695280 test_test.go:279: [0;33m[warning] restart servers
+[0m
+2022/03/22 20:12:09.696008 node.go:193: [0;37m[info] start raft store node, storeID: 1[0m
+2022/03/22 20:12:09.696299 peer.go:41: [0;37m[info] region id:1 end_key:"15 00000001" region_epoch:<conf_ver:1 version:3 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 > peers:<id:5 store_id:5 >  create peer with ID 1[0m
+2022/03/22 20:12:09.696723 peer.go:41: [0;37m[info] region id:6 start_key:"18 00000000" end_key:"3 00000002" region_epoch:<conf_ver:1 version:3 > peers:<id:7 store_id:1 > peers:<id:8 store_id:2 > peers:<id:9 store_id:3 > peers:<id:10 store_id:4 > peers:<id:11 store_id:5 >  create peer with ID 7[0m
+2022/03/22 20:12:09.696991 peer.go:41: [0;37m[info] region id:12 start_key:"15 00000001" end_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:13 store_id:1 > peers:<id:14 store_id:2 > peers:<id:15 store_id:3 > peers:<id:16 store_id:4 > peers:<id:17 store_id:5 >  create peer with ID 13[0m
+2022/03/22 20:12:09.697207 peer.go:41: [0;37m[info] region id:18 start_key:"4 00000000" end_key:"6 00000003" region_epoch:<conf_ver:1 version:3 > peers:<id:19 store_id:1 > peers:<id:20 store_id:2 > peers:<id:21 store_id:3 > peers:<id:22 store_id:4 > peers:<id:23 store_id:5 >  create peer with ID 19[0m
+2022/03/22 20:12:09.697394 peer.go:41: [0;37m[info] region id:24 start_key:"3 00000002" end_key:"4 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:25 store_id:1 > peers:<id:26 store_id:2 > peers:<id:27 store_id:3 > peers:<id:28 store_id:4 > peers:<id:29 store_id:5 >  create peer with ID 25[0m
+2022/03/22 20:12:09.697497 peer.go:41: [0;37m[info] region id:30 start_key:"6 00000004" region_epoch:<conf_ver:1 version:1 > peers:<id:31 store_id:1 > peers:<id:32 store_id:2 > peers:<id:33 store_id:3 > peers:<id:34 store_id:4 > peers:<id:35 store_id:5 >  create peer with ID 31[0m
+2022/03/22 20:12:09.697587 peer.go:41: [0;37m[info] region id:42 start_key:"6 00000003" end_key:"6 00000004" region_epoch:<conf_ver:1 version:1 > peers:<id:43 store_id:1 > peers:<id:44 store_id:2 > peers:<id:45 store_id:3 > peers:<id:46 store_id:4 > peers:<id:47 store_id:5 >  create peer with ID 43[0m
+2022/03/22 20:12:09.697664 raftstore.go:175: [0;37m[info] start store 1, region_count 7, tombstone_count 0, takes 1.481116ms[0m
+2022/03/22 20:12:09.698278 node.go:193: [0;37m[info] start raft store node, storeID: 2[0m
+2022/03/22 20:12:09.698427 peer.go:41: [0;37m[info] region id:1 end_key:"15 00000001" region_epoch:<conf_ver:1 version:3 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 > peers:<id:5 store_id:5 >  create peer with ID 2[0m
+2022/03/22 20:12:09.698868 peer.go:41: [0;37m[info] region id:6 start_key:"18 00000000" end_key:"3 00000002" region_epoch:<conf_ver:1 version:3 > peers:<id:7 store_id:1 > peers:<id:8 store_id:2 > peers:<id:9 store_id:3 > peers:<id:10 store_id:4 > peers:<id:11 store_id:5 >  create peer with ID 8[0m
+2022/03/22 20:12:09.699151 peer.go:41: [0;37m[info] region id:12 start_key:"15 00000001" end_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:13 store_id:1 > peers:<id:14 store_id:2 > peers:<id:15 store_id:3 > peers:<id:16 store_id:4 > peers:<id:17 store_id:5 >  create peer with ID 14[0m
+2022/03/22 20:12:09.699316 peer.go:41: [0;37m[info] region id:18 start_key:"4 00000000" end_key:"6 00000003" region_epoch:<conf_ver:1 version:3 > peers:<id:19 store_id:1 > peers:<id:20 store_id:2 > peers:<id:21 store_id:3 > peers:<id:22 store_id:4 > peers:<id:23 store_id:5 >  create peer with ID 20[0m
+2022/03/22 20:12:09.699450 peer.go:41: [0;37m[info] region id:24 start_key:"3 00000002" end_key:"4 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:25 store_id:1 > peers:<id:26 store_id:2 > peers:<id:27 store_id:3 > peers:<id:28 store_id:4 > peers:<id:29 store_id:5 >  create peer with ID 26[0m
+2022/03/22 20:12:09.699557 peer.go:41: [0;37m[info] region id:30 start_key:"6 00000004" region_epoch:<conf_ver:1 version:1 > peers:<id:31 store_id:1 > peers:<id:32 store_id:2 > peers:<id:33 store_id:3 > peers:<id:34 store_id:4 > peers:<id:35 store_id:5 >  create peer with ID 32[0m
+2022/03/22 20:12:09.699622 peer.go:41: [0;37m[info] region id:42 start_key:"6 00000003" end_key:"6 00000004" region_epoch:<conf_ver:1 version:1 > peers:<id:43 store_id:1 > peers:<id:44 store_id:2 > peers:<id:45 store_id:3 > peers:<id:46 store_id:4 > peers:<id:47 store_id:5 >  create peer with ID 44[0m
+2022/03/22 20:12:09.699665 raftstore.go:175: [0;37m[info] start store 2, region_count 7, tombstone_count 0, takes 1.291259ms[0m
+2022/03/22 20:12:09.700115 node.go:193: [0;37m[info] start raft store node, storeID: 3[0m
+2022/03/22 20:12:09.700225 peer.go:41: [0;37m[info] region id:1 end_key:"15 00000001" region_epoch:<conf_ver:1 version:3 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 > peers:<id:5 store_id:5 >  create peer with ID 3[0m
+2022/03/22 20:12:09.700507 peer.go:41: [0;37m[info] region id:6 start_key:"18 00000000" end_key:"3 00000002" region_epoch:<conf_ver:1 version:3 > peers:<id:7 store_id:1 > peers:<id:8 store_id:2 > peers:<id:9 store_id:3 > peers:<id:10 store_id:4 > peers:<id:11 store_id:5 >  create peer with ID 9[0m
+2022/03/22 20:12:09.700698 peer.go:41: [0;37m[info] region id:12 start_key:"15 00000001" end_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:13 store_id:1 > peers:<id:14 store_id:2 > peers:<id:15 store_id:3 > peers:<id:16 store_id:4 > peers:<id:17 store_id:5 >  create peer with ID 15[0m
+2022/03/22 20:12:09.700838 peer.go:41: [0;37m[info] region id:18 start_key:"4 00000000" end_key:"6 00000003" region_epoch:<conf_ver:1 version:3 > peers:<id:19 store_id:1 > peers:<id:20 store_id:2 > peers:<id:21 store_id:3 > peers:<id:22 store_id:4 > peers:<id:23 store_id:5 >  create peer with ID 21[0m
+2022/03/22 20:12:09.700983 peer.go:41: [0;37m[info] region id:24 start_key:"3 00000002" end_key:"4 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:25 store_id:1 > peers:<id:26 store_id:2 > peers:<id:27 store_id:3 > peers:<id:28 store_id:4 > peers:<id:29 store_id:5 >  create peer with ID 27[0m
+2022/03/22 20:12:09.701080 peer.go:41: [0;37m[info] region id:30 start_key:"6 00000004" region_epoch:<conf_ver:1 version:1 > peers:<id:31 store_id:1 > peers:<id:32 store_id:2 > peers:<id:33 store_id:3 > peers:<id:34 store_id:4 > peers:<id:35 store_id:5 >  create peer with ID 33[0m
+2022/03/22 20:12:09.701158 peer.go:41: [0;37m[info] region id:42 start_key:"6 00000003" end_key:"6 00000004" region_epoch:<conf_ver:1 version:1 > peers:<id:43 store_id:1 > peers:<id:44 store_id:2 > peers:<id:45 store_id:3 > peers:<id:46 store_id:4 > peers:<id:47 store_id:5 >  create peer with ID 45[0m
+2022/03/22 20:12:09.701230 raftstore.go:175: [0;37m[info] start store 3, region_count 7, tombstone_count 0, takes 1.040594ms[0m
+2022/03/22 20:12:09.701688 node.go:193: [0;37m[info] start raft store node, storeID: 4[0m
+2022/03/22 20:12:09.701793 peer.go:41: [0;37m[info] region id:1 end_key:"15 00000001" region_epoch:<conf_ver:1 version:3 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 > peers:<id:5 store_id:5 >  create peer with ID 4[0m
+2022/03/22 20:12:09.702086 peer.go:41: [0;37m[info] region id:6 start_key:"18 00000000" end_key:"3 00000002" region_epoch:<conf_ver:1 version:3 > peers:<id:7 store_id:1 > peers:<id:8 store_id:2 > peers:<id:9 store_id:3 > peers:<id:10 store_id:4 > peers:<id:11 store_id:5 >  create peer with ID 10[0m
+2022/03/22 20:12:09.702242 peer.go:41: [0;37m[info] region id:12 start_key:"15 00000001" end_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:13 store_id:1 > peers:<id:14 store_id:2 > peers:<id:15 store_id:3 > peers:<id:16 store_id:4 > peers:<id:17 store_id:5 >  create peer with ID 16[0m
+2022/03/22 20:12:09.702384 peer.go:41: [0;37m[info] region id:18 start_key:"4 00000000" end_key:"6 00000003" region_epoch:<conf_ver:1 version:3 > peers:<id:19 store_id:1 > peers:<id:20 store_id:2 > peers:<id:21 store_id:3 > peers:<id:22 store_id:4 > peers:<id:23 store_id:5 >  create peer with ID 22[0m
+2022/03/22 20:12:09.702517 peer.go:41: [0;37m[info] region id:24 start_key:"3 00000002" end_key:"4 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:25 store_id:1 > peers:<id:26 store_id:2 > peers:<id:27 store_id:3 > peers:<id:28 store_id:4 > peers:<id:29 store_id:5 >  create peer with ID 28[0m
+2022/03/22 20:12:09.702601 peer.go:41: [0;37m[info] region id:30 start_key:"6 00000004" region_epoch:<conf_ver:1 version:1 > peers:<id:31 store_id:1 > peers:<id:32 store_id:2 > peers:<id:33 store_id:3 > peers:<id:34 store_id:4 > peers:<id:35 store_id:5 >  create peer with ID 34[0m
+2022/03/22 20:12:09.702678 peer.go:41: [0;37m[info] region id:42 start_key:"6 00000003" end_key:"6 00000004" region_epoch:<conf_ver:1 version:1 > peers:<id:43 store_id:1 > peers:<id:44 store_id:2 > peers:<id:45 store_id:3 > peers:<id:46 store_id:4 > peers:<id:47 store_id:5 >  create peer with ID 46[0m
+2022/03/22 20:12:09.702722 raftstore.go:175: [0;37m[info] start store 4, region_count 7, tombstone_count 0, takes 963.767µs[0m
+2022/03/22 20:12:09.703137 node.go:193: [0;37m[info] start raft store node, storeID: 5[0m
+2022/03/22 20:12:09.703270 peer.go:41: [0;37m[info] region id:1 end_key:"15 00000001" region_epoch:<conf_ver:1 version:3 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 > peers:<id:5 store_id:5 >  create peer with ID 5[0m
+2022/03/22 20:12:09.703581 peer.go:41: [0;37m[info] region id:6 start_key:"18 00000000" end_key:"3 00000002" region_epoch:<conf_ver:1 version:3 > peers:<id:7 store_id:1 > peers:<id:8 store_id:2 > peers:<id:9 store_id:3 > peers:<id:10 store_id:4 > peers:<id:11 store_id:5 >  create peer with ID 11[0m
+2022/03/22 20:12:09.703764 peer.go:41: [0;37m[info] region id:12 start_key:"15 00000001" end_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:13 store_id:1 > peers:<id:14 store_id:2 > peers:<id:15 store_id:3 > peers:<id:16 store_id:4 > peers:<id:17 store_id:5 >  create peer with ID 17[0m
+2022/03/22 20:12:09.703929 peer.go:41: [0;37m[info] region id:18 start_key:"4 00000000" end_key:"6 00000003" region_epoch:<conf_ver:1 version:3 > peers:<id:19 store_id:1 > peers:<id:20 store_id:2 > peers:<id:21 store_id:3 > peers:<id:22 store_id:4 > peers:<id:23 store_id:5 >  create peer with ID 23[0m
+2022/03/22 20:12:09.704058 peer.go:41: [0;37m[info] region id:24 start_key:"3 00000002" end_key:"4 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:25 store_id:1 > peers:<id:26 store_id:2 > peers:<id:27 store_id:3 > peers:<id:28 store_id:4 > peers:<id:29 store_id:5 >  create peer with ID 29[0m
+2022/03/22 20:12:09.704141 peer.go:41: [0;37m[info] region id:30 start_key:"6 00000004" region_epoch:<conf_ver:1 version:1 > peers:<id:31 store_id:1 > peers:<id:32 store_id:2 > peers:<id:33 store_id:3 > peers:<id:34 store_id:4 > peers:<id:35 store_id:5 >  create peer with ID 35[0m
+2022/03/22 20:12:09.704202 peer.go:41: [0;37m[info] region id:42 start_key:"6 00000003" end_key:"6 00000004" region_epoch:<conf_ver:1 version:1 > peers:<id:43 store_id:1 > peers:<id:44 store_id:2 > peers:<id:45 store_id:3 > peers:<id:46 store_id:4 > peers:<id:47 store_id:5 >  create peer with ID 47[0m
+2022/03/22 20:12:09.704255 raftstore.go:175: [0;37m[info] start store 5, region_count 7, tombstone_count 0, takes 1.023693ms[0m
+2022/03/22 20:12:10.202104 raft.go:433: [0;31m[error] node 13 becomeLeader at term 8 with index 105[0m
+2022/03/22 20:12:10.207311 raft.go:433: [0;31m[error] node 45 becomeLeader at term 7 with index 6[0m
+2022/03/22 20:12:10.229422 raft.go:433: [0;31m[error] node 10 becomeLeader at term 8 with index 143[0m
+2022/03/22 20:12:10.264795 raft.go:433: [0;31m[error] node 29 becomeLeader at term 7 with index 28[0m
+2022/03/22 20:12:10.309366 peer_msg_handler.go:573: [0;31m[error] [region 6] 10 on split with [49 56 32 48 48 48 48 48 48 49 48][0m
+2022/03/22 20:12:10.309439 raft.go:433: [0;31m[error] node 20 becomeLeader at term 7 with index 74[0m
+2022/03/22 20:12:10.309550 peer_msg_handler.go:573: [0;31m[error] [region 12] 13 on split with [49 54 32 48 48 48 48 48 48 48 50][0m
+2022/03/22 20:12:10.325558 peer_msg_handler.go:736: [0;31m[error] [region 6] 10 propose split msg, msg: 1 3 local region: 1 3[0m
+2022/03/22 20:12:10.339660 peer_msg_handler.go:736: [0;31m[error] [region 12] 13 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:12:10.345630 raft.go:433: [0;31m[error] node 3 becomeLeader at term 8 with index 362[0m
+2022/03/22 20:12:10.397100 peer_msg_handler.go:257: [0;31m[error] [region 6] 10 apply split begin, split key [49 56 32 48 48 48 48 48 48 49 48], StartKey [49 56 32 48 48 48 48 48 48 48 48], EndKey [51 32 48 48 48 48 48 48 48 50][0m
+2022/03/22 20:12:10.397217 peer.go:41: [0;37m[info] region id:48 start_key:"18 00000010" end_key:"3 00000002" region_epoch:<conf_ver:1 version:1 > peers:<id:49 store_id:1 > peers:<id:50 store_id:2 > peers:<id:51 store_id:3 > peers:<id:52 store_id:4 > peers:<id:53 store_id:5 >  create peer with ID 52[0m
+2022/03/22 20:12:10.400034 peer_msg_handler.go:257: [0;31m[error] [region 6] 8 apply split begin, split key [49 56 32 48 48 48 48 48 48 49 48], StartKey [49 56 32 48 48 48 48 48 48 48 48], EndKey [51 32 48 48 48 48 48 48 48 50][0m
+2022/03/22 20:12:10.400065 peer_msg_handler.go:257: [0;31m[error] [region 12] 13 apply split begin, split key [49 54 32 48 48 48 48 48 48 48 50], StartKey [49 53 32 48 48 48 48 48 48 48 49], EndKey [49 56 32 48 48 48 48 48 48 48 48][0m
+2022/03/22 20:12:10.400135 peer.go:41: [0;37m[info] region id:54 start_key:"16 00000002" end_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:55 store_id:1 > peers:<id:56 store_id:2 > peers:<id:57 store_id:3 > peers:<id:58 store_id:4 > peers:<id:59 store_id:5 >  create peer with ID 55[0m
+2022/03/22 20:12:10.400146 peer.go:41: [0;37m[info] region id:48 start_key:"18 00000010" end_key:"3 00000002" region_epoch:<conf_ver:1 version:1 > peers:<id:49 store_id:1 > peers:<id:50 store_id:2 > peers:<id:51 store_id:3 > peers:<id:52 store_id:4 > peers:<id:53 store_id:5 >  create peer with ID 50[0m
+2022/03/22 20:12:10.415479 peer_msg_handler.go:322: [0;31m[error] [region 6] 10 apply split finished[0m
+2022/03/22 20:12:10.418412 peer_msg_handler.go:322: [0;31m[error] [region 6] 8 apply split finished[0m
+2022/03/22 20:12:10.418423 peer_msg_handler.go:322: [0;31m[error] [region 12] 13 apply split finished[0m
+2022/03/22 20:12:10.421269 peer_msg_handler.go:257: [0;31m[error] [region 6] 9 apply split begin, split key [49 56 32 48 48 48 48 48 48 49 48], StartKey [49 56 32 48 48 48 48 48 48 48 48], EndKey [51 32 48 48 48 48 48 48 48 50][0m
+2022/03/22 20:12:10.421424 peer.go:41: [0;37m[info] region id:48 start_key:"18 00000010" end_key:"3 00000002" region_epoch:<conf_ver:1 version:1 > peers:<id:49 store_id:1 > peers:<id:50 store_id:2 > peers:<id:51 store_id:3 > peers:<id:52 store_id:4 > peers:<id:53 store_id:5 >  create peer with ID 51[0m
+2022/03/22 20:12:10.426736 peer_msg_handler.go:257: [0;31m[error] [region 6] 11 apply split begin, split key [49 56 32 48 48 48 48 48 48 49 48], StartKey [49 56 32 48 48 48 48 48 48 48 48], EndKey [51 32 48 48 48 48 48 48 48 50][0m
+2022/03/22 20:12:10.426840 peer.go:41: [0;37m[info] region id:48 start_key:"18 00000010" end_key:"3 00000002" region_epoch:<conf_ver:1 version:1 > peers:<id:49 store_id:1 > peers:<id:50 store_id:2 > peers:<id:51 store_id:3 > peers:<id:52 store_id:4 > peers:<id:53 store_id:5 >  create peer with ID 53[0m
+2022/03/22 20:12:10.435602 peer_msg_handler.go:322: [0;31m[error] [region 6] 9 apply split finished[0m
+2022/03/22 20:12:10.438526 peer_msg_handler.go:257: [0;31m[error] [region 12] 16 apply split begin, split key [49 54 32 48 48 48 48 48 48 48 50], StartKey [49 53 32 48 48 48 48 48 48 48 49], EndKey [49 56 32 48 48 48 48 48 48 48 48][0m
+2022/03/22 20:12:10.438621 peer.go:41: [0;37m[info] region id:54 start_key:"16 00000002" end_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:55 store_id:1 > peers:<id:56 store_id:2 > peers:<id:57 store_id:3 > peers:<id:58 store_id:4 > peers:<id:59 store_id:5 >  create peer with ID 58[0m
+2022/03/22 20:12:10.444454 peer_msg_handler.go:322: [0;31m[error] [region 6] 11 apply split finished[0m
+2022/03/22 20:12:10.444574 peer_msg_handler.go:257: [0;31m[error] [region 6] 7 apply split begin, split key [49 56 32 48 48 48 48 48 48 49 48], StartKey [49 56 32 48 48 48 48 48 48 48 48], EndKey [51 32 48 48 48 48 48 48 48 50][0m
+2022/03/22 20:12:10.444668 peer.go:41: [0;37m[info] region id:48 start_key:"18 00000010" end_key:"3 00000002" region_epoch:<conf_ver:1 version:1 > peers:<id:49 store_id:1 > peers:<id:50 store_id:2 > peers:<id:51 store_id:3 > peers:<id:52 store_id:4 > peers:<id:53 store_id:5 >  create peer with ID 49[0m
+2022/03/22 20:12:10.446889 peer_msg_handler.go:257: [0;31m[error] [region 12] 15 apply split begin, split key [49 54 32 48 48 48 48 48 48 48 50], StartKey [49 53 32 48 48 48 48 48 48 48 49], EndKey [49 56 32 48 48 48 48 48 48 48 48][0m
+2022/03/22 20:12:10.447014 peer.go:41: [0;37m[info] region id:54 start_key:"16 00000002" end_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:55 store_id:1 > peers:<id:56 store_id:2 > peers:<id:57 store_id:3 > peers:<id:58 store_id:4 > peers:<id:59 store_id:5 >  create peer with ID 57[0m
+2022/03/22 20:12:10.455073 peer_msg_handler.go:322: [0;31m[error] [region 12] 16 apply split finished[0m
+2022/03/22 20:12:10.457835 peer_msg_handler.go:257: [0;31m[error] [region 12] 17 apply split begin, split key [49 54 32 48 48 48 48 48 48 48 50], StartKey [49 53 32 48 48 48 48 48 48 48 49], EndKey [49 56 32 48 48 48 48 48 48 48 48][0m
+2022/03/22 20:12:10.457846 peer_msg_handler.go:257: [0;31m[error] [region 12] 14 apply split begin, split key [49 54 32 48 48 48 48 48 48 48 50], StartKey [49 53 32 48 48 48 48 48 48 48 49], EndKey [49 56 32 48 48 48 48 48 48 48 48][0m
+2022/03/22 20:12:10.457992 peer.go:41: [0;37m[info] region id:54 start_key:"16 00000002" end_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:55 store_id:1 > peers:<id:56 store_id:2 > peers:<id:57 store_id:3 > peers:<id:58 store_id:4 > peers:<id:59 store_id:5 >  create peer with ID 56[0m
+2022/03/22 20:12:10.457924 peer.go:41: [0;37m[info] region id:54 start_key:"16 00000002" end_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:55 store_id:1 > peers:<id:56 store_id:2 > peers:<id:57 store_id:3 > peers:<id:58 store_id:4 > peers:<id:59 store_id:5 >  create peer with ID 59[0m
+2022/03/22 20:12:10.463435 peer_msg_handler.go:322: [0;31m[error] [region 12] 15 apply split finished[0m
+2022/03/22 20:12:10.463500 peer_msg_handler.go:322: [0;31m[error] [region 6] 7 apply split finished[0m
+2022/03/22 20:12:10.471491 peer_msg_handler.go:322: [0;31m[error] [region 12] 17 apply split finished[0m
+2022/03/22 20:12:10.471617 peer_msg_handler.go:573: [0;31m[error] [region 1] 3 on split with [48 32 48 48 48 48 48 48 49 49][0m
+2022/03/22 20:12:10.476604 peer_msg_handler.go:322: [0;31m[error] [region 12] 14 apply split finished[0m
+2022/03/22 20:12:10.499201 peer_msg_handler.go:736: [0;31m[error] [region 1] 3 propose split msg, msg: 1 3 local region: 1 3[0m
+2022/03/22 20:12:10.550509 peer_msg_handler.go:257: [0;31m[error] [region 1] 3 apply split begin, split key [48 32 48 48 48 48 48 48 49 49], StartKey [], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:10.550563 peer.go:41: [0;37m[info] region id:60 start_key:"0 00000011" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:61 store_id:1 > peers:<id:62 store_id:2 > peers:<id:63 store_id:3 > peers:<id:64 store_id:4 > peers:<id:65 store_id:5 >  create peer with ID 63[0m
+2022/03/22 20:12:10.564675 peer_msg_handler.go:257: [0;31m[error] [region 1] 4 apply split begin, split key [48 32 48 48 48 48 48 48 49 49], StartKey [], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:10.564746 peer.go:41: [0;37m[info] region id:60 start_key:"0 00000011" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:61 store_id:1 > peers:<id:62 store_id:2 > peers:<id:63 store_id:3 > peers:<id:64 store_id:4 > peers:<id:65 store_id:5 >  create peer with ID 64[0m
+2022/03/22 20:12:10.564810 peer_msg_handler.go:257: [0;31m[error] [region 1] 2 apply split begin, split key [48 32 48 48 48 48 48 48 49 49], StartKey [], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:10.564893 peer.go:41: [0;37m[info] region id:60 start_key:"0 00000011" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:61 store_id:1 > peers:<id:62 store_id:2 > peers:<id:63 store_id:3 > peers:<id:64 store_id:4 > peers:<id:65 store_id:5 >  create peer with ID 62[0m
+2022/03/22 20:12:10.567806 peer_msg_handler.go:322: [0;31m[error] [region 1] 3 apply split finished[0m
+2022/03/22 20:12:10.573056 peer_msg_handler.go:573: [0;31m[error] [region 1] 3 on split with [48 32 48 48 48 48 48 48 49 49][0m
+2022/03/22 20:12:10.578782 peer_msg_handler.go:257: [0;31m[error] [region 1] 5 apply split begin, split key [48 32 48 48 48 48 48 48 49 49], StartKey [], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:10.578878 peer.go:41: [0;37m[info] region id:60 start_key:"0 00000011" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:61 store_id:1 > peers:<id:62 store_id:2 > peers:<id:63 store_id:3 > peers:<id:64 store_id:4 > peers:<id:65 store_id:5 >  create peer with ID 65[0m
+2022/03/22 20:12:10.581477 peer_msg_handler.go:322: [0;31m[error] [region 1] 2 apply split finished[0m
+2022/03/22 20:12:10.581584 peer_msg_handler.go:322: [0;31m[error] [region 1] 4 apply split finished[0m
+2022/03/22 20:12:10.586867 peer_msg_handler.go:257: [0;31m[error] [region 1] 1 apply split begin, split key [48 32 48 48 48 48 48 48 49 49], StartKey [], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:10.586951 peer.go:41: [0;37m[info] region id:60 start_key:"0 00000011" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:61 store_id:1 > peers:<id:62 store_id:2 > peers:<id:63 store_id:3 > peers:<id:64 store_id:4 > peers:<id:65 store_id:5 >  create peer with ID 61[0m
+2022/03/22 20:12:10.594923 peer_msg_handler.go:322: [0;31m[error] [region 1] 5 apply split finished[0m
+2022/03/22 20:12:10.603133 peer_msg_handler.go:322: [0;31m[error] [region 1] 1 apply split finished[0m
+2022/03/22 20:12:10.624418 raft.go:433: [0;31m[error] node 32 becomeLeader at term 7 with index 10[0m
+2022/03/22 20:12:10.905766 raft.go:433: [0;31m[error] node 55 becomeLeader at term 6 with index 5[0m
+2022/03/22 20:12:11.006495 peer_msg_handler.go:573: [0;31m[error] [region 54] 55 on split with [49 54 32 48 48 48 48 48 48 49 50][0m
+2022/03/22 20:12:11.033221 peer_msg_handler.go:736: [0;31m[error] [region 54] 55 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:12:11.040268 raft.go:433: [0;31m[error] node 50 becomeLeader at term 6 with index 5[0m
+2022/03/22 20:12:11.087417 peer_msg_handler.go:257: [0;31m[error] [region 54] 55 apply split begin, split key [49 54 32 48 48 48 48 48 48 49 50], StartKey [49 54 32 48 48 48 48 48 48 48 50], EndKey [49 56 32 48 48 48 48 48 48 48 48][0m
+2022/03/22 20:12:11.087587 peer.go:41: [0;37m[info] region id:72 start_key:"16 00000012" end_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:73 store_id:1 > peers:<id:74 store_id:2 > peers:<id:75 store_id:3 > peers:<id:76 store_id:4 > peers:<id:77 store_id:5 >  create peer with ID 73[0m
+2022/03/22 20:12:11.099290 peer_msg_handler.go:257: [0;31m[error] [region 54] 56 apply split begin, split key [49 54 32 48 48 48 48 48 48 49 50], StartKey [49 54 32 48 48 48 48 48 48 48 50], EndKey [49 56 32 48 48 48 48 48 48 48 48][0m
+2022/03/22 20:12:11.099389 peer.go:41: [0;37m[info] region id:72 start_key:"16 00000012" end_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:73 store_id:1 > peers:<id:74 store_id:2 > peers:<id:75 store_id:3 > peers:<id:76 store_id:4 > peers:<id:77 store_id:5 >  create peer with ID 74[0m
+2022/03/22 20:12:11.101831 peer_msg_handler.go:257: [0;31m[error] [region 54] 58 apply split begin, split key [49 54 32 48 48 48 48 48 48 49 50], StartKey [49 54 32 48 48 48 48 48 48 48 50], EndKey [49 56 32 48 48 48 48 48 48 48 48][0m
+2022/03/22 20:12:11.101895 peer.go:41: [0;37m[info] region id:72 start_key:"16 00000012" end_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:73 store_id:1 > peers:<id:74 store_id:2 > peers:<id:75 store_id:3 > peers:<id:76 store_id:4 > peers:<id:77 store_id:5 >  create peer with ID 76[0m
+2022/03/22 20:12:11.101846 peer_msg_handler.go:257: [0;31m[error] [region 54] 59 apply split begin, split key [49 54 32 48 48 48 48 48 48 49 50], StartKey [49 54 32 48 48 48 48 48 48 48 50], EndKey [49 56 32 48 48 48 48 48 48 48 48][0m
+2022/03/22 20:12:11.102009 peer.go:41: [0;37m[info] region id:72 start_key:"16 00000012" end_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:73 store_id:1 > peers:<id:74 store_id:2 > peers:<id:75 store_id:3 > peers:<id:76 store_id:4 > peers:<id:77 store_id:5 >  create peer with ID 77[0m
+2022/03/22 20:12:11.104082 peer_msg_handler.go:322: [0;31m[error] [region 54] 55 apply split finished[0m
+2022/03/22 20:12:11.106513 peer_msg_handler.go:257: [0;31m[error] [region 54] 57 apply split begin, split key [49 54 32 48 48 48 48 48 48 49 50], StartKey [49 54 32 48 48 48 48 48 48 48 50], EndKey [49 56 32 48 48 48 48 48 48 48 48][0m
+2022/03/22 20:12:11.106646 peer.go:41: [0;37m[info] region id:72 start_key:"16 00000012" end_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:73 store_id:1 > peers:<id:74 store_id:2 > peers:<id:75 store_id:3 > peers:<id:76 store_id:4 > peers:<id:77 store_id:5 >  create peer with ID 75[0m
+2022/03/22 20:12:11.113789 peer_msg_handler.go:322: [0;31m[error] [region 54] 56 apply split finished[0m
+2022/03/22 20:12:11.116428 peer_msg_handler.go:322: [0;31m[error] [region 54] 58 apply split finished[0m
+2022/03/22 20:12:11.116517 peer_msg_handler.go:322: [0;31m[error] [region 54] 59 apply split finished[0m
+2022/03/22 20:12:11.121263 peer_msg_handler.go:322: [0;31m[error] [region 54] 57 apply split finished[0m
+2022/03/22 20:12:11.140392 peer_msg_handler.go:573: [0;31m[error] [region 48] 50 on split with [49 57 32 48 48 48 48 48 48 48 56][0m
+2022/03/22 20:12:11.140462 raft.go:433: [0;31m[error] node 62 becomeLeader at term 6 with index 5[0m
+2022/03/22 20:12:11.164533 peer_msg_handler.go:736: [0;31m[error] [region 48] 50 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:12:11.205615 peer_msg_handler.go:573: [0;31m[error] [region 60] 62 on split with [49 32 48 48 48 48 48 48 48 52][0m
+2022/03/22 20:12:11.236828 peer_msg_handler.go:257: [0;31m[error] [region 48] 50 apply split begin, split key [49 57 32 48 48 48 48 48 48 48 56], StartKey [49 56 32 48 48 48 48 48 48 49 48], EndKey [51 32 48 48 48 48 48 48 48 50][0m
+2022/03/22 20:12:11.236881 peer.go:41: [0;37m[info] region id:78 start_key:"19 00000008" end_key:"3 00000002" region_epoch:<conf_ver:1 version:1 > peers:<id:79 store_id:1 > peers:<id:80 store_id:2 > peers:<id:81 store_id:3 > peers:<id:82 store_id:4 > peers:<id:83 store_id:5 >  create peer with ID 80[0m
+2022/03/22 20:12:11.248962 peer_msg_handler.go:257: [0;31m[error] [region 48] 51 apply split begin, split key [49 57 32 48 48 48 48 48 48 48 56], StartKey [49 56 32 48 48 48 48 48 48 49 48], EndKey [51 32 48 48 48 48 48 48 48 50][0m
+2022/03/22 20:12:11.249045 peer.go:41: [0;37m[info] region id:78 start_key:"19 00000008" end_key:"3 00000002" region_epoch:<conf_ver:1 version:1 > peers:<id:79 store_id:1 > peers:<id:80 store_id:2 > peers:<id:81 store_id:3 > peers:<id:82 store_id:4 > peers:<id:83 store_id:5 >  create peer with ID 81[0m
+2022/03/22 20:12:11.251358 peer_msg_handler.go:322: [0;31m[error] [region 48] 50 apply split finished[0m
+2022/03/22 20:12:11.261365 peer_msg_handler.go:322: [0;31m[error] [region 48] 51 apply split finished[0m
+2022/03/22 20:12:11.263803 peer_msg_handler.go:257: [0;31m[error] [region 48] 49 apply split begin, split key [49 57 32 48 48 48 48 48 48 48 56], StartKey [49 56 32 48 48 48 48 48 48 49 48], EndKey [51 32 48 48 48 48 48 48 48 50][0m
+2022/03/22 20:12:11.263872 peer.go:41: [0;37m[info] region id:78 start_key:"19 00000008" end_key:"3 00000002" region_epoch:<conf_ver:1 version:1 > peers:<id:79 store_id:1 > peers:<id:80 store_id:2 > peers:<id:81 store_id:3 > peers:<id:82 store_id:4 > peers:<id:83 store_id:5 >  create peer with ID 79[0m
+2022/03/22 20:12:11.266272 peer_msg_handler.go:736: [0;31m[error] [region 60] 62 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:12:11.266318 peer_msg_handler.go:573: [0;31m[error] [region 48] 50 on split with [49 57 32 48 48 48 48 48 48 48 56][0m
+2022/03/22 20:12:11.278346 peer_msg_handler.go:322: [0;31m[error] [region 48] 49 apply split finished[0m
+2022/03/22 20:12:11.306036 peer_msg_handler.go:573: [0;31m[error] [region 60] 62 on split with [49 32 48 48 48 48 48 48 48 52][0m
+2022/03/22 20:12:11.313376 peer_msg_handler.go:257: [0;31m[error] [region 48] 52 apply split begin, split key [49 57 32 48 48 48 48 48 48 48 56], StartKey [49 56 32 48 48 48 48 48 48 49 48], EndKey [51 32 48 48 48 48 48 48 48 50][0m
+2022/03/22 20:12:11.313431 peer.go:41: [0;37m[info] region id:78 start_key:"19 00000008" end_key:"3 00000002" region_epoch:<conf_ver:1 version:1 > peers:<id:79 store_id:1 > peers:<id:80 store_id:2 > peers:<id:81 store_id:3 > peers:<id:82 store_id:4 > peers:<id:83 store_id:5 >  create peer with ID 82[0m
+2022/03/22 20:12:11.320954 peer_msg_handler.go:257: [0;31m[error] [region 60] 62 apply split begin, split key [49 32 48 48 48 48 48 48 48 52], StartKey [48 32 48 48 48 48 48 48 49 49], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:11.321027 peer.go:41: [0;37m[info] region id:84 start_key:"1 00000004" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:85 store_id:1 > peers:<id:86 store_id:2 > peers:<id:87 store_id:3 > peers:<id:88 store_id:4 > peers:<id:89 store_id:5 >  create peer with ID 86[0m
+2022/03/22 20:12:11.330608 peer_msg_handler.go:322: [0;31m[error] [region 48] 52 apply split finished[0m
+2022/03/22 20:12:11.332987 peer_msg_handler.go:257: [0;31m[error] [region 48] 53 apply split begin, split key [49 57 32 48 48 48 48 48 48 48 56], StartKey [49 56 32 48 48 48 48 48 48 49 48], EndKey [51 32 48 48 48 48 48 48 48 50][0m
+2022/03/22 20:12:11.333037 peer.go:41: [0;37m[info] region id:78 start_key:"19 00000008" end_key:"3 00000002" region_epoch:<conf_ver:1 version:1 > peers:<id:79 store_id:1 > peers:<id:80 store_id:2 > peers:<id:81 store_id:3 > peers:<id:82 store_id:4 > peers:<id:83 store_id:5 >  create peer with ID 83[0m
+2022/03/22 20:12:11.337671 peer_msg_handler.go:322: [0;31m[error] [region 60] 62 apply split finished[0m
+2022/03/22 20:12:11.350343 peer_msg_handler.go:322: [0;31m[error] [region 48] 53 apply split finished[0m
+2022/03/22 20:12:11.355261 peer_msg_handler.go:257: [0;31m[error] [region 60] 61 apply split begin, split key [49 32 48 48 48 48 48 48 48 52], StartKey [48 32 48 48 48 48 48 48 49 49], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:11.355344 peer.go:41: [0;37m[info] region id:84 start_key:"1 00000004" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:85 store_id:1 > peers:<id:86 store_id:2 > peers:<id:87 store_id:3 > peers:<id:88 store_id:4 > peers:<id:89 store_id:5 >  create peer with ID 85[0m
+2022/03/22 20:12:11.367884 peer_msg_handler.go:257: [0;31m[error] [region 60] 63 apply split begin, split key [49 32 48 48 48 48 48 48 48 52], StartKey [48 32 48 48 48 48 48 48 49 49], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:11.367929 peer.go:41: [0;37m[info] region id:84 start_key:"1 00000004" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:85 store_id:1 > peers:<id:86 store_id:2 > peers:<id:87 store_id:3 > peers:<id:88 store_id:4 > peers:<id:89 store_id:5 >  create peer with ID 87[0m
+2022/03/22 20:12:11.370220 peer_msg_handler.go:322: [0;31m[error] [region 60] 61 apply split finished[0m
+2022/03/22 20:12:11.370240 peer_msg_handler.go:257: [0;31m[error] [region 60] 65 apply split begin, split key [49 32 48 48 48 48 48 48 48 52], StartKey [48 32 48 48 48 48 48 48 49 49], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:11.370298 peer.go:41: [0;37m[info] region id:84 start_key:"1 00000004" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:85 store_id:1 > peers:<id:86 store_id:2 > peers:<id:87 store_id:3 > peers:<id:88 store_id:4 > peers:<id:89 store_id:5 >  create peer with ID 89[0m
+2022/03/22 20:12:11.382371 peer_msg_handler.go:322: [0;31m[error] [region 60] 63 apply split finished[0m
+2022/03/22 20:12:11.387173 peer_msg_handler.go:322: [0;31m[error] [region 60] 65 apply split finished[0m
+2022/03/22 20:12:11.387200 peer_msg_handler.go:257: [0;31m[error] [region 60] 64 apply split begin, split key [49 32 48 48 48 48 48 48 48 52], StartKey [48 32 48 48 48 48 48 48 49 49], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:11.387248 peer.go:41: [0;37m[info] region id:84 start_key:"1 00000004" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:85 store_id:1 > peers:<id:86 store_id:2 > peers:<id:87 store_id:3 > peers:<id:88 store_id:4 > peers:<id:89 store_id:5 >  create peer with ID 88[0m
+2022/03/22 20:12:11.404266 peer_msg_handler.go:322: [0;31m[error] [region 60] 64 apply split finished[0m
+2022/03/22 20:12:11.709358 raft.go:433: [0;31m[error] node 73 becomeLeader at term 6 with index 5[0m
+2022/03/22 20:12:11.866071 peer_msg_handler.go:573: [0;31m[error] [region 72] 73 on split with [49 55 32 48 48 48 48 48 48 48 50][0m
+2022/03/22 20:12:11.915066 peer_msg_handler.go:736: [0;31m[error] [region 72] 73 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:12:11.954381 peer_msg_handler.go:573: [0;31m[error] [region 72] 73 on split with [49 55 32 48 48 48 48 48 48 48 50][0m
+2022/03/22 20:12:11.954425 raft.go:433: [0;31m[error] node 79 becomeLeader at term 6 with index 5[0m
+2022/03/22 20:12:11.979421 raft.go:433: [0;31m[error] node 87 becomeLeader at term 6 with index 5[0m
+2022/03/22 20:12:11.982117 peer_msg_handler.go:257: [0;31m[error] [region 72] 73 apply split begin, split key [49 55 32 48 48 48 48 48 48 48 50], StartKey [49 54 32 48 48 48 48 48 48 49 50], EndKey [49 56 32 48 48 48 48 48 48 48 48][0m
+2022/03/22 20:12:11.982233 peer.go:41: [0;37m[info] region id:102 start_key:"17 00000002" end_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:103 store_id:1 > peers:<id:104 store_id:2 > peers:<id:105 store_id:3 > peers:<id:106 store_id:4 > peers:<id:107 store_id:5 >  create peer with ID 103[0m
+2022/03/22 20:12:11.998702 peer_msg_handler.go:322: [0;31m[error] [region 72] 73 apply split finished[0m
+2022/03/22 20:12:12.009046 peer_msg_handler.go:573: [0;31m[error] [region 78] 79 on split with [50 32 48 48 48 48 48 48 48 52][0m
+2022/03/22 20:12:12.022544 peer_msg_handler.go:257: [0;31m[error] [region 72] 75 apply split begin, split key [49 55 32 48 48 48 48 48 48 48 50], StartKey [49 54 32 48 48 48 48 48 48 49 50], EndKey [49 56 32 48 48 48 48 48 48 48 48][0m
+2022/03/22 20:12:12.022573 peer_msg_handler.go:257: [0;31m[error] [region 72] 77 apply split begin, split key [49 55 32 48 48 48 48 48 48 48 50], StartKey [49 54 32 48 48 48 48 48 48 49 50], EndKey [49 56 32 48 48 48 48 48 48 48 48][0m
+2022/03/22 20:12:12.022618 peer.go:41: [0;37m[info] region id:102 start_key:"17 00000002" end_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:103 store_id:1 > peers:<id:104 store_id:2 > peers:<id:105 store_id:3 > peers:<id:106 store_id:4 > peers:<id:107 store_id:5 >  create peer with ID 105[0m
+2022/03/22 20:12:12.022720 peer.go:41: [0;37m[info] region id:102 start_key:"17 00000002" end_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:103 store_id:1 > peers:<id:104 store_id:2 > peers:<id:105 store_id:3 > peers:<id:106 store_id:4 > peers:<id:107 store_id:5 >  create peer with ID 107[0m
+2022/03/22 20:12:12.025329 peer_msg_handler.go:257: [0;31m[error] [region 72] 76 apply split begin, split key [49 55 32 48 48 48 48 48 48 48 50], StartKey [49 54 32 48 48 48 48 48 48 49 50], EndKey [49 56 32 48 48 48 48 48 48 48 48][0m
+2022/03/22 20:12:12.025345 peer_msg_handler.go:257: [0;31m[error] [region 72] 74 apply split begin, split key [49 55 32 48 48 48 48 48 48 48 50], StartKey [49 54 32 48 48 48 48 48 48 49 50], EndKey [49 56 32 48 48 48 48 48 48 48 48][0m
+2022/03/22 20:12:12.025443 peer.go:41: [0;37m[info] region id:102 start_key:"17 00000002" end_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:103 store_id:1 > peers:<id:104 store_id:2 > peers:<id:105 store_id:3 > peers:<id:106 store_id:4 > peers:<id:107 store_id:5 >  create peer with ID 106[0m
+2022/03/22 20:12:12.025446 peer.go:41: [0;37m[info] region id:102 start_key:"17 00000002" end_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:103 store_id:1 > peers:<id:104 store_id:2 > peers:<id:105 store_id:3 > peers:<id:106 store_id:4 > peers:<id:107 store_id:5 >  create peer with ID 104[0m
+2022/03/22 20:12:12.038054 peer_msg_handler.go:322: [0;31m[error] [region 72] 75 apply split finished[0m
+2022/03/22 20:12:12.038075 peer_msg_handler.go:322: [0;31m[error] [region 72] 77 apply split finished[0m
+2022/03/22 20:12:12.041203 peer_msg_handler.go:322: [0;31m[error] [region 72] 76 apply split finished[0m
+2022/03/22 20:12:12.046005 peer_msg_handler.go:322: [0;31m[error] [region 72] 74 apply split finished[0m
+2022/03/22 20:12:12.064563 peer_msg_handler.go:736: [0;31m[error] [region 78] 79 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:12:12.099503 peer_msg_handler.go:573: [0;31m[error] [region 78] 79 on split with [50 32 48 48 48 48 48 48 48 52][0m
+2022/03/22 20:12:12.144153 peer_msg_handler.go:736: [0;31m[error] [region 78] 79 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:12:12.149461 peer_msg_handler.go:573: [0;31m[error] [region 84] 87 on split with [49 32 48 48 48 48 48 48 49 53][0m
+2022/03/22 20:12:12.184713 peer_msg_handler.go:257: [0;31m[error] [region 78] 79 apply split begin, split key [50 32 48 48 48 48 48 48 48 52], StartKey [49 57 32 48 48 48 48 48 48 48 56], EndKey [51 32 48 48 48 48 48 48 48 50][0m
+2022/03/22 20:12:12.184885 peer.go:41: [0;37m[info] region id:114 start_key:"2 00000004" end_key:"3 00000002" region_epoch:<conf_ver:1 version:1 > peers:<id:115 store_id:1 > peers:<id:116 store_id:2 > peers:<id:117 store_id:3 > peers:<id:118 store_id:4 > peers:<id:119 store_id:5 >  create peer with ID 115[0m
+2022/03/22 20:12:12.195286 peer_msg_handler.go:257: [0;31m[error] [region 78] 82 apply split begin, split key [50 32 48 48 48 48 48 48 48 52], StartKey [49 57 32 48 48 48 48 48 48 48 56], EndKey [51 32 48 48 48 48 48 48 48 50][0m
+2022/03/22 20:12:12.195372 peer.go:41: [0;37m[info] region id:114 start_key:"2 00000004" end_key:"3 00000002" region_epoch:<conf_ver:1 version:1 > peers:<id:115 store_id:1 > peers:<id:116 store_id:2 > peers:<id:117 store_id:3 > peers:<id:118 store_id:4 > peers:<id:119 store_id:5 >  create peer with ID 118[0m
+2022/03/22 20:12:12.207647 peer_msg_handler.go:322: [0;31m[error] [region 78] 79 apply split finished[0m
+2022/03/22 20:12:12.212891 peer_msg_handler.go:322: [0;31m[error] [region 78] 82 apply split finished[0m
+2022/03/22 20:12:12.215379 peer_msg_handler.go:736: [0;31m[error] [region 84] 87 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:12:12.235851 peer_msg_handler.go:257: [0;31m[error] [region 78] 80 apply split begin, split key [50 32 48 48 48 48 48 48 48 52], StartKey [49 57 32 48 48 48 48 48 48 48 56], EndKey [51 32 48 48 48 48 48 48 48 50][0m
+2022/03/22 20:12:12.235956 peer.go:41: [0;37m[info] region id:114 start_key:"2 00000004" end_key:"3 00000002" region_epoch:<conf_ver:1 version:1 > peers:<id:115 store_id:1 > peers:<id:116 store_id:2 > peers:<id:117 store_id:3 > peers:<id:118 store_id:4 > peers:<id:119 store_id:5 >  create peer with ID 116[0m
+2022/03/22 20:12:12.254820 peer_msg_handler.go:322: [0;31m[error] [region 78] 80 apply split finished[0m
+2022/03/22 20:12:12.254903 peer_msg_handler.go:257: [0;31m[error] [region 78] 83 apply split begin, split key [50 32 48 48 48 48 48 48 48 52], StartKey [49 57 32 48 48 48 48 48 48 48 56], EndKey [51 32 48 48 48 48 48 48 48 50][0m
+2022/03/22 20:12:12.254971 peer.go:41: [0;37m[info] region id:114 start_key:"2 00000004" end_key:"3 00000002" region_epoch:<conf_ver:1 version:1 > peers:<id:115 store_id:1 > peers:<id:116 store_id:2 > peers:<id:117 store_id:3 > peers:<id:118 store_id:4 > peers:<id:119 store_id:5 >  create peer with ID 119[0m
+2022/03/22 20:12:12.260587 peer_msg_handler.go:257: [0;31m[error] [region 78] 81 apply split begin, split key [50 32 48 48 48 48 48 48 48 52], StartKey [49 57 32 48 48 48 48 48 48 48 56], EndKey [51 32 48 48 48 48 48 48 48 50][0m
+2022/03/22 20:12:12.260705 peer.go:41: [0;37m[info] region id:114 start_key:"2 00000004" end_key:"3 00000002" region_epoch:<conf_ver:1 version:1 > peers:<id:115 store_id:1 > peers:<id:116 store_id:2 > peers:<id:117 store_id:3 > peers:<id:118 store_id:4 > peers:<id:119 store_id:5 >  create peer with ID 117[0m
+2022/03/22 20:12:12.272448 peer_msg_handler.go:322: [0;31m[error] [region 78] 83 apply split finished[0m
+2022/03/22 20:12:12.275427 peer_msg_handler.go:322: [0;31m[error] [region 78] 81 apply split finished[0m
+2022/03/22 20:12:12.282312 peer_msg_handler.go:573: [0;31m[error] [region 84] 87 on split with [49 32 48 48 48 48 48 48 49 53][0m
+2022/03/22 20:12:12.328984 peer_msg_handler.go:257: [0;31m[error] [region 84] 87 apply split begin, split key [49 32 48 48 48 48 48 48 49 53], StartKey [49 32 48 48 48 48 48 48 48 52], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:12.329079 peer.go:41: [0;37m[info] region id:126 start_key:"1 00000015" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:127 store_id:1 > peers:<id:128 store_id:2 > peers:<id:129 store_id:3 > peers:<id:130 store_id:4 > peers:<id:131 store_id:5 >  create peer with ID 129[0m
+2022/03/22 20:12:12.351406 peer_msg_handler.go:257: [0;31m[error] [region 84] 85 apply split begin, split key [49 32 48 48 48 48 48 48 49 53], StartKey [49 32 48 48 48 48 48 48 48 52], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:12.351487 peer.go:41: [0;37m[info] region id:126 start_key:"1 00000015" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:127 store_id:1 > peers:<id:128 store_id:2 > peers:<id:129 store_id:3 > peers:<id:130 store_id:4 > peers:<id:131 store_id:5 >  create peer with ID 127[0m
+2022/03/22 20:12:12.351627 peer_msg_handler.go:322: [0;31m[error] [region 84] 87 apply split finished[0m
+2022/03/22 20:12:12.364600 peer_msg_handler.go:573: [0;31m[error] [region 84] 87 on split with [49 32 48 48 48 48 48 48 49 53][0m
+2022/03/22 20:12:12.370153 peer_msg_handler.go:322: [0;31m[error] [region 84] 85 apply split finished[0m
+2022/03/22 20:12:12.401343 peer_msg_handler.go:257: [0;31m[error] [region 84] 89 apply split begin, split key [49 32 48 48 48 48 48 48 49 53], StartKey [49 32 48 48 48 48 48 48 48 52], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:12.401396 peer.go:41: [0;37m[info] region id:126 start_key:"1 00000015" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:127 store_id:1 > peers:<id:128 store_id:2 > peers:<id:129 store_id:3 > peers:<id:130 store_id:4 > peers:<id:131 store_id:5 >  create peer with ID 131[0m
+2022/03/22 20:12:12.418155 peer_msg_handler.go:322: [0;31m[error] [region 84] 89 apply split finished[0m
+2022/03/22 20:12:12.435020 peer_msg_handler.go:257: [0;31m[error] [region 84] 88 apply split begin, split key [49 32 48 48 48 48 48 48 49 53], StartKey [49 32 48 48 48 48 48 48 48 52], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:12.435103 peer.go:41: [0;37m[info] region id:126 start_key:"1 00000015" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:127 store_id:1 > peers:<id:128 store_id:2 > peers:<id:129 store_id:3 > peers:<id:130 store_id:4 > peers:<id:131 store_id:5 >  create peer with ID 130[0m
+2022/03/22 20:12:12.446199 peer_msg_handler.go:257: [0;31m[error] [region 84] 86 apply split begin, split key [49 32 48 48 48 48 48 48 49 53], StartKey [49 32 48 48 48 48 48 48 48 52], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:12.446316 peer.go:41: [0;37m[info] region id:126 start_key:"1 00000015" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:127 store_id:1 > peers:<id:128 store_id:2 > peers:<id:129 store_id:3 > peers:<id:130 store_id:4 > peers:<id:131 store_id:5 >  create peer with ID 128[0m
+2022/03/22 20:12:12.451405 peer_msg_handler.go:322: [0;31m[error] [region 84] 88 apply split finished[0m
+2022/03/22 20:12:12.462312 peer_msg_handler.go:322: [0;31m[error] [region 84] 86 apply split finished[0m
+2022/03/22 20:12:12.781042 raft.go:433: [0;31m[error] node 104 becomeLeader at term 6 with index 5[0m
+2022/03/22 20:12:13.006525 raft.go:433: [0;31m[error] node 119 becomeLeader at term 6 with index 5[0m
+2022/03/22 20:12:13.961527 raft.go:433: [0;31m[error] node 131 becomeLeader at term 7 with index 5[0m
+2022/03/22 20:12:14.103520 peer_msg_handler.go:573: [0;31m[error] [region 126] 131 on split with [49 48 32 48 48 48 48 48 48 48 54][0m
+2022/03/22 20:12:14.183406 peer_msg_handler.go:736: [0;31m[error] [region 126] 131 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:12:14.256024 peer_msg_handler.go:573: [0;31m[error] [region 126] 131 on split with [49 48 32 48 48 48 48 48 48 48 54][0m
+2022/03/22 20:12:14.310545 peer_msg_handler.go:257: [0;31m[error] [region 126] 131 apply split begin, split key [49 48 32 48 48 48 48 48 48 48 54], StartKey [49 32 48 48 48 48 48 48 49 53], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:14.310649 peer.go:41: [0;37m[info] region id:144 start_key:"10 00000006" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:145 store_id:1 > peers:<id:146 store_id:2 > peers:<id:147 store_id:3 > peers:<id:148 store_id:4 > peers:<id:149 store_id:5 >  create peer with ID 149[0m
+2022/03/22 20:12:14.330837 peer_msg_handler.go:322: [0;31m[error] [region 126] 131 apply split finished[0m
+2022/03/22 20:12:14.347384 peer_msg_handler.go:573: [0;31m[error] [region 126] 131 on split with [49 48 32 48 48 48 48 48 48 48 54][0m
+2022/03/22 20:12:14.381993 peer_msg_handler.go:257: [0;31m[error] [region 126] 128 apply split begin, split key [49 48 32 48 48 48 48 48 48 48 54], StartKey [49 32 48 48 48 48 48 48 49 53], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:14.382087 peer.go:41: [0;37m[info] region id:144 start_key:"10 00000006" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:145 store_id:1 > peers:<id:146 store_id:2 > peers:<id:147 store_id:3 > peers:<id:148 store_id:4 > peers:<id:149 store_id:5 >  create peer with ID 146[0m
+2022/03/22 20:12:14.382105 peer_msg_handler.go:257: [0;31m[error] [region 126] 127 apply split begin, split key [49 48 32 48 48 48 48 48 48 48 54], StartKey [49 32 48 48 48 48 48 48 49 53], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:14.382205 peer.go:41: [0;37m[info] region id:144 start_key:"10 00000006" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:145 store_id:1 > peers:<id:146 store_id:2 > peers:<id:147 store_id:3 > peers:<id:148 store_id:4 > peers:<id:149 store_id:5 >  create peer with ID 145[0m
+2022/03/22 20:12:14.398148 peer_msg_handler.go:322: [0;31m[error] [region 126] 128 apply split finished[0m
+2022/03/22 20:12:14.398200 peer_msg_handler.go:322: [0;31m[error] [region 126] 127 apply split finished[0m
+2022/03/22 20:12:14.400938 peer_msg_handler.go:257: [0;31m[error] [region 126] 129 apply split begin, split key [49 48 32 48 48 48 48 48 48 48 54], StartKey [49 32 48 48 48 48 48 48 49 53], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:14.401017 peer.go:41: [0;37m[info] region id:144 start_key:"10 00000006" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:145 store_id:1 > peers:<id:146 store_id:2 > peers:<id:147 store_id:3 > peers:<id:148 store_id:4 > peers:<id:149 store_id:5 >  create peer with ID 147[0m
+2022/03/22 20:12:14.423274 peer_msg_handler.go:322: [0;31m[error] [region 126] 129 apply split finished[0m
+2022/03/22 20:12:14.451837 peer_msg_handler.go:257: [0;31m[error] [region 126] 130 apply split begin, split key [49 48 32 48 48 48 48 48 48 48 54], StartKey [49 32 48 48 48 48 48 48 49 53], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:14.451919 peer.go:41: [0;37m[info] region id:144 start_key:"10 00000006" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:145 store_id:1 > peers:<id:146 store_id:2 > peers:<id:147 store_id:3 > peers:<id:148 store_id:4 > peers:<id:149 store_id:5 >  create peer with ID 148[0m
+2022/03/22 20:12:14.468964 peer_msg_handler.go:322: [0;31m[error] [region 126] 130 apply split finished[0m
+2022/03/22 20:12:15.068723 raft.go:433: [0;31m[error] node 149 becomeLeader at term 6 with index 5[0m
+2022/03/22 20:12:15.155082 peer_msg_handler.go:573: [0;31m[error] [region 144] 149 on split with [49 49 32 48 48 48 48 48 48 48 50][0m
+2022/03/22 20:12:15.232553 peer_msg_handler.go:736: [0;31m[error] [region 144] 149 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:12:15.232602 peer_msg_handler.go:573: [0;31m[error] [region 144] 149 on split with [49 49 32 48 48 48 48 48 48 48 50][0m
+2022/03/22 20:12:15.326791 peer_msg_handler.go:736: [0;31m[error] [region 144] 149 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:12:15.326851 peer_msg_handler.go:573: [0;31m[error] [region 144] 149 on split with [49 49 32 48 48 48 48 48 48 48 50][0m
+2022/03/22 20:12:15.395059 peer_msg_handler.go:736: [0;31m[error] [region 144] 149 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:12:15.395123 peer_msg_handler.go:573: [0;31m[error] [region 144] 149 on split with [49 49 32 48 48 48 48 48 48 48 50][0m
+2022/03/22 20:12:15.400173 peer_msg_handler.go:257: [0;31m[error] [region 144] 149 apply split begin, split key [49 49 32 48 48 48 48 48 48 48 50], StartKey [49 48 32 48 48 48 48 48 48 48 54], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:15.400250 peer.go:41: [0;37m[info] region id:162 start_key:"11 00000002" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:163 store_id:1 > peers:<id:164 store_id:2 > peers:<id:165 store_id:3 > peers:<id:166 store_id:4 > peers:<id:167 store_id:5 >  create peer with ID 167[0m
+2022/03/22 20:12:15.415000 peer_msg_handler.go:322: [0;31m[error] [region 144] 149 apply split finished[0m
+2022/03/22 20:12:15.440191 peer_msg_handler.go:257: [0;31m[error] [region 144] 148 apply split begin, split key [49 49 32 48 48 48 48 48 48 48 50], StartKey [49 48 32 48 48 48 48 48 48 48 54], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:15.440293 peer.go:41: [0;37m[info] region id:162 start_key:"11 00000002" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:163 store_id:1 > peers:<id:164 store_id:2 > peers:<id:165 store_id:3 > peers:<id:166 store_id:4 > peers:<id:167 store_id:5 >  create peer with ID 166[0m
+2022/03/22 20:12:15.455140 peer_msg_handler.go:257: [0;31m[error] [region 144] 147 apply split begin, split key [49 49 32 48 48 48 48 48 48 48 50], StartKey [49 48 32 48 48 48 48 48 48 48 54], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:15.455231 peer.go:41: [0;37m[info] region id:162 start_key:"11 00000002" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:163 store_id:1 > peers:<id:164 store_id:2 > peers:<id:165 store_id:3 > peers:<id:166 store_id:4 > peers:<id:167 store_id:5 >  create peer with ID 165[0m
+2022/03/22 20:12:15.457893 peer_msg_handler.go:322: [0;31m[error] [region 144] 148 apply split finished[0m
+2022/03/22 20:12:15.470850 peer_msg_handler.go:322: [0;31m[error] [region 144] 147 apply split finished[0m
+2022/03/22 20:12:15.503502 peer_msg_handler.go:257: [0;31m[error] [region 144] 145 apply split begin, split key [49 49 32 48 48 48 48 48 48 48 50], StartKey [49 48 32 48 48 48 48 48 48 48 54], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:15.503599 peer.go:41: [0;37m[info] region id:162 start_key:"11 00000002" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:163 store_id:1 > peers:<id:164 store_id:2 > peers:<id:165 store_id:3 > peers:<id:166 store_id:4 > peers:<id:167 store_id:5 >  create peer with ID 163[0m
+2022/03/22 20:12:15.522664 peer_msg_handler.go:322: [0;31m[error] [region 144] 145 apply split finished[0m
+2022/03/22 20:12:15.588064 peer_msg_handler.go:257: [0;31m[error] [region 144] 146 apply split begin, split key [49 49 32 48 48 48 48 48 48 48 50], StartKey [49 48 32 48 48 48 48 48 48 48 54], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:15.588145 peer.go:41: [0;37m[info] region id:162 start_key:"11 00000002" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:163 store_id:1 > peers:<id:164 store_id:2 > peers:<id:165 store_id:3 > peers:<id:166 store_id:4 > peers:<id:167 store_id:5 >  create peer with ID 164[0m
+2022/03/22 20:12:15.604290 peer_msg_handler.go:322: [0;31m[error] [region 144] 146 apply split finished[0m
+2022/03/22 20:12:16.186858 raft.go:433: [0;31m[error] node 165 becomeLeader at term 6 with index 5[0m
+2022/03/22 20:12:16.380917 peer_msg_handler.go:573: [0;31m[error] [region 162] 165 on split with [49 49 32 48 48 48 48 48 48 49 50][0m
+2022/03/22 20:12:16.469982 peer_msg_handler.go:736: [0;31m[error] [region 162] 165 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:12:16.470037 peer_msg_handler.go:573: [0;31m[error] [region 162] 165 on split with [49 49 32 48 48 48 48 48 48 49 50][0m
+2022/03/22 20:12:16.562559 peer_msg_handler.go:736: [0;31m[error] [region 162] 165 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:12:16.562625 peer_msg_handler.go:573: [0;31m[error] [region 162] 165 on split with [49 49 32 48 48 48 48 48 48 49 50][0m
+2022/03/22 20:12:16.642261 peer_msg_handler.go:573: [0;31m[error] [region 162] 165 on split with [49 49 32 48 48 48 48 48 48 49 50][0m
+2022/03/22 20:12:16.642298 peer_msg_handler.go:736: [0;31m[error] [region 162] 165 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:12:16.717290 peer_msg_handler.go:257: [0;31m[error] [region 162] 165 apply split begin, split key [49 49 32 48 48 48 48 48 48 49 50], StartKey [49 49 32 48 48 48 48 48 48 48 50], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:16.717486 peer.go:41: [0;37m[info] region id:186 start_key:"11 00000012" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:187 store_id:1 > peers:<id:188 store_id:2 > peers:<id:189 store_id:3 > peers:<id:190 store_id:4 > peers:<id:191 store_id:5 >  create peer with ID 189[0m
+2022/03/22 20:12:16.782484 peer_msg_handler.go:322: [0;31m[error] [region 162] 165 apply split finished[0m
+2022/03/22 20:12:16.807669 peer_msg_handler.go:573: [0;31m[error] [region 162] 165 on split with [49 49 32 48 48 48 48 48 48 49 50][0m
+2022/03/22 20:12:16.866853 peer_msg_handler.go:257: [0;31m[error] [region 162] 166 apply split begin, split key [49 49 32 48 48 48 48 48 48 49 50], StartKey [49 49 32 48 48 48 48 48 48 48 50], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:16.866889 peer_msg_handler.go:257: [0;31m[error] [region 162] 167 apply split begin, split key [49 49 32 48 48 48 48 48 48 49 50], StartKey [49 49 32 48 48 48 48 48 48 48 50], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:16.866924 peer.go:41: [0;37m[info] region id:186 start_key:"11 00000012" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:187 store_id:1 > peers:<id:188 store_id:2 > peers:<id:189 store_id:3 > peers:<id:190 store_id:4 > peers:<id:191 store_id:5 >  create peer with ID 190[0m
+2022/03/22 20:12:16.867085 peer.go:41: [0;37m[info] region id:186 start_key:"11 00000012" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:187 store_id:1 > peers:<id:188 store_id:2 > peers:<id:189 store_id:3 > peers:<id:190 store_id:4 > peers:<id:191 store_id:5 >  create peer with ID 191[0m
+2022/03/22 20:12:16.870753 peer_msg_handler.go:257: [0;31m[error] [region 162] 163 apply split begin, split key [49 49 32 48 48 48 48 48 48 49 50], StartKey [49 49 32 48 48 48 48 48 48 48 50], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:16.870865 peer.go:41: [0;37m[info] region id:186 start_key:"11 00000012" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:187 store_id:1 > peers:<id:188 store_id:2 > peers:<id:189 store_id:3 > peers:<id:190 store_id:4 > peers:<id:191 store_id:5 >  create peer with ID 187[0m
+2022/03/22 20:12:16.887289 peer_msg_handler.go:322: [0;31m[error] [region 162] 167 apply split finished[0m
+2022/03/22 20:12:16.887311 peer_msg_handler.go:322: [0;31m[error] [region 162] 166 apply split finished[0m
+2022/03/22 20:12:16.889856 peer_msg_handler.go:322: [0;31m[error] [region 162] 163 apply split finished[0m
+2022/03/22 20:12:16.901330 peer_msg_handler.go:257: [0;31m[error] [region 162] 164 apply split begin, split key [49 49 32 48 48 48 48 48 48 49 50], StartKey [49 49 32 48 48 48 48 48 48 48 50], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:16.901500 peer.go:41: [0;37m[info] region id:186 start_key:"11 00000012" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:187 store_id:1 > peers:<id:188 store_id:2 > peers:<id:189 store_id:3 > peers:<id:190 store_id:4 > peers:<id:191 store_id:5 >  create peer with ID 188[0m
+2022/03/22 20:12:16.917406 peer_msg_handler.go:322: [0;31m[error] [region 162] 164 apply split finished[0m
+2022/03/22 20:12:17.592695 raft.go:433: [0;31m[error] node 190 becomeLeader at term 6 with index 5[0m
+2022/03/22 20:12:17.678457 peer_msg_handler.go:573: [0;31m[error] [region 186] 190 on split with [49 50 32 48 48 48 48 48 48 48 51][0m
+2022/03/22 20:12:17.739922 peer_msg_handler.go:736: [0;31m[error] [region 186] 190 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:12:17.739985 peer_msg_handler.go:573: [0;31m[error] [region 186] 190 on split with [49 50 32 48 48 48 48 48 48 48 51][0m
+2022/03/22 20:12:17.805953 peer_msg_handler.go:736: [0;31m[error] [region 186] 190 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:12:17.890481 peer_msg_handler.go:573: [0;31m[error] [region 186] 190 on split with [49 50 32 48 48 48 48 48 48 48 51][0m
+2022/03/22 20:12:17.895696 peer_msg_handler.go:257: [0;31m[error] [region 186] 190 apply split begin, split key [49 50 32 48 48 48 48 48 48 48 51], StartKey [49 49 32 48 48 48 48 48 48 49 50], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:17.895847 peer.go:41: [0;37m[info] region id:216 start_key:"12 00000003" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:217 store_id:1 > peers:<id:218 store_id:2 > peers:<id:219 store_id:3 > peers:<id:220 store_id:4 > peers:<id:221 store_id:5 >  create peer with ID 220[0m
+2022/03/22 20:12:17.913979 peer_msg_handler.go:322: [0;31m[error] [region 186] 190 apply split finished[0m
+2022/03/22 20:12:17.971183 peer_msg_handler.go:257: [0;31m[error] [region 186] 188 apply split begin, split key [49 50 32 48 48 48 48 48 48 48 51], StartKey [49 49 32 48 48 48 48 48 48 49 50], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:17.971316 peer.go:41: [0;37m[info] region id:216 start_key:"12 00000003" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:217 store_id:1 > peers:<id:218 store_id:2 > peers:<id:219 store_id:3 > peers:<id:220 store_id:4 > peers:<id:221 store_id:5 >  create peer with ID 218[0m
+2022/03/22 20:12:17.986946 peer_msg_handler.go:322: [0;31m[error] [region 186] 188 apply split finished[0m
+2022/03/22 20:12:17.989380 peer_msg_handler.go:573: [0;31m[error] [region 186] 190 on split with [49 50 32 48 48 48 48 48 48 48 51][0m
+2022/03/22 20:12:18.002197 peer_msg_handler.go:257: [0;31m[error] [region 186] 191 apply split begin, split key [49 50 32 48 48 48 48 48 48 48 51], StartKey [49 49 32 48 48 48 48 48 48 49 50], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:18.002329 peer.go:41: [0;37m[info] region id:216 start_key:"12 00000003" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:217 store_id:1 > peers:<id:218 store_id:2 > peers:<id:219 store_id:3 > peers:<id:220 store_id:4 > peers:<id:221 store_id:5 >  create peer with ID 221[0m
+2022/03/22 20:12:18.017572 peer_msg_handler.go:322: [0;31m[error] [region 186] 191 apply split finished[0m
+2022/03/22 20:12:18.017613 peer_msg_handler.go:257: [0;31m[error] [region 186] 189 apply split begin, split key [49 50 32 48 48 48 48 48 48 48 51], StartKey [49 49 32 48 48 48 48 48 48 49 50], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:18.017687 peer.go:41: [0;37m[info] region id:216 start_key:"12 00000003" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:217 store_id:1 > peers:<id:218 store_id:2 > peers:<id:219 store_id:3 > peers:<id:220 store_id:4 > peers:<id:221 store_id:5 >  create peer with ID 219[0m
+2022/03/22 20:12:18.035526 peer_msg_handler.go:322: [0;31m[error] [region 186] 189 apply split finished[0m
+2022/03/22 20:12:18.035591 peer_msg_handler.go:257: [0;31m[error] [region 186] 187 apply split begin, split key [49 50 32 48 48 48 48 48 48 48 51], StartKey [49 49 32 48 48 48 48 48 48 49 50], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:18.035650 peer.go:41: [0;37m[info] region id:216 start_key:"12 00000003" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:217 store_id:1 > peers:<id:218 store_id:2 > peers:<id:219 store_id:3 > peers:<id:220 store_id:4 > peers:<id:221 store_id:5 >  create peer with ID 217[0m
+2022/03/22 20:12:18.050306 peer_msg_handler.go:322: [0;31m[error] [region 186] 187 apply split finished[0m
+2022/03/22 20:12:18.665162 raft.go:433: [0;31m[error] node 219 becomeLeader at term 6 with index 5[0m
+2022/03/22 20:12:18.756346 peer_msg_handler.go:573: [0;31m[error] [region 216] 219 on split with [49 50 32 48 48 48 48 48 48 49 51][0m
+2022/03/22 20:12:18.858342 peer_msg_handler.go:736: [0;31m[error] [region 216] 219 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:12:18.858424 peer_msg_handler.go:573: [0;31m[error] [region 216] 219 on split with [49 50 32 48 48 48 48 48 48 49 51][0m
+2022/03/22 20:12:18.962946 peer_msg_handler.go:736: [0;31m[error] [region 216] 219 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:12:18.963011 peer_msg_handler.go:573: [0;31m[error] [region 216] 219 on split with [49 50 32 48 48 48 48 48 48 49 51][0m
+2022/03/22 20:12:18.995960 peer_msg_handler.go:257: [0;31m[error] [region 216] 219 apply split begin, split key [49 50 32 48 48 48 48 48 48 49 51], StartKey [49 50 32 48 48 48 48 48 48 48 51], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:18.996099 peer.go:41: [0;37m[info] region id:240 start_key:"12 00000013" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:241 store_id:1 > peers:<id:242 store_id:2 > peers:<id:243 store_id:3 > peers:<id:244 store_id:4 > peers:<id:245 store_id:5 >  create peer with ID 243[0m
+2022/03/22 20:12:19.011466 peer_msg_handler.go:322: [0;31m[error] [region 216] 219 apply split finished[0m
+2022/03/22 20:12:19.016692 peer_msg_handler.go:257: [0;31m[error] [region 216] 218 apply split begin, split key [49 50 32 48 48 48 48 48 48 49 51], StartKey [49 50 32 48 48 48 48 48 48 48 51], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:19.016782 peer.go:41: [0;37m[info] region id:240 start_key:"12 00000013" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:241 store_id:1 > peers:<id:242 store_id:2 > peers:<id:243 store_id:3 > peers:<id:244 store_id:4 > peers:<id:245 store_id:5 >  create peer with ID 242[0m
+2022/03/22 20:12:19.033739 peer_msg_handler.go:322: [0;31m[error] [region 216] 218 apply split finished[0m
+2022/03/22 20:12:19.063280 peer_msg_handler.go:257: [0;31m[error] [region 216] 220 apply split begin, split key [49 50 32 48 48 48 48 48 48 49 51], StartKey [49 50 32 48 48 48 48 48 48 48 51], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:19.063356 peer.go:41: [0;37m[info] region id:240 start_key:"12 00000013" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:241 store_id:1 > peers:<id:242 store_id:2 > peers:<id:243 store_id:3 > peers:<id:244 store_id:4 > peers:<id:245 store_id:5 >  create peer with ID 244[0m
+2022/03/22 20:12:19.065508 peer_msg_handler.go:573: [0;31m[error] [region 216] 219 on split with [49 50 32 48 48 48 48 48 48 49 51][0m
+2022/03/22 20:12:19.079636 peer_msg_handler.go:322: [0;31m[error] [region 216] 220 apply split finished[0m
+2022/03/22 20:12:19.092069 peer_msg_handler.go:257: [0;31m[error] [region 216] 217 apply split begin, split key [49 50 32 48 48 48 48 48 48 49 51], StartKey [49 50 32 48 48 48 48 48 48 48 51], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:19.092171 peer.go:41: [0;37m[info] region id:240 start_key:"12 00000013" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:241 store_id:1 > peers:<id:242 store_id:2 > peers:<id:243 store_id:3 > peers:<id:244 store_id:4 > peers:<id:245 store_id:5 >  create peer with ID 241[0m
+2022/03/22 20:12:19.107431 peer_msg_handler.go:322: [0;31m[error] [region 216] 217 apply split finished[0m
+2022/03/22 20:12:19.140237 peer_msg_handler.go:257: [0;31m[error] [region 216] 221 apply split begin, split key [49 50 32 48 48 48 48 48 48 49 51], StartKey [49 50 32 48 48 48 48 48 48 48 51], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:19.140333 peer.go:41: [0;37m[info] region id:240 start_key:"12 00000013" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:241 store_id:1 > peers:<id:242 store_id:2 > peers:<id:243 store_id:3 > peers:<id:244 store_id:4 > peers:<id:245 store_id:5 >  create peer with ID 245[0m
+2022/03/22 20:12:19.156895 peer_msg_handler.go:322: [0;31m[error] [region 216] 221 apply split finished[0m
+2022/03/22 20:12:20.924614 raft.go:433: [0;31m[error] node 241 becomeLeader at term 7 with index 5[0m
+2022/03/22 20:12:21.045649 peer_msg_handler.go:573: [0;31m[error] [region 240] 241 on split with [49 51 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:21.149735 peer_msg_handler.go:736: [0;31m[error] [region 240] 241 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:12:21.149787 peer_msg_handler.go:573: [0;31m[error] [region 240] 241 on split with [49 51 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:21.253730 peer_msg_handler.go:736: [0;31m[error] [region 240] 241 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:12:21.253784 peer_msg_handler.go:573: [0;31m[error] [region 240] 241 on split with [49 51 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:21.363827 peer_msg_handler.go:736: [0;31m[error] [region 240] 241 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:12:21.363924 peer_msg_handler.go:573: [0;31m[error] [region 240] 241 on split with [49 51 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:21.474721 peer_msg_handler.go:257: [0;31m[error] [region 240] 241 apply split begin, split key [49 51 32 48 48 48 48 48 48 48 49], StartKey [49 50 32 48 48 48 48 48 48 49 51], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:21.474875 peer.go:41: [0;37m[info] region id:264 start_key:"13 00000001" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:265 store_id:1 > peers:<id:266 store_id:2 > peers:<id:267 store_id:3 > peers:<id:268 store_id:4 > peers:<id:269 store_id:5 >  create peer with ID 265[0m
+2022/03/22 20:12:21.480024 peer_msg_handler.go:257: [0;31m[error] [region 240] 242 apply split begin, split key [49 51 32 48 48 48 48 48 48 48 49], StartKey [49 50 32 48 48 48 48 48 48 49 51], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:21.480137 peer.go:41: [0;37m[info] region id:264 start_key:"13 00000001" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:265 store_id:1 > peers:<id:266 store_id:2 > peers:<id:267 store_id:3 > peers:<id:268 store_id:4 > peers:<id:269 store_id:5 >  create peer with ID 266[0m
+2022/03/22 20:12:21.490591 peer_msg_handler.go:322: [0;31m[error] [region 240] 241 apply split finished[0m
+2022/03/22 20:12:21.495877 peer_msg_handler.go:573: [0;31m[error] [region 240] 241 on split with [49 51 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:21.495962 peer_msg_handler.go:322: [0;31m[error] [region 240] 242 apply split finished[0m
+2022/03/22 20:12:21.578709 peer_msg_handler.go:257: [0;31m[error] [region 240] 244 apply split begin, split key [49 51 32 48 48 48 48 48 48 48 49], StartKey [49 50 32 48 48 48 48 48 48 49 51], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:21.578778 peer.go:41: [0;37m[info] region id:264 start_key:"13 00000001" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:265 store_id:1 > peers:<id:266 store_id:2 > peers:<id:267 store_id:3 > peers:<id:268 store_id:4 > peers:<id:269 store_id:5 >  create peer with ID 268[0m
+2022/03/22 20:12:21.594310 peer_msg_handler.go:322: [0;31m[error] [region 240] 244 apply split finished[0m
+2022/03/22 20:12:21.643897 peer_msg_handler.go:257: [0;31m[error] [region 240] 245 apply split begin, split key [49 51 32 48 48 48 48 48 48 48 49], StartKey [49 50 32 48 48 48 48 48 48 49 51], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:21.644123 peer.go:41: [0;37m[info] region id:264 start_key:"13 00000001" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:265 store_id:1 > peers:<id:266 store_id:2 > peers:<id:267 store_id:3 > peers:<id:268 store_id:4 > peers:<id:269 store_id:5 >  create peer with ID 269[0m
+2022/03/22 20:12:21.646410 peer_msg_handler.go:257: [0;31m[error] [region 240] 243 apply split begin, split key [49 51 32 48 48 48 48 48 48 48 49], StartKey [49 50 32 48 48 48 48 48 48 49 51], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:21.646499 peer.go:41: [0;37m[info] region id:264 start_key:"13 00000001" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:265 store_id:1 > peers:<id:266 store_id:2 > peers:<id:267 store_id:3 > peers:<id:268 store_id:4 > peers:<id:269 store_id:5 >  create peer with ID 267[0m
+2022/03/22 20:12:21.658969 peer_msg_handler.go:322: [0;31m[error] [region 240] 245 apply split finished[0m
+2022/03/22 20:12:21.661506 peer_msg_handler.go:322: [0;31m[error] [region 240] 243 apply split finished[0m
+2022/03/22 20:12:22.250247 raft.go:433: [0;31m[error] node 267 becomeLeader at term 6 with index 5[0m
+2022/03/22 20:12:22.536702 peer_msg_handler.go:573: [0;31m[error] [region 264] 267 on split with [49 51 32 48 48 48 48 48 48 49 49][0m
+2022/03/22 20:12:22.654658 peer_msg_handler.go:736: [0;31m[error] [region 264] 267 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:12:22.654715 peer_msg_handler.go:573: [0;31m[error] [region 264] 267 on split with [49 51 32 48 48 48 48 48 48 49 49][0m
+2022/03/22 20:12:22.654736 peer_msg_handler.go:573: [0;31m[error] [region 264] 267 on split with [49 51 32 48 48 48 48 48 48 49 49][0m
+2022/03/22 20:12:22.857036 peer_msg_handler.go:736: [0;31m[error] [region 264] 267 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:12:22.857091 peer_msg_handler.go:736: [0;31m[error] [region 264] 267 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:12:22.857115 peer_msg_handler.go:573: [0;31m[error] [region 264] 267 on split with [49 51 32 48 48 48 48 48 48 49 49][0m
+2022/03/22 20:12:22.857128 peer_msg_handler.go:573: [0;31m[error] [region 264] 267 on split with [49 51 32 48 48 48 48 48 48 49 49][0m
+2022/03/22 20:12:22.872778 peer_msg_handler.go:257: [0;31m[error] [region 264] 267 apply split begin, split key [49 51 32 48 48 48 48 48 48 49 49], StartKey [49 51 32 48 48 48 48 48 48 48 49], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:22.872927 peer.go:41: [0;37m[info] region id:294 start_key:"13 00000011" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:295 store_id:1 > peers:<id:296 store_id:2 > peers:<id:297 store_id:3 > peers:<id:298 store_id:4 > peers:<id:299 store_id:5 >  create peer with ID 297[0m
+2022/03/22 20:12:22.888229 peer_msg_handler.go:322: [0;31m[error] [region 264] 267 apply split finished[0m
+2022/03/22 20:12:22.930912 peer_msg_handler.go:257: [0;31m[error] [region 264] 269 apply split begin, split key [49 51 32 48 48 48 48 48 48 49 49], StartKey [49 51 32 48 48 48 48 48 48 48 49], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:22.931010 peer.go:41: [0;37m[info] region id:294 start_key:"13 00000011" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:295 store_id:1 > peers:<id:296 store_id:2 > peers:<id:297 store_id:3 > peers:<id:298 store_id:4 > peers:<id:299 store_id:5 >  create peer with ID 299[0m
+2022/03/22 20:12:22.949781 peer_msg_handler.go:322: [0;31m[error] [region 264] 269 apply split finished[0m
+2022/03/22 20:12:22.952329 peer_msg_handler.go:257: [0;31m[error] [region 264] 266 apply split begin, split key [49 51 32 48 48 48 48 48 48 49 49], StartKey [49 51 32 48 48 48 48 48 48 48 49], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:22.952390 peer.go:41: [0;37m[info] region id:294 start_key:"13 00000011" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:295 store_id:1 > peers:<id:296 store_id:2 > peers:<id:297 store_id:3 > peers:<id:298 store_id:4 > peers:<id:299 store_id:5 >  create peer with ID 296[0m
+2022/03/22 20:12:22.960569 peer_msg_handler.go:257: [0;31m[error] [region 264] 268 apply split begin, split key [49 51 32 48 48 48 48 48 48 49 49], StartKey [49 51 32 48 48 48 48 48 48 48 49], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:22.960722 peer.go:41: [0;37m[info] region id:294 start_key:"13 00000011" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:295 store_id:1 > peers:<id:296 store_id:2 > peers:<id:297 store_id:3 > peers:<id:298 store_id:4 > peers:<id:299 store_id:5 >  create peer with ID 298[0m
+2022/03/22 20:12:22.968971 peer_msg_handler.go:322: [0;31m[error] [region 264] 266 apply split finished[0m
+2022/03/22 20:12:22.976891 peer_msg_handler.go:322: [0;31m[error] [region 264] 268 apply split finished[0m
+2022/03/22 20:12:22.984493 peer_msg_handler.go:573: [0;31m[error] [region 264] 267 on split with [49 51 32 48 48 48 48 48 48 49 49][0m
+2022/03/22 20:12:22.984521 peer_msg_handler.go:573: [0;31m[error] [region 264] 267 on split with [49 51 32 48 48 48 48 48 48 49 49][0m
+2022/03/22 20:12:23.068640 peer_msg_handler.go:257: [0;31m[error] [region 264] 265 apply split begin, split key [49 51 32 48 48 48 48 48 48 49 49], StartKey [49 51 32 48 48 48 48 48 48 48 49], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:23.068728 peer.go:41: [0;37m[info] region id:294 start_key:"13 00000011" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:295 store_id:1 > peers:<id:296 store_id:2 > peers:<id:297 store_id:3 > peers:<id:298 store_id:4 > peers:<id:299 store_id:5 >  create peer with ID 295[0m
+2022/03/22 20:12:23.083709 peer_msg_handler.go:322: [0;31m[error] [region 264] 265 apply split finished[0m
+2022/03/22 20:12:23.879752 raft.go:433: [0;31m[error] node 295 becomeLeader at term 6 with index 5[0m
+2022/03/22 20:12:24.068110 peer_msg_handler.go:573: [0;31m[error] [region 294] 295 on split with [49 52 32 48 48 48 48 48 48 48 50][0m
+2022/03/22 20:12:24.190208 peer_msg_handler.go:736: [0;31m[error] [region 294] 295 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:12:24.190368 peer_msg_handler.go:573: [0;31m[error] [region 294] 295 on split with [49 52 32 48 48 48 48 48 48 48 50][0m
+2022/03/22 20:12:24.325652 peer_msg_handler.go:736: [0;31m[error] [region 294] 295 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:12:24.325717 peer_msg_handler.go:573: [0;31m[error] [region 294] 295 on split with [49 52 32 48 48 48 48 48 48 48 50][0m
+2022/03/22 20:12:24.443597 peer_msg_handler.go:736: [0;31m[error] [region 294] 295 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:12:24.443651 peer_msg_handler.go:573: [0;31m[error] [region 294] 295 on split with [49 52 32 48 48 48 48 48 48 48 50][0m
+2022/03/22 20:12:24.501080 peer_msg_handler.go:257: [0;31m[error] [region 294] 295 apply split begin, split key [49 52 32 48 48 48 48 48 48 48 50], StartKey [49 51 32 48 48 48 48 48 48 49 49], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:24.501182 peer.go:41: [0;37m[info] region id:336 start_key:"14 00000002" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:337 store_id:1 > peers:<id:338 store_id:2 > peers:<id:339 store_id:3 > peers:<id:340 store_id:4 > peers:<id:341 store_id:5 >  create peer with ID 337[0m
+2022/03/22 20:12:24.508069 peer_msg_handler.go:322: [0;31m[error] [region 294] 295 apply split finished[0m
+2022/03/22 20:12:24.515079 peer_msg_handler.go:257: [0;31m[error] [region 294] 299 apply split begin, split key [49 52 32 48 48 48 48 48 48 48 50], StartKey [49 51 32 48 48 48 48 48 48 49 49], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:24.515184 peer.go:41: [0;37m[info] region id:336 start_key:"14 00000002" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:337 store_id:1 > peers:<id:338 store_id:2 > peers:<id:339 store_id:3 > peers:<id:340 store_id:4 > peers:<id:341 store_id:5 >  create peer with ID 341[0m
+2022/03/22 20:12:24.525734 peer_msg_handler.go:257: [0;31m[error] [region 294] 297 apply split begin, split key [49 52 32 48 48 48 48 48 48 48 50], StartKey [49 51 32 48 48 48 48 48 48 49 49], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:24.525823 peer.go:41: [0;37m[info] region id:336 start_key:"14 00000002" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:337 store_id:1 > peers:<id:338 store_id:2 > peers:<id:339 store_id:3 > peers:<id:340 store_id:4 > peers:<id:341 store_id:5 >  create peer with ID 339[0m
+2022/03/22 20:12:24.525730 peer_msg_handler.go:322: [0;31m[error] [region 294] 299 apply split finished[0m
+2022/03/22 20:12:24.545725 peer_msg_handler.go:573: [0;31m[error] [region 294] 295 on split with [49 52 32 48 48 48 48 48 48 48 50][0m
+2022/03/22 20:12:24.549559 peer_msg_handler.go:322: [0;31m[error] [region 294] 297 apply split finished[0m
+2022/03/22 20:12:24.551418 peer_msg_handler.go:257: [0;31m[error] [region 294] 298 apply split begin, split key [49 52 32 48 48 48 48 48 48 48 50], StartKey [49 51 32 48 48 48 48 48 48 49 49], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:24.551510 peer.go:41: [0;37m[info] region id:336 start_key:"14 00000002" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:337 store_id:1 > peers:<id:338 store_id:2 > peers:<id:339 store_id:3 > peers:<id:340 store_id:4 > peers:<id:341 store_id:5 >  create peer with ID 340[0m
+2022/03/22 20:12:24.568190 peer_msg_handler.go:322: [0;31m[error] [region 294] 298 apply split finished[0m
+2022/03/22 20:12:24.576194 peer_msg_handler.go:257: [0;31m[error] [region 294] 296 apply split begin, split key [49 52 32 48 48 48 48 48 48 48 50], StartKey [49 51 32 48 48 48 48 48 48 49 49], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:24.576342 peer.go:41: [0;37m[info] region id:336 start_key:"14 00000002" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:337 store_id:1 > peers:<id:338 store_id:2 > peers:<id:339 store_id:3 > peers:<id:340 store_id:4 > peers:<id:341 store_id:5 >  create peer with ID 338[0m
+2022/03/22 20:12:24.591538 peer_msg_handler.go:322: [0;31m[error] [region 294] 296 apply split finished[0m
+2022/03/22 20:12:25.337604 raft.go:433: [0;31m[error] node 340 becomeLeader at term 6 with index 5[0m
+2022/03/22 20:12:25.545435 peer_msg_handler.go:573: [0;31m[error] [region 336] 340 on split with [49 52 32 48 48 48 48 48 48 49 50][0m
+2022/03/22 20:12:25.651105 peer_msg_handler.go:736: [0;31m[error] [region 336] 340 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:12:25.651151 peer_msg_handler.go:573: [0;31m[error] [region 336] 340 on split with [49 52 32 48 48 48 48 48 48 49 50][0m
+2022/03/22 20:12:25.776021 peer_msg_handler.go:736: [0;31m[error] [region 336] 340 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:12:25.776125 peer_msg_handler.go:573: [0;31m[error] [region 336] 340 on split with [49 52 32 48 48 48 48 48 48 49 50][0m
+2022/03/22 20:12:25.888100 peer_msg_handler.go:736: [0;31m[error] [region 336] 340 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:12:25.888144 peer_msg_handler.go:573: [0;31m[error] [region 336] 340 on split with [49 52 32 48 48 48 48 48 48 49 50][0m
+2022/03/22 20:12:25.888155 peer_msg_handler.go:573: [0;31m[error] [region 336] 340 on split with [49 52 32 48 48 48 48 48 48 49 50][0m
+2022/03/22 20:12:25.916963 peer_msg_handler.go:257: [0;31m[error] [region 336] 340 apply split begin, split key [49 52 32 48 48 48 48 48 48 49 50], StartKey [49 52 32 48 48 48 48 48 48 48 50], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:25.917072 peer.go:41: [0;37m[info] region id:366 start_key:"14 00000012" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:367 store_id:1 > peers:<id:368 store_id:2 > peers:<id:369 store_id:3 > peers:<id:370 store_id:4 > peers:<id:371 store_id:5 >  create peer with ID 370[0m
+2022/03/22 20:12:25.935426 peer_msg_handler.go:322: [0;31m[error] [region 336] 340 apply split finished[0m
+2022/03/22 20:12:25.963648 peer_msg_handler.go:257: [0;31m[error] [region 336] 337 apply split begin, split key [49 52 32 48 48 48 48 48 48 49 50], StartKey [49 52 32 48 48 48 48 48 48 48 50], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:25.963859 peer.go:41: [0;37m[info] region id:366 start_key:"14 00000012" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:367 store_id:1 > peers:<id:368 store_id:2 > peers:<id:369 store_id:3 > peers:<id:370 store_id:4 > peers:<id:371 store_id:5 >  create peer with ID 367[0m
+2022/03/22 20:12:25.982332 peer_msg_handler.go:322: [0;31m[error] [region 336] 337 apply split finished[0m
+2022/03/22 20:12:26.029499 peer_msg_handler.go:573: [0;31m[error] [region 336] 340 on split with [49 52 32 48 48 48 48 48 48 49 50][0m
+2022/03/22 20:12:26.032268 peer_msg_handler.go:257: [0;31m[error] [region 336] 341 apply split begin, split key [49 52 32 48 48 48 48 48 48 49 50], StartKey [49 52 32 48 48 48 48 48 48 48 50], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:26.032353 peer.go:41: [0;37m[info] region id:366 start_key:"14 00000012" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:367 store_id:1 > peers:<id:368 store_id:2 > peers:<id:369 store_id:3 > peers:<id:370 store_id:4 > peers:<id:371 store_id:5 >  create peer with ID 371[0m
+2022/03/22 20:12:26.041114 peer_msg_handler.go:257: [0;31m[error] [region 336] 339 apply split begin, split key [49 52 32 48 48 48 48 48 48 49 50], StartKey [49 52 32 48 48 48 48 48 48 48 50], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:26.041197 peer.go:41: [0;37m[info] region id:366 start_key:"14 00000012" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:367 store_id:1 > peers:<id:368 store_id:2 > peers:<id:369 store_id:3 > peers:<id:370 store_id:4 > peers:<id:371 store_id:5 >  create peer with ID 369[0m
+2022/03/22 20:12:26.044258 peer_msg_handler.go:257: [0;31m[error] [region 336] 338 apply split begin, split key [49 52 32 48 48 48 48 48 48 49 50], StartKey [49 52 32 48 48 48 48 48 48 48 50], EndKey [49 53 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:12:26.044361 peer.go:41: [0;37m[info] region id:366 start_key:"14 00000012" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:367 store_id:1 > peers:<id:368 store_id:2 > peers:<id:369 store_id:3 > peers:<id:370 store_id:4 > peers:<id:371 store_id:5 >  create peer with ID 368[0m
+2022/03/22 20:12:26.049560 peer_msg_handler.go:322: [0;31m[error] [region 336] 341 apply split finished[0m
+2022/03/22 20:12:26.057635 peer_msg_handler.go:322: [0;31m[error] [region 336] 339 apply split finished[0m
+2022/03/22 20:12:26.066518 peer_msg_handler.go:322: [0;31m[error] [region 336] 338 apply split finished[0m
+2022/03/22 20:12:26.921859 raft.go:433: [0;31m[error] node 369 becomeLeader at term 6 with index 5[0m
+2022/03/22 20:12:51.128655 raft.go:433: [0;31m[error] node 46 becomeLeader at term 8 with index 9[0m
+2022/03/22 20:12:51.131394 raft.go:433: [0;31m[error] node 164 becomeLeader at term 7 with index 9[0m
+2022/03/22 20:13:20.445846 raft.go:433: [0;31m[error] node 27 becomeLeader at term 9 with index 40[0m
+2022/03/22 20:13:20.446141 raft.go:433: [0;31m[error] node 165 becomeLeader at term 9 with index 21[0m
+2022/03/22 20:13:20.575966 raft.go:433: [0;31m[error] node 45 becomeLeader at term 9 with index 10[0m
+2022/03/22 20:13:20.578510 raft.go:433: [0;31m[error] node 296 becomeLeader at term 7 with index 9[0m
+2022/03/22 20:13:20.578595 raft.go:433: [0;31m[error] node 2 becomeLeader at term 9 with index 376[0m
+2022/03/22 20:13:20.594943 raft.go:433: [0;31m[error] node 64 becomeLeader at term 8 with index 20[0m
+2022/03/22 20:13:20.595240 raft.go:433: [0;31m[error] node 130 becomeLeader at term 8 with index 19[0m
+2022/03/22 20:13:20.679757 raft.go:433: [0;31m[error] node 53 becomeLeader at term 7 with index 7[0m
+2022/03/22 20:13:20.928025 raft.go:433: [0;31m[error] node 35 becomeLeader at term 10 with index 29[0m
+2022/03/22 20:13:20.947540 raft.go:433: [0;31m[error] node 219 becomeLeader at term 9 with index 19[0m
+2022/03/22 20:13:20.949984 raft.go:433: [0;31m[error] node 20 becomeLeader at term 9 with index 91[0m
+2022/03/22 20:13:21.006220 raft.go:433: [0;31m[error] node 103 becomeLeader at term 9 with index 6[0m
+2022/03/22 20:13:21.124525 raft.go:433: [0;31m[error] node 369 becomeLeader at term 8 with index 6[0m
+2022/03/22 20:13:21.144667 raft.go:433: [0;31m[error] node 10 becomeLeader at term 11 with index 145[0m
+2022/03/22 20:13:21.197582 raft.go:433: [0;31m[error] node 73 becomeLeader at term 8 with index 7[0m
+2022/03/22 20:13:21.217653 raft.go:433: [0;31m[error] node 148 becomeLeader at term 9 with index 21[0m
+2022/03/22 20:13:21.250453 raft.go:433: [0;31m[error] node 14 becomeLeader at term 11 with index 107[0m
+2022/03/22 20:13:21.299261 raft.go:433: [0;31m[error] node 190 becomeLeader at term 8 with index 20[0m
+2022/03/22 20:13:21.299411 raft.go:433: [0;31m[error] node 340 becomeLeader at term 8 with index 9[0m
+2022/03/22 20:13:21.350717 raft.go:433: [0;31m[error] node 266 becomeLeader at term 8 with index 10[0m
+2022/03/22 20:13:21.450694 raft.go:433: [0;31m[error] node 116 becomeLeader at term 9 with index 21[0m
+2022/03/22 20:13:21.621108 raft.go:433: [0;31m[error] node 87 becomeLeader at term 8 with index 19[0m
+2022/03/22 20:13:21.632925 raft.go:433: [0;31m[error] node 79 becomeLeader at term 9 with index 13[0m
+2022/03/22 20:13:21.647693 raft.go:433: [0;31m[error] node 59 becomeLeader at term 8 with index 7[0m
+2022/03/22 20:13:24.927470 raft.go:433: [0;31m[error] node 32 becomeLeader at term 11 with index 30[0m
+2022/03/22 20:14:14.202868 test_test.go:272: [0;33m[warning] shutdown servers
+[0m
+2022/03/22 20:14:14.202953 node.go:198: [0;37m[info] stop raft store thread, storeID: 1[0m
+2022/03/22 20:14:14.410295 node.go:198: [0;37m[info] stop raft store thread, storeID: 2[0m
+2022/03/22 20:14:14.538212 node.go:198: [0;37m[info] stop raft store thread, storeID: 3[0m
+2022/03/22 20:14:15.017173 raft.go:433: [0;31m[error] node 83 becomeLeader at term 10 with index 29[0m
+2022/03/22 20:14:15.044371 node.go:198: [0;37m[info] stop raft store thread, storeID: 4[0m
+2022/03/22 20:14:15.156629 node.go:198: [0;37m[info] stop raft store thread, storeID: 5[0m
+2022/03/22 20:14:15.692927 test_test.go:279: [0;33m[warning] restart servers
+[0m
+2022/03/22 20:14:15.695685 node.go:193: [0;37m[info] start raft store node, storeID: 1[0m
+2022/03/22 20:14:15.696056 peer.go:41: [0;37m[info] region id:1 end_key:"0 00000011" region_epoch:<conf_ver:1 version:4 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 > peers:<id:5 store_id:5 >  create peer with ID 1[0m
+2022/03/22 20:14:15.696552 peer.go:41: [0;37m[info] region id:6 start_key:"18 00000000" end_key:"18 00000010" region_epoch:<conf_ver:1 version:4 > peers:<id:7 store_id:1 > peers:<id:8 store_id:2 > peers:<id:9 store_id:3 > peers:<id:10 store_id:4 > peers:<id:11 store_id:5 >  create peer with ID 7[0m
+2022/03/22 20:14:15.696789 peer.go:41: [0;37m[info] region id:12 start_key:"15 00000001" end_key:"16 00000002" region_epoch:<conf_ver:1 version:2 > peers:<id:13 store_id:1 > peers:<id:14 store_id:2 > peers:<id:15 store_id:3 > peers:<id:16 store_id:4 > peers:<id:17 store_id:5 >  create peer with ID 13[0m
+2022/03/22 20:14:15.697005 peer.go:41: [0;37m[info] region id:18 start_key:"4 00000000" end_key:"6 00000003" region_epoch:<conf_ver:1 version:3 > peers:<id:19 store_id:1 > peers:<id:20 store_id:2 > peers:<id:21 store_id:3 > peers:<id:22 store_id:4 > peers:<id:23 store_id:5 >  create peer with ID 19[0m
+2022/03/22 20:14:15.697236 peer.go:41: [0;37m[info] region id:24 start_key:"3 00000002" end_key:"4 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:25 store_id:1 > peers:<id:26 store_id:2 > peers:<id:27 store_id:3 > peers:<id:28 store_id:4 > peers:<id:29 store_id:5 >  create peer with ID 25[0m
+2022/03/22 20:14:15.697434 peer.go:41: [0;37m[info] region id:30 start_key:"6 00000004" region_epoch:<conf_ver:1 version:1 > peers:<id:31 store_id:1 > peers:<id:32 store_id:2 > peers:<id:33 store_id:3 > peers:<id:34 store_id:4 > peers:<id:35 store_id:5 >  create peer with ID 31[0m
+2022/03/22 20:14:15.697610 peer.go:41: [0;37m[info] region id:42 start_key:"6 00000003" end_key:"6 00000004" region_epoch:<conf_ver:1 version:1 > peers:<id:43 store_id:1 > peers:<id:44 store_id:2 > peers:<id:45 store_id:3 > peers:<id:46 store_id:4 > peers:<id:47 store_id:5 >  create peer with ID 43[0m
+2022/03/22 20:14:15.697720 peer.go:41: [0;37m[info] region id:48 start_key:"18 00000010" end_key:"19 00000008" region_epoch:<conf_ver:1 version:2 > peers:<id:49 store_id:1 > peers:<id:50 store_id:2 > peers:<id:51 store_id:3 > peers:<id:52 store_id:4 > peers:<id:53 store_id:5 >  create peer with ID 49[0m
+2022/03/22 20:14:15.697836 peer.go:41: [0;37m[info] region id:54 start_key:"16 00000002" end_key:"16 00000012" region_epoch:<conf_ver:1 version:2 > peers:<id:55 store_id:1 > peers:<id:56 store_id:2 > peers:<id:57 store_id:3 > peers:<id:58 store_id:4 > peers:<id:59 store_id:5 >  create peer with ID 55[0m
+2022/03/22 20:14:15.697996 peer.go:41: [0;37m[info] region id:60 start_key:"0 00000011" end_key:"1 00000004" region_epoch:<conf_ver:1 version:2 > peers:<id:61 store_id:1 > peers:<id:62 store_id:2 > peers:<id:63 store_id:3 > peers:<id:64 store_id:4 > peers:<id:65 store_id:5 >  create peer with ID 61[0m
+2022/03/22 20:14:15.698122 peer.go:41: [0;37m[info] region id:72 start_key:"16 00000012" end_key:"17 00000002" region_epoch:<conf_ver:1 version:2 > peers:<id:73 store_id:1 > peers:<id:74 store_id:2 > peers:<id:75 store_id:3 > peers:<id:76 store_id:4 > peers:<id:77 store_id:5 >  create peer with ID 73[0m
+2022/03/22 20:14:15.698243 peer.go:41: [0;37m[info] region id:78 start_key:"19 00000008" end_key:"2 00000004" region_epoch:<conf_ver:1 version:2 > peers:<id:79 store_id:1 > peers:<id:80 store_id:2 > peers:<id:81 store_id:3 > peers:<id:82 store_id:4 > peers:<id:83 store_id:5 >  create peer with ID 79[0m
+2022/03/22 20:14:15.698368 peer.go:41: [0;37m[info] region id:84 start_key:"1 00000004" end_key:"1 00000015" region_epoch:<conf_ver:1 version:2 > peers:<id:85 store_id:1 > peers:<id:86 store_id:2 > peers:<id:87 store_id:3 > peers:<id:88 store_id:4 > peers:<id:89 store_id:5 >  create peer with ID 85[0m
+2022/03/22 20:14:15.698526 peer.go:41: [0;37m[info] region id:102 start_key:"17 00000002" end_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:103 store_id:1 > peers:<id:104 store_id:2 > peers:<id:105 store_id:3 > peers:<id:106 store_id:4 > peers:<id:107 store_id:5 >  create peer with ID 103[0m
+2022/03/22 20:14:15.698705 peer.go:41: [0;37m[info] region id:114 start_key:"2 00000004" end_key:"3 00000002" region_epoch:<conf_ver:1 version:1 > peers:<id:115 store_id:1 > peers:<id:116 store_id:2 > peers:<id:117 store_id:3 > peers:<id:118 store_id:4 > peers:<id:119 store_id:5 >  create peer with ID 115[0m
+2022/03/22 20:14:15.698860 peer.go:41: [0;37m[info] region id:126 start_key:"1 00000015" end_key:"10 00000006" region_epoch:<conf_ver:1 version:2 > peers:<id:127 store_id:1 > peers:<id:128 store_id:2 > peers:<id:129 store_id:3 > peers:<id:130 store_id:4 > peers:<id:131 store_id:5 >  create peer with ID 127[0m
+2022/03/22 20:14:15.699064 peer.go:41: [0;37m[info] region id:144 start_key:"10 00000006" end_key:"11 00000002" region_epoch:<conf_ver:1 version:2 > peers:<id:145 store_id:1 > peers:<id:146 store_id:2 > peers:<id:147 store_id:3 > peers:<id:148 store_id:4 > peers:<id:149 store_id:5 >  create peer with ID 145[0m
+2022/03/22 20:14:15.699167 peer.go:41: [0;37m[info] region id:162 start_key:"11 00000002" end_key:"11 00000012" region_epoch:<conf_ver:1 version:2 > peers:<id:163 store_id:1 > peers:<id:164 store_id:2 > peers:<id:165 store_id:3 > peers:<id:166 store_id:4 > peers:<id:167 store_id:5 >  create peer with ID 163[0m
+2022/03/22 20:14:15.699252 peer.go:41: [0;37m[info] region id:186 start_key:"11 00000012" end_key:"12 00000003" region_epoch:<conf_ver:1 version:2 > peers:<id:187 store_id:1 > peers:<id:188 store_id:2 > peers:<id:189 store_id:3 > peers:<id:190 store_id:4 > peers:<id:191 store_id:5 >  create peer with ID 187[0m
+2022/03/22 20:14:15.699336 peer.go:41: [0;37m[info] region id:216 start_key:"12 00000003" end_key:"12 00000013" region_epoch:<conf_ver:1 version:2 > peers:<id:217 store_id:1 > peers:<id:218 store_id:2 > peers:<id:219 store_id:3 > peers:<id:220 store_id:4 > peers:<id:221 store_id:5 >  create peer with ID 217[0m
+2022/03/22 20:14:15.699422 peer.go:41: [0;37m[info] region id:240 start_key:"12 00000013" end_key:"13 00000001" region_epoch:<conf_ver:1 version:2 > peers:<id:241 store_id:1 > peers:<id:242 store_id:2 > peers:<id:243 store_id:3 > peers:<id:244 store_id:4 > peers:<id:245 store_id:5 >  create peer with ID 241[0m
+2022/03/22 20:14:15.699507 peer.go:41: [0;37m[info] region id:264 start_key:"13 00000001" end_key:"13 00000011" region_epoch:<conf_ver:1 version:2 > peers:<id:265 store_id:1 > peers:<id:266 store_id:2 > peers:<id:267 store_id:3 > peers:<id:268 store_id:4 > peers:<id:269 store_id:5 >  create peer with ID 265[0m
+2022/03/22 20:14:15.699577 peer.go:41: [0;37m[info] region id:294 start_key:"13 00000011" end_key:"14 00000002" region_epoch:<conf_ver:1 version:2 > peers:<id:295 store_id:1 > peers:<id:296 store_id:2 > peers:<id:297 store_id:3 > peers:<id:298 store_id:4 > peers:<id:299 store_id:5 >  create peer with ID 295[0m
+2022/03/22 20:14:15.699696 peer.go:41: [0;37m[info] region id:336 start_key:"14 00000002" end_key:"14 00000012" region_epoch:<conf_ver:1 version:2 > peers:<id:337 store_id:1 > peers:<id:338 store_id:2 > peers:<id:339 store_id:3 > peers:<id:340 store_id:4 > peers:<id:341 store_id:5 >  create peer with ID 337[0m
+2022/03/22 20:14:15.699791 peer.go:41: [0;37m[info] region id:366 start_key:"14 00000012" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:367 store_id:1 > peers:<id:368 store_id:2 > peers:<id:369 store_id:3 > peers:<id:370 store_id:4 > peers:<id:371 store_id:5 >  create peer with ID 367[0m
+2022/03/22 20:14:15.699853 raftstore.go:175: [0;37m[info] start store 1, region_count 25, tombstone_count 0, takes 4.03644ms[0m
+2022/03/22 20:14:15.701551 node.go:193: [0;37m[info] start raft store node, storeID: 2[0m
+2022/03/22 20:14:15.701647 peer.go:41: [0;37m[info] region id:1 end_key:"0 00000011" region_epoch:<conf_ver:1 version:4 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 > peers:<id:5 store_id:5 >  create peer with ID 2[0m
+2022/03/22 20:14:15.701920 peer.go:41: [0;37m[info] region id:6 start_key:"18 00000000" end_key:"18 00000010" region_epoch:<conf_ver:1 version:4 > peers:<id:7 store_id:1 > peers:<id:8 store_id:2 > peers:<id:9 store_id:3 > peers:<id:10 store_id:4 > peers:<id:11 store_id:5 >  create peer with ID 8[0m
+2022/03/22 20:14:15.702078 peer.go:41: [0;37m[info] region id:12 start_key:"15 00000001" end_key:"16 00000002" region_epoch:<conf_ver:1 version:2 > peers:<id:13 store_id:1 > peers:<id:14 store_id:2 > peers:<id:15 store_id:3 > peers:<id:16 store_id:4 > peers:<id:17 store_id:5 >  create peer with ID 14[0m
+2022/03/22 20:14:15.702188 peer.go:41: [0;37m[info] region id:18 start_key:"4 00000000" end_key:"6 00000003" region_epoch:<conf_ver:1 version:3 > peers:<id:19 store_id:1 > peers:<id:20 store_id:2 > peers:<id:21 store_id:3 > peers:<id:22 store_id:4 > peers:<id:23 store_id:5 >  create peer with ID 20[0m
+2022/03/22 20:14:15.702328 peer.go:41: [0;37m[info] region id:24 start_key:"3 00000002" end_key:"4 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:25 store_id:1 > peers:<id:26 store_id:2 > peers:<id:27 store_id:3 > peers:<id:28 store_id:4 > peers:<id:29 store_id:5 >  create peer with ID 26[0m
+2022/03/22 20:14:15.702422 peer.go:41: [0;37m[info] region id:30 start_key:"6 00000004" region_epoch:<conf_ver:1 version:1 > peers:<id:31 store_id:1 > peers:<id:32 store_id:2 > peers:<id:33 store_id:3 > peers:<id:34 store_id:4 > peers:<id:35 store_id:5 >  create peer with ID 32[0m
+2022/03/22 20:14:15.702531 peer.go:41: [0;37m[info] region id:42 start_key:"6 00000003" end_key:"6 00000004" region_epoch:<conf_ver:1 version:1 > peers:<id:43 store_id:1 > peers:<id:44 store_id:2 > peers:<id:45 store_id:3 > peers:<id:46 store_id:4 > peers:<id:47 store_id:5 >  create peer with ID 44[0m
+2022/03/22 20:14:15.702592 peer.go:41: [0;37m[info] region id:48 start_key:"18 00000010" end_key:"19 00000008" region_epoch:<conf_ver:1 version:2 > peers:<id:49 store_id:1 > peers:<id:50 store_id:2 > peers:<id:51 store_id:3 > peers:<id:52 store_id:4 > peers:<id:53 store_id:5 >  create peer with ID 50[0m
+2022/03/22 20:14:15.702666 peer.go:41: [0;37m[info] region id:54 start_key:"16 00000002" end_key:"16 00000012" region_epoch:<conf_ver:1 version:2 > peers:<id:55 store_id:1 > peers:<id:56 store_id:2 > peers:<id:57 store_id:3 > peers:<id:58 store_id:4 > peers:<id:59 store_id:5 >  create peer with ID 56[0m
+2022/03/22 20:14:15.702727 peer.go:41: [0;37m[info] region id:60 start_key:"0 00000011" end_key:"1 00000004" region_epoch:<conf_ver:1 version:2 > peers:<id:61 store_id:1 > peers:<id:62 store_id:2 > peers:<id:63 store_id:3 > peers:<id:64 store_id:4 > peers:<id:65 store_id:5 >  create peer with ID 62[0m
+2022/03/22 20:14:15.702811 peer.go:41: [0;37m[info] region id:72 start_key:"16 00000012" end_key:"17 00000002" region_epoch:<conf_ver:1 version:2 > peers:<id:73 store_id:1 > peers:<id:74 store_id:2 > peers:<id:75 store_id:3 > peers:<id:76 store_id:4 > peers:<id:77 store_id:5 >  create peer with ID 74[0m
+2022/03/22 20:14:15.702877 peer.go:41: [0;37m[info] region id:78 start_key:"19 00000008" end_key:"2 00000004" region_epoch:<conf_ver:1 version:2 > peers:<id:79 store_id:1 > peers:<id:80 store_id:2 > peers:<id:81 store_id:3 > peers:<id:82 store_id:4 > peers:<id:83 store_id:5 >  create peer with ID 80[0m
+2022/03/22 20:14:15.702967 peer.go:41: [0;37m[info] region id:84 start_key:"1 00000004" end_key:"1 00000015" region_epoch:<conf_ver:1 version:2 > peers:<id:85 store_id:1 > peers:<id:86 store_id:2 > peers:<id:87 store_id:3 > peers:<id:88 store_id:4 > peers:<id:89 store_id:5 >  create peer with ID 86[0m
+2022/03/22 20:14:15.703070 peer.go:41: [0;37m[info] region id:102 start_key:"17 00000002" end_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:103 store_id:1 > peers:<id:104 store_id:2 > peers:<id:105 store_id:3 > peers:<id:106 store_id:4 > peers:<id:107 store_id:5 >  create peer with ID 104[0m
+2022/03/22 20:14:15.703160 peer.go:41: [0;37m[info] region id:114 start_key:"2 00000004" end_key:"3 00000002" region_epoch:<conf_ver:1 version:1 > peers:<id:115 store_id:1 > peers:<id:116 store_id:2 > peers:<id:117 store_id:3 > peers:<id:118 store_id:4 > peers:<id:119 store_id:5 >  create peer with ID 116[0m
+2022/03/22 20:14:15.703239 peer.go:41: [0;37m[info] region id:126 start_key:"1 00000015" end_key:"10 00000006" region_epoch:<conf_ver:1 version:2 > peers:<id:127 store_id:1 > peers:<id:128 store_id:2 > peers:<id:129 store_id:3 > peers:<id:130 store_id:4 > peers:<id:131 store_id:5 >  create peer with ID 128[0m
+2022/03/22 20:14:15.703314 peer.go:41: [0;37m[info] region id:144 start_key:"10 00000006" end_key:"11 00000002" region_epoch:<conf_ver:1 version:2 > peers:<id:145 store_id:1 > peers:<id:146 store_id:2 > peers:<id:147 store_id:3 > peers:<id:148 store_id:4 > peers:<id:149 store_id:5 >  create peer with ID 146[0m
+2022/03/22 20:14:15.703398 peer.go:41: [0;37m[info] region id:162 start_key:"11 00000002" end_key:"11 00000012" region_epoch:<conf_ver:1 version:2 > peers:<id:163 store_id:1 > peers:<id:164 store_id:2 > peers:<id:165 store_id:3 > peers:<id:166 store_id:4 > peers:<id:167 store_id:5 >  create peer with ID 164[0m
+2022/03/22 20:14:15.703471 peer.go:41: [0;37m[info] region id:186 start_key:"11 00000012" end_key:"12 00000003" region_epoch:<conf_ver:1 version:2 > peers:<id:187 store_id:1 > peers:<id:188 store_id:2 > peers:<id:189 store_id:3 > peers:<id:190 store_id:4 > peers:<id:191 store_id:5 >  create peer with ID 188[0m
+2022/03/22 20:14:15.703547 peer.go:41: [0;37m[info] region id:216 start_key:"12 00000003" end_key:"12 00000013" region_epoch:<conf_ver:1 version:2 > peers:<id:217 store_id:1 > peers:<id:218 store_id:2 > peers:<id:219 store_id:3 > peers:<id:220 store_id:4 > peers:<id:221 store_id:5 >  create peer with ID 218[0m
+2022/03/22 20:14:15.703618 peer.go:41: [0;37m[info] region id:240 start_key:"12 00000013" end_key:"13 00000001" region_epoch:<conf_ver:1 version:2 > peers:<id:241 store_id:1 > peers:<id:242 store_id:2 > peers:<id:243 store_id:3 > peers:<id:244 store_id:4 > peers:<id:245 store_id:5 >  create peer with ID 242[0m
+2022/03/22 20:14:15.703699 peer.go:41: [0;37m[info] region id:264 start_key:"13 00000001" end_key:"13 00000011" region_epoch:<conf_ver:1 version:2 > peers:<id:265 store_id:1 > peers:<id:266 store_id:2 > peers:<id:267 store_id:3 > peers:<id:268 store_id:4 > peers:<id:269 store_id:5 >  create peer with ID 266[0m
+2022/03/22 20:14:15.703766 peer.go:41: [0;37m[info] region id:294 start_key:"13 00000011" end_key:"14 00000002" region_epoch:<conf_ver:1 version:2 > peers:<id:295 store_id:1 > peers:<id:296 store_id:2 > peers:<id:297 store_id:3 > peers:<id:298 store_id:4 > peers:<id:299 store_id:5 >  create peer with ID 296[0m
+2022/03/22 20:14:15.703845 peer.go:41: [0;37m[info] region id:336 start_key:"14 00000002" end_key:"14 00000012" region_epoch:<conf_ver:1 version:2 > peers:<id:337 store_id:1 > peers:<id:338 store_id:2 > peers:<id:339 store_id:3 > peers:<id:340 store_id:4 > peers:<id:341 store_id:5 >  create peer with ID 338[0m
+2022/03/22 20:14:15.703922 peer.go:41: [0;37m[info] region id:366 start_key:"14 00000012" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:367 store_id:1 > peers:<id:368 store_id:2 > peers:<id:369 store_id:3 > peers:<id:370 store_id:4 > peers:<id:371 store_id:5 >  create peer with ID 368[0m
+2022/03/22 20:14:15.703977 raftstore.go:175: [0;37m[info] start store 2, region_count 25, tombstone_count 0, takes 2.361127ms[0m
+2022/03/22 20:14:15.705676 node.go:193: [0;37m[info] start raft store node, storeID: 3[0m
+2022/03/22 20:14:15.705769 peer.go:41: [0;37m[info] region id:1 end_key:"0 00000011" region_epoch:<conf_ver:1 version:4 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 > peers:<id:5 store_id:5 >  create peer with ID 3[0m
+2022/03/22 20:14:15.706023 peer.go:41: [0;37m[info] region id:6 start_key:"18 00000000" end_key:"18 00000010" region_epoch:<conf_ver:1 version:4 > peers:<id:7 store_id:1 > peers:<id:8 store_id:2 > peers:<id:9 store_id:3 > peers:<id:10 store_id:4 > peers:<id:11 store_id:5 >  create peer with ID 9[0m
+2022/03/22 20:14:15.706139 peer.go:41: [0;37m[info] region id:12 start_key:"15 00000001" end_key:"16 00000002" region_epoch:<conf_ver:1 version:2 > peers:<id:13 store_id:1 > peers:<id:14 store_id:2 > peers:<id:15 store_id:3 > peers:<id:16 store_id:4 > peers:<id:17 store_id:5 >  create peer with ID 15[0m
+2022/03/22 20:14:15.706299 peer.go:41: [0;37m[info] region id:18 start_key:"4 00000000" end_key:"6 00000003" region_epoch:<conf_ver:1 version:3 > peers:<id:19 store_id:1 > peers:<id:20 store_id:2 > peers:<id:21 store_id:3 > peers:<id:22 store_id:4 > peers:<id:23 store_id:5 >  create peer with ID 21[0m
+2022/03/22 20:14:15.706454 peer.go:41: [0;37m[info] region id:24 start_key:"3 00000002" end_key:"4 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:25 store_id:1 > peers:<id:26 store_id:2 > peers:<id:27 store_id:3 > peers:<id:28 store_id:4 > peers:<id:29 store_id:5 >  create peer with ID 27[0m
+2022/03/22 20:14:15.706545 peer.go:41: [0;37m[info] region id:30 start_key:"6 00000004" region_epoch:<conf_ver:1 version:1 > peers:<id:31 store_id:1 > peers:<id:32 store_id:2 > peers:<id:33 store_id:3 > peers:<id:34 store_id:4 > peers:<id:35 store_id:5 >  create peer with ID 33[0m
+2022/03/22 20:14:15.706649 peer.go:41: [0;37m[info] region id:42 start_key:"6 00000003" end_key:"6 00000004" region_epoch:<conf_ver:1 version:1 > peers:<id:43 store_id:1 > peers:<id:44 store_id:2 > peers:<id:45 store_id:3 > peers:<id:46 store_id:4 > peers:<id:47 store_id:5 >  create peer with ID 45[0m
+2022/03/22 20:14:15.706705 peer.go:41: [0;37m[info] region id:48 start_key:"18 00000010" end_key:"19 00000008" region_epoch:<conf_ver:1 version:2 > peers:<id:49 store_id:1 > peers:<id:50 store_id:2 > peers:<id:51 store_id:3 > peers:<id:52 store_id:4 > peers:<id:53 store_id:5 >  create peer with ID 51[0m
+2022/03/22 20:14:15.706787 peer.go:41: [0;37m[info] region id:54 start_key:"16 00000002" end_key:"16 00000012" region_epoch:<conf_ver:1 version:2 > peers:<id:55 store_id:1 > peers:<id:56 store_id:2 > peers:<id:57 store_id:3 > peers:<id:58 store_id:4 > peers:<id:59 store_id:5 >  create peer with ID 57[0m
+2022/03/22 20:14:15.706856 peer.go:41: [0;37m[info] region id:60 start_key:"0 00000011" end_key:"1 00000004" region_epoch:<conf_ver:1 version:2 > peers:<id:61 store_id:1 > peers:<id:62 store_id:2 > peers:<id:63 store_id:3 > peers:<id:64 store_id:4 > peers:<id:65 store_id:5 >  create peer with ID 63[0m
+2022/03/22 20:14:15.706942 peer.go:41: [0;37m[info] region id:72 start_key:"16 00000012" end_key:"17 00000002" region_epoch:<conf_ver:1 version:2 > peers:<id:73 store_id:1 > peers:<id:74 store_id:2 > peers:<id:75 store_id:3 > peers:<id:76 store_id:4 > peers:<id:77 store_id:5 >  create peer with ID 75[0m
+2022/03/22 20:14:15.707050 peer.go:41: [0;37m[info] region id:78 start_key:"19 00000008" end_key:"2 00000004" region_epoch:<conf_ver:1 version:2 > peers:<id:79 store_id:1 > peers:<id:80 store_id:2 > peers:<id:81 store_id:3 > peers:<id:82 store_id:4 > peers:<id:83 store_id:5 >  create peer with ID 81[0m
+2022/03/22 20:14:15.707128 peer.go:41: [0;37m[info] region id:84 start_key:"1 00000004" end_key:"1 00000015" region_epoch:<conf_ver:1 version:2 > peers:<id:85 store_id:1 > peers:<id:86 store_id:2 > peers:<id:87 store_id:3 > peers:<id:88 store_id:4 > peers:<id:89 store_id:5 >  create peer with ID 87[0m
+2022/03/22 20:14:15.707189 peer.go:41: [0;37m[info] region id:102 start_key:"17 00000002" end_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:103 store_id:1 > peers:<id:104 store_id:2 > peers:<id:105 store_id:3 > peers:<id:106 store_id:4 > peers:<id:107 store_id:5 >  create peer with ID 105[0m
+2022/03/22 20:14:15.707292 peer.go:41: [0;37m[info] region id:114 start_key:"2 00000004" end_key:"3 00000002" region_epoch:<conf_ver:1 version:1 > peers:<id:115 store_id:1 > peers:<id:116 store_id:2 > peers:<id:117 store_id:3 > peers:<id:118 store_id:4 > peers:<id:119 store_id:5 >  create peer with ID 117[0m
+2022/03/22 20:14:15.707378 peer.go:41: [0;37m[info] region id:126 start_key:"1 00000015" end_key:"10 00000006" region_epoch:<conf_ver:1 version:2 > peers:<id:127 store_id:1 > peers:<id:128 store_id:2 > peers:<id:129 store_id:3 > peers:<id:130 store_id:4 > peers:<id:131 store_id:5 >  create peer with ID 129[0m
+2022/03/22 20:14:15.707447 peer.go:41: [0;37m[info] region id:144 start_key:"10 00000006" end_key:"11 00000002" region_epoch:<conf_ver:1 version:2 > peers:<id:145 store_id:1 > peers:<id:146 store_id:2 > peers:<id:147 store_id:3 > peers:<id:148 store_id:4 > peers:<id:149 store_id:5 >  create peer with ID 147[0m
+2022/03/22 20:14:15.707535 peer.go:41: [0;37m[info] region id:162 start_key:"11 00000002" end_key:"11 00000012" region_epoch:<conf_ver:1 version:2 > peers:<id:163 store_id:1 > peers:<id:164 store_id:2 > peers:<id:165 store_id:3 > peers:<id:166 store_id:4 > peers:<id:167 store_id:5 >  create peer with ID 165[0m
+2022/03/22 20:14:15.707614 peer.go:41: [0;37m[info] region id:186 start_key:"11 00000012" end_key:"12 00000003" region_epoch:<conf_ver:1 version:2 > peers:<id:187 store_id:1 > peers:<id:188 store_id:2 > peers:<id:189 store_id:3 > peers:<id:190 store_id:4 > peers:<id:191 store_id:5 >  create peer with ID 189[0m
+2022/03/22 20:14:15.707695 peer.go:41: [0;37m[info] region id:216 start_key:"12 00000003" end_key:"12 00000013" region_epoch:<conf_ver:1 version:2 > peers:<id:217 store_id:1 > peers:<id:218 store_id:2 > peers:<id:219 store_id:3 > peers:<id:220 store_id:4 > peers:<id:221 store_id:5 >  create peer with ID 219[0m
+2022/03/22 20:14:15.707771 peer.go:41: [0;37m[info] region id:240 start_key:"12 00000013" end_key:"13 00000001" region_epoch:<conf_ver:1 version:2 > peers:<id:241 store_id:1 > peers:<id:242 store_id:2 > peers:<id:243 store_id:3 > peers:<id:244 store_id:4 > peers:<id:245 store_id:5 >  create peer with ID 243[0m
+2022/03/22 20:14:15.707830 peer.go:41: [0;37m[info] region id:264 start_key:"13 00000001" end_key:"13 00000011" region_epoch:<conf_ver:1 version:2 > peers:<id:265 store_id:1 > peers:<id:266 store_id:2 > peers:<id:267 store_id:3 > peers:<id:268 store_id:4 > peers:<id:269 store_id:5 >  create peer with ID 267[0m
+2022/03/22 20:14:15.707890 peer.go:41: [0;37m[info] region id:294 start_key:"13 00000011" end_key:"14 00000002" region_epoch:<conf_ver:1 version:2 > peers:<id:295 store_id:1 > peers:<id:296 store_id:2 > peers:<id:297 store_id:3 > peers:<id:298 store_id:4 > peers:<id:299 store_id:5 >  create peer with ID 297[0m
+2022/03/22 20:14:15.707965 peer.go:41: [0;37m[info] region id:336 start_key:"14 00000002" end_key:"14 00000012" region_epoch:<conf_ver:1 version:2 > peers:<id:337 store_id:1 > peers:<id:338 store_id:2 > peers:<id:339 store_id:3 > peers:<id:340 store_id:4 > peers:<id:341 store_id:5 >  create peer with ID 339[0m
+2022/03/22 20:14:15.708035 peer.go:41: [0;37m[info] region id:366 start_key:"14 00000012" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:367 store_id:1 > peers:<id:368 store_id:2 > peers:<id:369 store_id:3 > peers:<id:370 store_id:4 > peers:<id:371 store_id:5 >  create peer with ID 369[0m
+2022/03/22 20:14:15.708086 raftstore.go:175: [0;37m[info] start store 3, region_count 25, tombstone_count 0, takes 2.347449ms[0m
+2022/03/22 20:14:15.709777 node.go:193: [0;37m[info] start raft store node, storeID: 4[0m
+2022/03/22 20:14:15.709877 peer.go:41: [0;37m[info] region id:1 end_key:"0 00000011" region_epoch:<conf_ver:1 version:4 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 > peers:<id:5 store_id:5 >  create peer with ID 4[0m
+2022/03/22 20:14:15.710133 peer.go:41: [0;37m[info] region id:6 start_key:"18 00000000" end_key:"18 00000010" region_epoch:<conf_ver:1 version:4 > peers:<id:7 store_id:1 > peers:<id:8 store_id:2 > peers:<id:9 store_id:3 > peers:<id:10 store_id:4 > peers:<id:11 store_id:5 >  create peer with ID 10[0m
+2022/03/22 20:14:15.710294 peer.go:41: [0;37m[info] region id:12 start_key:"15 00000001" end_key:"16 00000002" region_epoch:<conf_ver:1 version:2 > peers:<id:13 store_id:1 > peers:<id:14 store_id:2 > peers:<id:15 store_id:3 > peers:<id:16 store_id:4 > peers:<id:17 store_id:5 >  create peer with ID 16[0m
+2022/03/22 20:14:15.710417 peer.go:41: [0;37m[info] region id:18 start_key:"4 00000000" end_key:"6 00000003" region_epoch:<conf_ver:1 version:3 > peers:<id:19 store_id:1 > peers:<id:20 store_id:2 > peers:<id:21 store_id:3 > peers:<id:22 store_id:4 > peers:<id:23 store_id:5 >  create peer with ID 22[0m
+2022/03/22 20:14:15.710532 peer.go:41: [0;37m[info] region id:24 start_key:"3 00000002" end_key:"4 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:25 store_id:1 > peers:<id:26 store_id:2 > peers:<id:27 store_id:3 > peers:<id:28 store_id:4 > peers:<id:29 store_id:5 >  create peer with ID 28[0m
+2022/03/22 20:14:15.710664 peer.go:41: [0;37m[info] region id:30 start_key:"6 00000004" region_epoch:<conf_ver:1 version:1 > peers:<id:31 store_id:1 > peers:<id:32 store_id:2 > peers:<id:33 store_id:3 > peers:<id:34 store_id:4 > peers:<id:35 store_id:5 >  create peer with ID 34[0m
+2022/03/22 20:14:15.710752 peer.go:41: [0;37m[info] region id:42 start_key:"6 00000003" end_key:"6 00000004" region_epoch:<conf_ver:1 version:1 > peers:<id:43 store_id:1 > peers:<id:44 store_id:2 > peers:<id:45 store_id:3 > peers:<id:46 store_id:4 > peers:<id:47 store_id:5 >  create peer with ID 46[0m
+2022/03/22 20:14:15.710816 peer.go:41: [0;37m[info] region id:48 start_key:"18 00000010" end_key:"19 00000008" region_epoch:<conf_ver:1 version:2 > peers:<id:49 store_id:1 > peers:<id:50 store_id:2 > peers:<id:51 store_id:3 > peers:<id:52 store_id:4 > peers:<id:53 store_id:5 >  create peer with ID 52[0m
+2022/03/22 20:14:15.710898 peer.go:41: [0;37m[info] region id:54 start_key:"16 00000002" end_key:"16 00000012" region_epoch:<conf_ver:1 version:2 > peers:<id:55 store_id:1 > peers:<id:56 store_id:2 > peers:<id:57 store_id:3 > peers:<id:58 store_id:4 > peers:<id:59 store_id:5 >  create peer with ID 58[0m
+2022/03/22 20:14:15.710972 peer.go:41: [0;37m[info] region id:60 start_key:"0 00000011" end_key:"1 00000004" region_epoch:<conf_ver:1 version:2 > peers:<id:61 store_id:1 > peers:<id:62 store_id:2 > peers:<id:63 store_id:3 > peers:<id:64 store_id:4 > peers:<id:65 store_id:5 >  create peer with ID 64[0m
+2022/03/22 20:14:15.711084 peer.go:41: [0;37m[info] region id:72 start_key:"16 00000012" end_key:"17 00000002" region_epoch:<conf_ver:1 version:2 > peers:<id:73 store_id:1 > peers:<id:74 store_id:2 > peers:<id:75 store_id:3 > peers:<id:76 store_id:4 > peers:<id:77 store_id:5 >  create peer with ID 76[0m
+2022/03/22 20:14:15.711154 peer.go:41: [0;37m[info] region id:78 start_key:"19 00000008" end_key:"2 00000004" region_epoch:<conf_ver:1 version:2 > peers:<id:79 store_id:1 > peers:<id:80 store_id:2 > peers:<id:81 store_id:3 > peers:<id:82 store_id:4 > peers:<id:83 store_id:5 >  create peer with ID 82[0m
+2022/03/22 20:14:15.711242 peer.go:41: [0;37m[info] region id:84 start_key:"1 00000004" end_key:"1 00000015" region_epoch:<conf_ver:1 version:2 > peers:<id:85 store_id:1 > peers:<id:86 store_id:2 > peers:<id:87 store_id:3 > peers:<id:88 store_id:4 > peers:<id:89 store_id:5 >  create peer with ID 88[0m
+2022/03/22 20:14:15.711321 peer.go:41: [0;37m[info] region id:102 start_key:"17 00000002" end_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:103 store_id:1 > peers:<id:104 store_id:2 > peers:<id:105 store_id:3 > peers:<id:106 store_id:4 > peers:<id:107 store_id:5 >  create peer with ID 106[0m
+2022/03/22 20:14:15.711402 peer.go:41: [0;37m[info] region id:114 start_key:"2 00000004" end_key:"3 00000002" region_epoch:<conf_ver:1 version:1 > peers:<id:115 store_id:1 > peers:<id:116 store_id:2 > peers:<id:117 store_id:3 > peers:<id:118 store_id:4 > peers:<id:119 store_id:5 >  create peer with ID 118[0m
+2022/03/22 20:14:15.711501 peer.go:41: [0;37m[info] region id:126 start_key:"1 00000015" end_key:"10 00000006" region_epoch:<conf_ver:1 version:2 > peers:<id:127 store_id:1 > peers:<id:128 store_id:2 > peers:<id:129 store_id:3 > peers:<id:130 store_id:4 > peers:<id:131 store_id:5 >  create peer with ID 130[0m
+2022/03/22 20:14:15.711593 peer.go:41: [0;37m[info] region id:144 start_key:"10 00000006" end_key:"11 00000002" region_epoch:<conf_ver:1 version:2 > peers:<id:145 store_id:1 > peers:<id:146 store_id:2 > peers:<id:147 store_id:3 > peers:<id:148 store_id:4 > peers:<id:149 store_id:5 >  create peer with ID 148[0m
+2022/03/22 20:14:15.711692 peer.go:41: [0;37m[info] region id:162 start_key:"11 00000002" end_key:"11 00000012" region_epoch:<conf_ver:1 version:2 > peers:<id:163 store_id:1 > peers:<id:164 store_id:2 > peers:<id:165 store_id:3 > peers:<id:166 store_id:4 > peers:<id:167 store_id:5 >  create peer with ID 166[0m
+2022/03/22 20:14:15.711767 peer.go:41: [0;37m[info] region id:186 start_key:"11 00000012" end_key:"12 00000003" region_epoch:<conf_ver:1 version:2 > peers:<id:187 store_id:1 > peers:<id:188 store_id:2 > peers:<id:189 store_id:3 > peers:<id:190 store_id:4 > peers:<id:191 store_id:5 >  create peer with ID 190[0m
+2022/03/22 20:14:15.711828 peer.go:41: [0;37m[info] region id:216 start_key:"12 00000003" end_key:"12 00000013" region_epoch:<conf_ver:1 version:2 > peers:<id:217 store_id:1 > peers:<id:218 store_id:2 > peers:<id:219 store_id:3 > peers:<id:220 store_id:4 > peers:<id:221 store_id:5 >  create peer with ID 220[0m
+2022/03/22 20:14:15.711884 peer.go:41: [0;37m[info] region id:240 start_key:"12 00000013" end_key:"13 00000001" region_epoch:<conf_ver:1 version:2 > peers:<id:241 store_id:1 > peers:<id:242 store_id:2 > peers:<id:243 store_id:3 > peers:<id:244 store_id:4 > peers:<id:245 store_id:5 >  create peer with ID 244[0m
+2022/03/22 20:14:15.711953 peer.go:41: [0;37m[info] region id:264 start_key:"13 00000001" end_key:"13 00000011" region_epoch:<conf_ver:1 version:2 > peers:<id:265 store_id:1 > peers:<id:266 store_id:2 > peers:<id:267 store_id:3 > peers:<id:268 store_id:4 > peers:<id:269 store_id:5 >  create peer with ID 268[0m
+2022/03/22 20:14:15.712019 peer.go:41: [0;37m[info] region id:294 start_key:"13 00000011" end_key:"14 00000002" region_epoch:<conf_ver:1 version:2 > peers:<id:295 store_id:1 > peers:<id:296 store_id:2 > peers:<id:297 store_id:3 > peers:<id:298 store_id:4 > peers:<id:299 store_id:5 >  create peer with ID 298[0m
+2022/03/22 20:14:15.712086 peer.go:41: [0;37m[info] region id:336 start_key:"14 00000002" end_key:"14 00000012" region_epoch:<conf_ver:1 version:2 > peers:<id:337 store_id:1 > peers:<id:338 store_id:2 > peers:<id:339 store_id:3 > peers:<id:340 store_id:4 > peers:<id:341 store_id:5 >  create peer with ID 340[0m
+2022/03/22 20:14:15.712151 peer.go:41: [0;37m[info] region id:366 start_key:"14 00000012" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:367 store_id:1 > peers:<id:368 store_id:2 > peers:<id:369 store_id:3 > peers:<id:370 store_id:4 > peers:<id:371 store_id:5 >  create peer with ID 370[0m
+2022/03/22 20:14:15.712211 raftstore.go:175: [0;37m[info] start store 4, region_count 25, tombstone_count 0, takes 2.365806ms[0m
+2022/03/22 20:14:15.713869 node.go:193: [0;37m[info] start raft store node, storeID: 5[0m
+2022/03/22 20:14:15.713966 peer.go:41: [0;37m[info] region id:1 end_key:"0 00000011" region_epoch:<conf_ver:1 version:4 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 > peers:<id:5 store_id:5 >  create peer with ID 5[0m
+2022/03/22 20:14:15.714201 peer.go:41: [0;37m[info] region id:6 start_key:"18 00000000" end_key:"18 00000010" region_epoch:<conf_ver:1 version:4 > peers:<id:7 store_id:1 > peers:<id:8 store_id:2 > peers:<id:9 store_id:3 > peers:<id:10 store_id:4 > peers:<id:11 store_id:5 >  create peer with ID 11[0m
+2022/03/22 20:14:15.714342 peer.go:41: [0;37m[info] region id:12 start_key:"15 00000001" end_key:"16 00000002" region_epoch:<conf_ver:1 version:2 > peers:<id:13 store_id:1 > peers:<id:14 store_id:2 > peers:<id:15 store_id:3 > peers:<id:16 store_id:4 > peers:<id:17 store_id:5 >  create peer with ID 17[0m
+2022/03/22 20:14:15.714478 peer.go:41: [0;37m[info] region id:18 start_key:"4 00000000" end_key:"6 00000003" region_epoch:<conf_ver:1 version:3 > peers:<id:19 store_id:1 > peers:<id:20 store_id:2 > peers:<id:21 store_id:3 > peers:<id:22 store_id:4 > peers:<id:23 store_id:5 >  create peer with ID 23[0m
+2022/03/22 20:14:15.714577 peer.go:41: [0;37m[info] region id:24 start_key:"3 00000002" end_key:"4 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:25 store_id:1 > peers:<id:26 store_id:2 > peers:<id:27 store_id:3 > peers:<id:28 store_id:4 > peers:<id:29 store_id:5 >  create peer with ID 29[0m
+2022/03/22 20:14:15.714642 peer.go:41: [0;37m[info] region id:30 start_key:"6 00000004" region_epoch:<conf_ver:1 version:1 > peers:<id:31 store_id:1 > peers:<id:32 store_id:2 > peers:<id:33 store_id:3 > peers:<id:34 store_id:4 > peers:<id:35 store_id:5 >  create peer with ID 35[0m
+2022/03/22 20:14:15.714738 peer.go:41: [0;37m[info] region id:42 start_key:"6 00000003" end_key:"6 00000004" region_epoch:<conf_ver:1 version:1 > peers:<id:43 store_id:1 > peers:<id:44 store_id:2 > peers:<id:45 store_id:3 > peers:<id:46 store_id:4 > peers:<id:47 store_id:5 >  create peer with ID 47[0m
+2022/03/22 20:14:15.714816 peer.go:41: [0;37m[info] region id:48 start_key:"18 00000010" end_key:"19 00000008" region_epoch:<conf_ver:1 version:2 > peers:<id:49 store_id:1 > peers:<id:50 store_id:2 > peers:<id:51 store_id:3 > peers:<id:52 store_id:4 > peers:<id:53 store_id:5 >  create peer with ID 53[0m
+2022/03/22 20:14:15.714881 peer.go:41: [0;37m[info] region id:54 start_key:"16 00000002" end_key:"16 00000012" region_epoch:<conf_ver:1 version:2 > peers:<id:55 store_id:1 > peers:<id:56 store_id:2 > peers:<id:57 store_id:3 > peers:<id:58 store_id:4 > peers:<id:59 store_id:5 >  create peer with ID 59[0m
+2022/03/22 20:14:15.714969 peer.go:41: [0;37m[info] region id:60 start_key:"0 00000011" end_key:"1 00000004" region_epoch:<conf_ver:1 version:2 > peers:<id:61 store_id:1 > peers:<id:62 store_id:2 > peers:<id:63 store_id:3 > peers:<id:64 store_id:4 > peers:<id:65 store_id:5 >  create peer with ID 65[0m
+2022/03/22 20:14:15.715051 peer.go:41: [0;37m[info] region id:72 start_key:"16 00000012" end_key:"17 00000002" region_epoch:<conf_ver:1 version:2 > peers:<id:73 store_id:1 > peers:<id:74 store_id:2 > peers:<id:75 store_id:3 > peers:<id:76 store_id:4 > peers:<id:77 store_id:5 >  create peer with ID 77[0m
+2022/03/22 20:14:15.715144 peer.go:41: [0;37m[info] region id:78 start_key:"19 00000008" end_key:"2 00000004" region_epoch:<conf_ver:1 version:2 > peers:<id:79 store_id:1 > peers:<id:80 store_id:2 > peers:<id:81 store_id:3 > peers:<id:82 store_id:4 > peers:<id:83 store_id:5 >  create peer with ID 83[0m
+2022/03/22 20:14:15.715227 peer.go:41: [0;37m[info] region id:84 start_key:"1 00000004" end_key:"1 00000015" region_epoch:<conf_ver:1 version:2 > peers:<id:85 store_id:1 > peers:<id:86 store_id:2 > peers:<id:87 store_id:3 > peers:<id:88 store_id:4 > peers:<id:89 store_id:5 >  create peer with ID 89[0m
+2022/03/22 20:14:15.715288 peer.go:41: [0;37m[info] region id:102 start_key:"17 00000002" end_key:"18 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:103 store_id:1 > peers:<id:104 store_id:2 > peers:<id:105 store_id:3 > peers:<id:106 store_id:4 > peers:<id:107 store_id:5 >  create peer with ID 107[0m
+2022/03/22 20:14:15.715355 peer.go:41: [0;37m[info] region id:114 start_key:"2 00000004" end_key:"3 00000002" region_epoch:<conf_ver:1 version:1 > peers:<id:115 store_id:1 > peers:<id:116 store_id:2 > peers:<id:117 store_id:3 > peers:<id:118 store_id:4 > peers:<id:119 store_id:5 >  create peer with ID 119[0m
+2022/03/22 20:14:15.715429 peer.go:41: [0;37m[info] region id:126 start_key:"1 00000015" end_key:"10 00000006" region_epoch:<conf_ver:1 version:2 > peers:<id:127 store_id:1 > peers:<id:128 store_id:2 > peers:<id:129 store_id:3 > peers:<id:130 store_id:4 > peers:<id:131 store_id:5 >  create peer with ID 131[0m
+2022/03/22 20:14:15.715491 peer.go:41: [0;37m[info] region id:144 start_key:"10 00000006" end_key:"11 00000002" region_epoch:<conf_ver:1 version:2 > peers:<id:145 store_id:1 > peers:<id:146 store_id:2 > peers:<id:147 store_id:3 > peers:<id:148 store_id:4 > peers:<id:149 store_id:5 >  create peer with ID 149[0m
+2022/03/22 20:14:15.715557 peer.go:41: [0;37m[info] region id:162 start_key:"11 00000002" end_key:"11 00000012" region_epoch:<conf_ver:1 version:2 > peers:<id:163 store_id:1 > peers:<id:164 store_id:2 > peers:<id:165 store_id:3 > peers:<id:166 store_id:4 > peers:<id:167 store_id:5 >  create peer with ID 167[0m
+2022/03/22 20:14:15.715630 peer.go:41: [0;37m[info] region id:186 start_key:"11 00000012" end_key:"12 00000003" region_epoch:<conf_ver:1 version:2 > peers:<id:187 store_id:1 > peers:<id:188 store_id:2 > peers:<id:189 store_id:3 > peers:<id:190 store_id:4 > peers:<id:191 store_id:5 >  create peer with ID 191[0m
+2022/03/22 20:14:15.715698 peer.go:41: [0;37m[info] region id:216 start_key:"12 00000003" end_key:"12 00000013" region_epoch:<conf_ver:1 version:2 > peers:<id:217 store_id:1 > peers:<id:218 store_id:2 > peers:<id:219 store_id:3 > peers:<id:220 store_id:4 > peers:<id:221 store_id:5 >  create peer with ID 221[0m
+2022/03/22 20:14:15.715758 peer.go:41: [0;37m[info] region id:240 start_key:"12 00000013" end_key:"13 00000001" region_epoch:<conf_ver:1 version:2 > peers:<id:241 store_id:1 > peers:<id:242 store_id:2 > peers:<id:243 store_id:3 > peers:<id:244 store_id:4 > peers:<id:245 store_id:5 >  create peer with ID 245[0m
+2022/03/22 20:14:15.715851 peer.go:41: [0;37m[info] region id:264 start_key:"13 00000001" end_key:"13 00000011" region_epoch:<conf_ver:1 version:2 > peers:<id:265 store_id:1 > peers:<id:266 store_id:2 > peers:<id:267 store_id:3 > peers:<id:268 store_id:4 > peers:<id:269 store_id:5 >  create peer with ID 269[0m
+2022/03/22 20:14:15.715919 peer.go:41: [0;37m[info] region id:294 start_key:"13 00000011" end_key:"14 00000002" region_epoch:<conf_ver:1 version:2 > peers:<id:295 store_id:1 > peers:<id:296 store_id:2 > peers:<id:297 store_id:3 > peers:<id:298 store_id:4 > peers:<id:299 store_id:5 >  create peer with ID 299[0m
+2022/03/22 20:14:15.716012 peer.go:41: [0;37m[info] region id:336 start_key:"14 00000002" end_key:"14 00000012" region_epoch:<conf_ver:1 version:2 > peers:<id:337 store_id:1 > peers:<id:338 store_id:2 > peers:<id:339 store_id:3 > peers:<id:340 store_id:4 > peers:<id:341 store_id:5 >  create peer with ID 341[0m
+2022/03/22 20:14:15.716089 peer.go:41: [0;37m[info] region id:366 start_key:"14 00000012" end_key:"15 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:367 store_id:1 > peers:<id:368 store_id:2 > peers:<id:369 store_id:3 > peers:<id:370 store_id:4 > peers:<id:371 store_id:5 >  create peer with ID 371[0m
+2022/03/22 20:14:15.716143 raftstore.go:175: [0;37m[info] start store 5, region_count 25, tombstone_count 0, takes 2.212525ms[0m
+2022/03/22 20:14:16.228483 raft.go:433: [0;31m[error] node 127 becomeLeader at term 9 with index 30[0m
+2022/03/22 20:14:16.247332 raft.go:433: [0;31m[error] node 116 becomeLeader at term 10 with index 31[0m
+2022/03/22 20:14:16.247444 raft.go:433: [0;31m[error] node 14 becomeLeader at term 12 with index 131[0m
+2022/03/22 20:14:16.266456 raft.go:433: [0;31m[error] node 337 becomeLeader at term 9 with index 26[0m
+2022/03/22 20:14:16.273686 raft.go:433: [0;31m[error] node 5 becomeLeader at term 10 with index 388[0m
+2022/03/22 20:14:16.277264 raft.go:433: [0;31m[error] node 268 becomeLeader at term 9 with index 27[0m
+2022/03/22 20:14:16.342276 raft.go:433: [0;31m[error] node 245 becomeLeader at term 8 with index 27[0m
+2022/03/22 20:14:16.342483 raft.go:433: [0;31m[error] node 47 becomeLeader at term 10 with index 13[0m
+2022/03/22 20:14:16.344969 raft.go:433: [0;31m[error] node 190 becomeLeader at term 9 with index 28[0m
+2022/03/22 20:14:16.345313 raft.go:433: [0;31m[error] node 166 becomeLeader at term 10 with index 28[0m
+2022/03/22 20:14:16.345399 raft.go:433: [0;31m[error] node 28 becomeLeader at term 10 with index 46[0m
+2022/03/22 20:14:16.375879 raft.go:433: [0;31m[error] node 20 becomeLeader at term 10 with index 120[0m
+2022/03/22 20:14:16.420912 raft.go:433: [0;31m[error] node 221 becomeLeader at term 10 with index 24[0m
+2022/03/22 20:14:16.421024 raft.go:433: [0;31m[error] node 83 becomeLeader at term 11 with index 30[0m
+2022/03/22 20:14:16.445205 raft.go:433: [0;31m[error] node 55 becomeLeader at term 9 with index 24[0m
+2022/03/22 20:14:16.445420 raft.go:433: [0;31m[error] node 7 becomeLeader at term 12 with index 167[0m
+2022/03/22 20:14:16.468239 raft.go:433: [0;31m[error] node 147 becomeLeader at term 10 with index 27[0m
+2022/03/22 20:14:16.468378 raft.go:433: [0;31m[error] node 63 becomeLeader at term 9 with index 30[0m
+2022/03/22 20:14:16.497127 raft.go:433: [0;31m[error] node 74 becomeLeader at term 9 with index 32[0m
+2022/03/22 20:14:16.497334 raft.go:433: [0;31m[error] node 368 becomeLeader at term 9 with index 23[0m
+2022/03/22 20:14:16.566140 raft.go:433: [0;31m[error] node 51 becomeLeader at term 8 with index 33[0m
+2022/03/22 20:14:16.569206 raft.go:433: [0;31m[error] node 103 becomeLeader at term 10 with index 23[0m
+2022/03/22 20:14:16.724151 raft.go:433: [0;31m[error] node 297 becomeLeader at term 8 with index 28[0m
+2022/03/22 20:14:16.777655 raft.go:433: [0;31m[error] node 89 becomeLeader at term 9 with index 21[0m
+2022/03/22 20:14:17.211294 raft.go:433: [0;31m[error] node 34 becomeLeader at term 13 with index 66[0m
+2022/03/22 20:14:52.178356 raft.go:433: [0;31m[error] node 188 becomeLeader at term 10 with index 33[0m
+2022/03/22 20:14:52.219531 raft.go:433: [0;31m[error] node 15 becomeLeader at term 13 with index 132[0m
+2022/03/22 20:14:52.225010 raft.go:433: [0;31m[error] node 118 becomeLeader at term 11 with index 40[0m
+2022/03/22 20:14:52.225056 raft.go:433: [0;31m[error] node 4 becomeLeader at term 11 with index 395[0m
+2022/03/22 20:14:52.225248 raft.go:433: [0;31m[error] node 46 becomeLeader at term 11 with index 16[0m
+2022/03/22 20:15:07.746488 node.go:198: [0;37m[info] stop raft store thread, storeID: 3[0m
+2022/03/22 20:15:07.804045 node.go:198: [0;37m[info] stop raft store thread, storeID: 4[0m
+2022/03/22 20:15:07.953743 node.go:198: [0;37m[info] stop raft store thread, storeID: 5[0m
+2022/03/22 20:15:08.026027 node.go:198: [0;37m[info] stop raft store thread, storeID: 1[0m
+2022/03/22 20:15:08.113553 node.go:198: [0;37m[info] stop raft store thread, storeID: 2[0m
+--- PASS: TestSplitRecoverManyClients3B (197.25s)
+PASS
+ok  	github.com/pingcap-incubator/tinykv/kv/test_raftstore	197.440s
+GO111MODULE=on go test -v --count=1 --parallel=1 -p=1 ./kv/test_raftstore -run ^TestSplitUnreliable3B|| true
+=== RUN   TestSplitUnreliable3B
+2022/03/22 20:15:11.705049 node.go:193: [0;37m[info] start raft store node, storeID: 3[0m
+2022/03/22 20:15:11.705473 peer.go:41: [0;37m[info] region id:1 region_epoch:<conf_ver:1 version:1 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 > peers:<id:5 store_id:5 >  create peer with ID 3[0m
+2022/03/22 20:15:11.705544 raftstore.go:175: [0;37m[info] start store 3, region_count 1, tombstone_count 0, takes 231.442µs[0m
+2022/03/22 20:15:11.705937 node.go:193: [0;37m[info] start raft store node, storeID: 4[0m
+2022/03/22 20:15:11.706044 peer.go:41: [0;37m[info] region id:1 region_epoch:<conf_ver:1 version:1 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 > peers:<id:5 store_id:5 >  create peer with ID 4[0m
+2022/03/22 20:15:11.706115 raftstore.go:175: [0;37m[info] start store 4, region_count 1, tombstone_count 0, takes 116.657µs[0m
+2022/03/22 20:15:11.706633 node.go:193: [0;37m[info] start raft store node, storeID: 5[0m
+2022/03/22 20:15:11.706780 peer.go:41: [0;37m[info] region id:1 region_epoch:<conf_ver:1 version:1 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 > peers:<id:5 store_id:5 >  create peer with ID 5[0m
+2022/03/22 20:15:11.706870 raftstore.go:175: [0;37m[info] start store 5, region_count 1, tombstone_count 0, takes 145.304µs[0m
+2022/03/22 20:15:11.707358 node.go:193: [0;37m[info] start raft store node, storeID: 1[0m
+2022/03/22 20:15:11.707477 peer.go:41: [0;37m[info] region id:1 region_epoch:<conf_ver:1 version:1 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 > peers:<id:5 store_id:5 >  create peer with ID 1[0m
+2022/03/22 20:15:11.707539 raftstore.go:175: [0;37m[info] start store 1, region_count 1, tombstone_count 0, takes 102.356µs[0m
+2022/03/22 20:15:11.708014 node.go:193: [0;37m[info] start raft store node, storeID: 2[0m
+2022/03/22 20:15:11.708103 peer.go:41: [0;37m[info] region id:1 region_epoch:<conf_ver:1 version:1 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 > peers:<id:5 store_id:5 >  create peer with ID 2[0m
+2022/03/22 20:15:11.708154 raftstore.go:175: [0;37m[info] start store 2, region_count 1, tombstone_count 0, takes 78.756µs[0m
+2022/03/22 20:15:12.209461 raft.go:433: [0;31m[error] node 4 becomeLeader at term 6 with index 5[0m
+2022/03/22 20:15:12.929991 peer_msg_handler.go:573: [0;31m[error] [region 1] 4 on split with [51 32 48 48 48 48 48 48 48 48][0m
+2022/03/22 20:15:12.962578 peer_msg_handler.go:736: [0;31m[error] [region 1] 4 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:15:12.972663 peer_msg_handler.go:257: [0;31m[error] [region 1] 4 apply split begin, split key [51 32 48 48 48 48 48 48 48 48], StartKey [], EndKey [][0m
+2022/03/22 20:15:12.972740 peer_msg_handler.go:257: [0;31m[error] [region 1] 5 apply split begin, split key [51 32 48 48 48 48 48 48 48 48], StartKey [], EndKey [][0m
+2022/03/22 20:15:12.972806 peer.go:41: [0;37m[info] region id:6 start_key:"3 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:7 store_id:1 > peers:<id:8 store_id:2 > peers:<id:9 store_id:3 > peers:<id:10 store_id:4 > peers:<id:11 store_id:5 >  create peer with ID 11[0m
+2022/03/22 20:15:12.972834 peer.go:41: [0;37m[info] region id:6 start_key:"3 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:7 store_id:1 > peers:<id:8 store_id:2 > peers:<id:9 store_id:3 > peers:<id:10 store_id:4 > peers:<id:11 store_id:5 >  create peer with ID 10[0m
+2022/03/22 20:15:12.972745 peer_msg_handler.go:257: [0;31m[error] [region 1] 2 apply split begin, split key [51 32 48 48 48 48 48 48 48 48], StartKey [], EndKey [][0m
+2022/03/22 20:15:12.972749 peer_msg_handler.go:257: [0;31m[error] [region 1] 3 apply split begin, split key [51 32 48 48 48 48 48 48 48 48], StartKey [], EndKey [][0m
+2022/03/22 20:15:12.972989 peer.go:41: [0;37m[info] region id:6 start_key:"3 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:7 store_id:1 > peers:<id:8 store_id:2 > peers:<id:9 store_id:3 > peers:<id:10 store_id:4 > peers:<id:11 store_id:5 >  create peer with ID 8[0m
+2022/03/22 20:15:12.973071 peer.go:41: [0;37m[info] region id:6 start_key:"3 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:7 store_id:1 > peers:<id:8 store_id:2 > peers:<id:9 store_id:3 > peers:<id:10 store_id:4 > peers:<id:11 store_id:5 >  create peer with ID 9[0m
+2022/03/22 20:15:12.975151 peer_msg_handler.go:257: [0;31m[error] [region 1] 1 apply split begin, split key [51 32 48 48 48 48 48 48 48 48], StartKey [], EndKey [][0m
+2022/03/22 20:15:12.975214 peer.go:41: [0;37m[info] region id:6 start_key:"3 00000000" region_epoch:<conf_ver:1 version:1 > peers:<id:7 store_id:1 > peers:<id:8 store_id:2 > peers:<id:9 store_id:3 > peers:<id:10 store_id:4 > peers:<id:11 store_id:5 >  create peer with ID 7[0m
+2022/03/22 20:15:12.987666 peer_msg_handler.go:322: [0;31m[error] [region 1] 5 apply split finished[0m
+2022/03/22 20:15:12.990007 peer_msg_handler.go:322: [0;31m[error] [region 1] 3 apply split finished[0m
+2022/03/22 20:15:12.990046 peer_msg_handler.go:322: [0;31m[error] [region 1] 4 apply split finished[0m
+2022/03/22 20:15:12.990007 peer_msg_handler.go:322: [0;31m[error] [region 1] 2 apply split finished[0m
+2022/03/22 20:15:12.992374 peer_msg_handler.go:322: [0;31m[error] [region 1] 1 apply split finished[0m
+2022/03/22 20:15:13.614031 raft.go:433: [0;31m[error] node 10 becomeLeader at term 6 with index 5[0m
+2022/03/22 20:15:17.562041 raft.go:433: [0;31m[error] node 1 becomeLeader at term 7 with index 52[0m
+2022/03/22 20:15:20.181100 peer_msg_handler.go:573: [0;31m[error] [region 6] 10 on split with [52 32 48 48 48 48 48 48 48 50][0m
+2022/03/22 20:15:20.191182 peer_msg_handler.go:736: [0;31m[error] [region 6] 10 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:15:20.224919 peer_msg_handler.go:257: [0;31m[error] [region 6] 10 apply split begin, split key [52 32 48 48 48 48 48 48 48 50], StartKey [51 32 48 48 48 48 48 48 48 48], EndKey [][0m
+2022/03/22 20:15:20.224976 peer.go:41: [0;37m[info] region id:12 start_key:"4 00000002" region_epoch:<conf_ver:1 version:1 > peers:<id:13 store_id:1 > peers:<id:14 store_id:2 > peers:<id:15 store_id:3 > peers:<id:16 store_id:4 > peers:<id:17 store_id:5 >  create peer with ID 16[0m
+2022/03/22 20:15:20.241718 peer_msg_handler.go:257: [0;31m[error] [region 6] 8 apply split begin, split key [52 32 48 48 48 48 48 48 48 50], StartKey [51 32 48 48 48 48 48 48 48 48], EndKey [][0m
+2022/03/22 20:15:20.241811 peer.go:41: [0;37m[info] region id:12 start_key:"4 00000002" region_epoch:<conf_ver:1 version:1 > peers:<id:13 store_id:1 > peers:<id:14 store_id:2 > peers:<id:15 store_id:3 > peers:<id:16 store_id:4 > peers:<id:17 store_id:5 >  create peer with ID 14[0m
+2022/03/22 20:15:20.241740 peer_msg_handler.go:322: [0;31m[error] [region 6] 10 apply split finished[0m
+2022/03/22 20:15:20.246943 peer_msg_handler.go:257: [0;31m[error] [region 6] 11 apply split begin, split key [52 32 48 48 48 48 48 48 48 50], StartKey [51 32 48 48 48 48 48 48 48 48], EndKey [][0m
+2022/03/22 20:15:20.247033 peer.go:41: [0;37m[info] region id:12 start_key:"4 00000002" region_epoch:<conf_ver:1 version:1 > peers:<id:13 store_id:1 > peers:<id:14 store_id:2 > peers:<id:15 store_id:3 > peers:<id:16 store_id:4 > peers:<id:17 store_id:5 >  create peer with ID 17[0m
+2022/03/22 20:15:20.257863 peer_msg_handler.go:257: [0;31m[error] [region 6] 7 apply split begin, split key [52 32 48 48 48 48 48 48 48 50], StartKey [51 32 48 48 48 48 48 48 48 48], EndKey [][0m
+2022/03/22 20:15:20.257930 peer.go:41: [0;37m[info] region id:12 start_key:"4 00000002" region_epoch:<conf_ver:1 version:1 > peers:<id:13 store_id:1 > peers:<id:14 store_id:2 > peers:<id:15 store_id:3 > peers:<id:16 store_id:4 > peers:<id:17 store_id:5 >  create peer with ID 13[0m
+2022/03/22 20:15:20.257875 peer_msg_handler.go:322: [0;31m[error] [region 6] 8 apply split finished[0m
+2022/03/22 20:15:20.260737 peer_msg_handler.go:257: [0;31m[error] [region 6] 9 apply split begin, split key [52 32 48 48 48 48 48 48 48 50], StartKey [51 32 48 48 48 48 48 48 48 48], EndKey [][0m
+2022/03/22 20:15:20.260811 peer.go:41: [0;37m[info] region id:12 start_key:"4 00000002" region_epoch:<conf_ver:1 version:1 > peers:<id:13 store_id:1 > peers:<id:14 store_id:2 > peers:<id:15 store_id:3 > peers:<id:16 store_id:4 > peers:<id:17 store_id:5 >  create peer with ID 15[0m
+2022/03/22 20:15:20.265028 peer_msg_handler.go:322: [0;31m[error] [region 6] 11 apply split finished[0m
+2022/03/22 20:15:20.274516 peer_msg_handler.go:322: [0;31m[error] [region 6] 7 apply split finished[0m
+2022/03/22 20:15:20.280199 peer_msg_handler.go:322: [0;31m[error] [region 6] 9 apply split finished[0m
+2022/03/22 20:15:20.861668 raft.go:433: [0;31m[error] node 17 becomeLeader at term 6 with index 5[0m
+2022/03/22 20:15:24.976135 raft.go:433: [0;31m[error] node 11 becomeLeader at term 7 with index 54[0m
+2022/03/22 20:15:25.211144 raft.go:433: [0;31m[error] node 1 becomeLeader at term 10 with index 230[0m
+2022/03/22 20:15:33.861473 raft.go:433: [0;31m[error] node 16 becomeLeader at term 8 with index 36[0m
+2022/03/22 20:15:36.691502 node.go:198: [0;37m[info] stop raft store thread, storeID: 3[0m
+2022/03/22 20:15:36.694220 node.go:198: [0;37m[info] stop raft store thread, storeID: 4[0m
+2022/03/22 20:15:36.694311 node.go:198: [0;37m[info] stop raft store thread, storeID: 5[0m
+2022/03/22 20:15:36.694382 node.go:198: [0;37m[info] stop raft store thread, storeID: 1[0m
+2022/03/22 20:15:36.694437 node.go:198: [0;37m[info] stop raft store thread, storeID: 2[0m
+--- PASS: TestSplitUnreliable3B (26.17s)
+PASS
+ok  	github.com/pingcap-incubator/tinykv/kv/test_raftstore	26.321s
+GO111MODULE=on go test -v --count=1 --parallel=1 -p=1 ./kv/test_raftstore -run ^TestSplitUnreliableRecover3B|| true
+=== RUN   TestSplitUnreliableRecover3B
+2022/03/22 20:15:39.578183 node.go:193: [0;37m[info] start raft store node, storeID: 1[0m
+2022/03/22 20:15:39.578464 peer.go:41: [0;37m[info] region id:1 region_epoch:<conf_ver:1 version:1 > peers:<id:5 store_id:5 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 >  create peer with ID 1[0m
+2022/03/22 20:15:39.578528 raftstore.go:175: [0;37m[info] start store 1, region_count 1, tombstone_count 0, takes 172.766µs[0m
+2022/03/22 20:15:39.578947 node.go:193: [0;37m[info] start raft store node, storeID: 2[0m
+2022/03/22 20:15:39.579056 peer.go:41: [0;37m[info] region id:1 region_epoch:<conf_ver:1 version:1 > peers:<id:5 store_id:5 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 >  create peer with ID 2[0m
+2022/03/22 20:15:39.579099 raftstore.go:175: [0;37m[info] start store 2, region_count 1, tombstone_count 0, takes 73.315µs[0m
+2022/03/22 20:15:39.579468 node.go:193: [0;37m[info] start raft store node, storeID: 3[0m
+2022/03/22 20:15:39.579549 peer.go:41: [0;37m[info] region id:1 region_epoch:<conf_ver:1 version:1 > peers:<id:5 store_id:5 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 >  create peer with ID 3[0m
+2022/03/22 20:15:39.579585 raftstore.go:175: [0;37m[info] start store 3, region_count 1, tombstone_count 0, takes 62.329µs[0m
+2022/03/22 20:15:39.579910 node.go:193: [0;37m[info] start raft store node, storeID: 4[0m
+2022/03/22 20:15:39.580047 peer.go:41: [0;37m[info] region id:1 region_epoch:<conf_ver:1 version:1 > peers:<id:5 store_id:5 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 >  create peer with ID 4[0m
+2022/03/22 20:15:39.580089 raftstore.go:175: [0;37m[info] start store 4, region_count 1, tombstone_count 0, takes 131.492µs[0m
+2022/03/22 20:15:39.580424 node.go:193: [0;37m[info] start raft store node, storeID: 5[0m
+2022/03/22 20:15:39.580497 peer.go:41: [0;37m[info] region id:1 region_epoch:<conf_ver:1 version:1 > peers:<id:5 store_id:5 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 >  create peer with ID 5[0m
+2022/03/22 20:15:39.580531 raftstore.go:175: [0;37m[info] start store 5, region_count 1, tombstone_count 0, takes 59.666µs[0m
+2022/03/22 20:15:40.083195 raft.go:433: [0;31m[error] node 3 becomeLeader at term 6 with index 5[0m
+2022/03/22 20:15:40.812496 peer_msg_handler.go:573: [0;31m[error] [region 1] 3 on split with [50 32 48 48 48 48 48 48 48 49][0m
+2022/03/22 20:15:40.842651 peer_msg_handler.go:736: [0;31m[error] [region 1] 3 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:15:40.852787 peer_msg_handler.go:257: [0;31m[error] [region 1] 3 apply split begin, split key [50 32 48 48 48 48 48 48 48 49], StartKey [], EndKey [][0m
+2022/03/22 20:15:40.852956 peer.go:41: [0;37m[info] region id:6 start_key:"2 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:7 store_id:5 > peers:<id:8 store_id:1 > peers:<id:9 store_id:2 > peers:<id:10 store_id:3 > peers:<id:11 store_id:4 >  create peer with ID 10[0m
+2022/03/22 20:15:40.855295 peer_msg_handler.go:257: [0;31m[error] [region 1] 4 apply split begin, split key [50 32 48 48 48 48 48 48 48 49], StartKey [], EndKey [][0m
+2022/03/22 20:15:40.855359 peer_msg_handler.go:257: [0;31m[error] [region 1] 1 apply split begin, split key [50 32 48 48 48 48 48 48 48 49], StartKey [], EndKey [][0m
+2022/03/22 20:15:40.855327 peer_msg_handler.go:257: [0;31m[error] [region 1] 2 apply split begin, split key [50 32 48 48 48 48 48 48 48 49], StartKey [], EndKey [][0m
+2022/03/22 20:15:40.855462 peer.go:41: [0;37m[info] region id:6 start_key:"2 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:7 store_id:5 > peers:<id:8 store_id:1 > peers:<id:9 store_id:2 > peers:<id:10 store_id:3 > peers:<id:11 store_id:4 >  create peer with ID 8[0m
+2022/03/22 20:15:40.855529 peer.go:41: [0;37m[info] region id:6 start_key:"2 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:7 store_id:5 > peers:<id:8 store_id:1 > peers:<id:9 store_id:2 > peers:<id:10 store_id:3 > peers:<id:11 store_id:4 >  create peer with ID 9[0m
+2022/03/22 20:15:40.855472 peer.go:41: [0;37m[info] region id:6 start_key:"2 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:7 store_id:5 > peers:<id:8 store_id:1 > peers:<id:9 store_id:2 > peers:<id:10 store_id:3 > peers:<id:11 store_id:4 >  create peer with ID 11[0m
+2022/03/22 20:15:40.857780 peer_msg_handler.go:257: [0;31m[error] [region 1] 5 apply split begin, split key [50 32 48 48 48 48 48 48 48 49], StartKey [], EndKey [][0m
+2022/03/22 20:15:40.857859 peer.go:41: [0;37m[info] region id:6 start_key:"2 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:7 store_id:5 > peers:<id:8 store_id:1 > peers:<id:9 store_id:2 > peers:<id:10 store_id:3 > peers:<id:11 store_id:4 >  create peer with ID 7[0m
+2022/03/22 20:15:40.867791 peer_msg_handler.go:322: [0;31m[error] [region 1] 3 apply split finished[0m
+2022/03/22 20:15:40.870415 peer_msg_handler.go:322: [0;31m[error] [region 1] 2 apply split finished[0m
+2022/03/22 20:15:40.870504 peer_msg_handler.go:322: [0;31m[error] [region 1] 4 apply split finished[0m
+2022/03/22 20:15:40.870557 peer_msg_handler.go:322: [0;31m[error] [region 1] 1 apply split finished[0m
+2022/03/22 20:15:40.873107 peer_msg_handler.go:322: [0;31m[error] [region 1] 5 apply split finished[0m
+2022/03/22 20:15:41.334615 raft.go:433: [0;31m[error] node 9 becomeLeader at term 6 with index 5[0m
+2022/03/22 20:15:42.384121 raft.go:433: [0;31m[error] node 8 becomeLeader at term 7 with index 6[0m
+2022/03/22 20:15:44.584916 raft.go:433: [0;31m[error] node 5 becomeLeader at term 7 with index 57[0m
+2022/03/22 20:15:47.082181 raft.go:433: [0;31m[error] node 9 becomeLeader at term 12 with index 7[0m
+2022/03/22 20:15:47.132434 test_test.go:272: [0;33m[warning] shutdown servers
+[0m
+2022/03/22 20:15:47.132461 node.go:198: [0;37m[info] stop raft store thread, storeID: 1[0m
+2022/03/22 20:15:47.139580 node.go:198: [0;37m[info] stop raft store thread, storeID: 2[0m
+2022/03/22 20:15:47.139614 node.go:198: [0;37m[info] stop raft store thread, storeID: 3[0m
+2022/03/22 20:15:47.144203 node.go:198: [0;37m[info] stop raft store thread, storeID: 4[0m
+2022/03/22 20:15:47.144242 node.go:198: [0;37m[info] stop raft store thread, storeID: 5[0m
+2022/03/22 20:15:47.644549 test_test.go:279: [0;33m[warning] restart servers
+[0m
+2022/03/22 20:15:47.645134 node.go:193: [0;37m[info] start raft store node, storeID: 1[0m
+2022/03/22 20:15:47.645393 peer.go:41: [0;37m[info] region id:1 end_key:"2 00000001" region_epoch:<conf_ver:1 version:2 > peers:<id:5 store_id:5 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 >  create peer with ID 1[0m
+2022/03/22 20:15:47.645556 peer.go:41: [0;37m[info] region id:6 start_key:"2 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:7 store_id:5 > peers:<id:8 store_id:1 > peers:<id:9 store_id:2 > peers:<id:10 store_id:3 > peers:<id:11 store_id:4 >  create peer with ID 8[0m
+2022/03/22 20:15:47.645662 raftstore.go:175: [0;37m[info] start store 1, region_count 2, tombstone_count 0, takes 381.067µs[0m
+2022/03/22 20:15:47.646138 node.go:193: [0;37m[info] start raft store node, storeID: 2[0m
+2022/03/22 20:15:47.646247 peer.go:41: [0;37m[info] region id:1 end_key:"2 00000001" region_epoch:<conf_ver:1 version:2 > peers:<id:5 store_id:5 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 >  create peer with ID 2[0m
+2022/03/22 20:15:47.646366 peer.go:41: [0;37m[info] region id:6 start_key:"2 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:7 store_id:5 > peers:<id:8 store_id:1 > peers:<id:9 store_id:2 > peers:<id:10 store_id:3 > peers:<id:11 store_id:4 >  create peer with ID 9[0m
+2022/03/22 20:15:47.646425 raftstore.go:175: [0;37m[info] start store 2, region_count 2, tombstone_count 0, takes 216.783µs[0m
+2022/03/22 20:15:47.646947 node.go:193: [0;37m[info] start raft store node, storeID: 3[0m
+2022/03/22 20:15:47.647071 peer.go:41: [0;37m[info] region id:1 end_key:"2 00000001" region_epoch:<conf_ver:1 version:2 > peers:<id:5 store_id:5 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 >  create peer with ID 3[0m
+2022/03/22 20:15:47.647214 peer.go:41: [0;37m[info] region id:6 start_key:"2 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:7 store_id:5 > peers:<id:8 store_id:1 > peers:<id:9 store_id:2 > peers:<id:10 store_id:3 > peers:<id:11 store_id:4 >  create peer with ID 10[0m
+2022/03/22 20:15:47.647279 raftstore.go:175: [0;37m[info] start store 3, region_count 2, tombstone_count 0, takes 250.178µs[0m
+2022/03/22 20:15:47.647775 node.go:193: [0;37m[info] start raft store node, storeID: 4[0m
+2022/03/22 20:15:47.647901 peer.go:41: [0;37m[info] region id:1 end_key:"2 00000001" region_epoch:<conf_ver:1 version:2 > peers:<id:5 store_id:5 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 >  create peer with ID 4[0m
+2022/03/22 20:15:47.648020 peer.go:41: [0;37m[info] region id:6 start_key:"2 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:7 store_id:5 > peers:<id:8 store_id:1 > peers:<id:9 store_id:2 > peers:<id:10 store_id:3 > peers:<id:11 store_id:4 >  create peer with ID 11[0m
+2022/03/22 20:15:47.648077 raftstore.go:175: [0;37m[info] start store 4, region_count 2, tombstone_count 0, takes 222.982µs[0m
+2022/03/22 20:15:47.648552 node.go:193: [0;37m[info] start raft store node, storeID: 5[0m
+2022/03/22 20:15:47.648648 peer.go:41: [0;37m[info] region id:1 end_key:"2 00000001" region_epoch:<conf_ver:1 version:2 > peers:<id:5 store_id:5 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 >  create peer with ID 5[0m
+2022/03/22 20:15:47.648757 peer.go:41: [0;37m[info] region id:6 start_key:"2 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:7 store_id:5 > peers:<id:8 store_id:1 > peers:<id:9 store_id:2 > peers:<id:10 store_id:3 > peers:<id:11 store_id:4 >  create peer with ID 7[0m
+2022/03/22 20:15:47.648810 raftstore.go:175: [0;37m[info] start store 5, region_count 2, tombstone_count 0, takes 195.368µs[0m
+2022/03/22 20:15:48.151733 raft.go:433: [0;31m[error] node 1 becomeLeader at term 8 with index 61[0m
+2022/03/22 20:15:48.209614 raft.go:433: [0;31m[error] node 10 becomeLeader at term 13 with index 11[0m
+2022/03/22 20:15:49.891846 peer_msg_handler.go:573: [0;31m[error] [region 6] 10 on split with [51 32 48 48 48 48 48 48 48 55][0m
+2022/03/22 20:15:49.897352 peer_msg_handler.go:736: [0;31m[error] [region 6] 10 propose split msg, msg: 1 1 local region: 1 1[0m
+2022/03/22 20:15:49.922012 peer_msg_handler.go:257: [0;31m[error] [region 6] 10 apply split begin, split key [51 32 48 48 48 48 48 48 48 55], StartKey [50 32 48 48 48 48 48 48 48 49], EndKey [][0m
+2022/03/22 20:15:49.922150 peer.go:41: [0;37m[info] region id:12 start_key:"3 00000007" region_epoch:<conf_ver:1 version:1 > peers:<id:13 store_id:5 > peers:<id:14 store_id:1 > peers:<id:15 store_id:2 > peers:<id:16 store_id:3 > peers:<id:17 store_id:4 >  create peer with ID 16[0m
+2022/03/22 20:15:49.926889 peer_msg_handler.go:257: [0;31m[error] [region 6] 7 apply split begin, split key [51 32 48 48 48 48 48 48 48 55], StartKey [50 32 48 48 48 48 48 48 48 49], EndKey [][0m
+2022/03/22 20:15:49.926999 peer.go:41: [0;37m[info] region id:12 start_key:"3 00000007" region_epoch:<conf_ver:1 version:1 > peers:<id:13 store_id:5 > peers:<id:14 store_id:1 > peers:<id:15 store_id:2 > peers:<id:16 store_id:3 > peers:<id:17 store_id:4 >  create peer with ID 13[0m
+2022/03/22 20:15:49.931675 peer_msg_handler.go:257: [0;31m[error] [region 6] 11 apply split begin, split key [51 32 48 48 48 48 48 48 48 55], StartKey [50 32 48 48 48 48 48 48 48 49], EndKey [][0m
+2022/03/22 20:15:49.931756 peer.go:41: [0;37m[info] region id:12 start_key:"3 00000007" region_epoch:<conf_ver:1 version:1 > peers:<id:13 store_id:5 > peers:<id:14 store_id:1 > peers:<id:15 store_id:2 > peers:<id:16 store_id:3 > peers:<id:17 store_id:4 >  create peer with ID 17[0m
+2022/03/22 20:15:49.933991 peer_msg_handler.go:257: [0;31m[error] [region 6] 9 apply split begin, split key [51 32 48 48 48 48 48 48 48 55], StartKey [50 32 48 48 48 48 48 48 48 49], EndKey [][0m
+2022/03/22 20:15:49.934086 peer.go:41: [0;37m[info] region id:12 start_key:"3 00000007" region_epoch:<conf_ver:1 version:1 > peers:<id:13 store_id:5 > peers:<id:14 store_id:1 > peers:<id:15 store_id:2 > peers:<id:16 store_id:3 > peers:<id:17 store_id:4 >  create peer with ID 15[0m
+2022/03/22 20:15:49.936521 peer_msg_handler.go:322: [0;31m[error] [region 6] 10 apply split finished[0m
+2022/03/22 20:15:49.944301 peer_msg_handler.go:322: [0;31m[error] [region 6] 7 apply split finished[0m
+2022/03/22 20:15:49.951966 peer_msg_handler.go:322: [0;31m[error] [region 6] 11 apply split finished[0m
+2022/03/22 20:15:49.952070 peer_msg_handler.go:322: [0;31m[error] [region 6] 9 apply split finished[0m
+2022/03/22 20:15:49.954518 peer_msg_handler.go:257: [0;31m[error] [region 6] 8 apply split begin, split key [51 32 48 48 48 48 48 48 48 55], StartKey [50 32 48 48 48 48 48 48 48 49], EndKey [][0m
+2022/03/22 20:15:49.954612 peer.go:41: [0;37m[info] region id:12 start_key:"3 00000007" region_epoch:<conf_ver:1 version:1 > peers:<id:13 store_id:5 > peers:<id:14 store_id:1 > peers:<id:15 store_id:2 > peers:<id:16 store_id:3 > peers:<id:17 store_id:4 >  create peer with ID 14[0m
+2022/03/22 20:15:49.968993 peer_msg_handler.go:322: [0;31m[error] [region 6] 8 apply split finished[0m
+2022/03/22 20:15:50.587082 raft.go:433: [0;31m[error] node 17 becomeLeader at term 6 with index 5[0m
+2022/03/22 20:15:54.052630 raft.go:433: [0;31m[error] node 13 becomeLeader at term 8 with index 6[0m
+    test_test.go:44: failure
+panic: key [52 32 48 48 48 48 48 48 48 48] is not in region id:6 start_key:"2 00000001" end_key:"3 00000007" region_epoch:<conf_ver:1 version:2 > peers:<id:7 store_id:5 > peers:<id:8 store_id:1 > peers:<id:9 store_id:2 > peers:<id:10 store_id:3 > peers:<id:11 store_id:4 > 
+
+goroutine 302 [running]:
+github.com/pingcap-incubator/tinykv/kv/storage/raft_storage.(*RegionIterator).Seek(0xc1b50877b0, {0xc1b4dfb1b0, 0x7, 0x10})
+	/home/void/project/tinykv/kv/storage/raft_storage/region_reader.go:83 +0xec
+github.com/pingcap-incubator/tinykv/kv/test_raftstore.(*Cluster).Scan(0xad7597, {0xc1b4dfb1b0, 0xa, 0x10}, {0xc1bdc29dc0, 0xa, 0x20})
+	/home/void/project/tinykv/kv/test_raftstore/cluster.go:376 +0x322
+github.com/pingcap-incubator/tinykv/kv/test_raftstore.GenericTest.func1(0x4, 0x0)
+	/home/void/project/tinykv/kv/test_raftstore/test_test.go:233 +0x528
+github.com/pingcap-incubator/tinykv/kv/test_raftstore.runClient(0x8bac6e, 0xc0043eb270, 0xc00022cc00, 0xc00018fd40)
+	/home/void/project/tinykv/kv/test_raftstore/test_test.go:27 +0x78
+created by github.com/pingcap-incubator/tinykv/kv/test_raftstore.SpawnClientsAndWait
+	/home/void/project/tinykv/kv/test_raftstore/test_test.go:37 +0x89
+FAIL	github.com/pingcap-incubator/tinykv/kv/test_raftstore	16.114s
+FAIL
+# GO111MODULE=on go test -v --count=1 --parallel=1 -p=1 ./kv/test_raftstore -run ^TestSplitConfChangeSnapshotUnreliableRecover3B|| true
+# GO111MODULE=on go test -v --count=1 --parallel=1 -p=1 ./kv/test_raftstore -run ^TestSplitConfChangeSnapshotUnreliableRecoverConcurrentPartition3B|| true
+rm -rf /tmp/*test-raftstore*
