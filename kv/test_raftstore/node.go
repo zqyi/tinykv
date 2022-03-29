@@ -118,6 +118,8 @@ func (t *MockTransport) Send(msg *raft_serverpb.RaftMessage) error {
 	if !found {
 		return errors.New(fmt.Sprintf("store %d is closed", toStore))
 	}
+
+	// log.Errorf("Mock Transport message: %s", msg)
 	router.SendRaftMessage(msg)
 
 	for _, filter := range t.filters {

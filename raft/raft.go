@@ -344,6 +344,7 @@ func (r *Raft) tryCommit() {
 			if term == r.Term && r.RaftLog.committed != i {
 				// 只能commit自己的term
 				r.RaftLog.committed = i
+				log.Errorf("leader %d commit %d", r.id, r.RaftLog.committed)
 				r.bcastAppend() // TODO 优化： 只向需要推进commit的peer发送
 			}
 			break
@@ -411,6 +412,7 @@ func (r *Raft) becomeFollower(term uint64, lead uint64) {
 // note: 只修改状态 不涉及动作
 func (r *Raft) becomeCandidate() {
 	// Your Code Here (2A).
+	log.Errorf("node %d becomeCandidate term %d with index %d", r.id, r.Term, r.RaftLog.LastIndex())
 
 	// 在每次转换为Candidate时 Term++
 	r.Term++
@@ -978,6 +980,7 @@ func (r *Raft) handleMsgPropose(m pb.Message) {
 				r.PendingConfIndex = r.RaftLog.LastIndex() + 1
 			} else {
 				// 如果上次ConfChange没有Apply，则不能将这次Propose
+				log.Errorf("%d cant propose confchange, pendingIndex %d, applied %d, last %d", r.id, r.PendingConfIndex, r.RaftLog.applied, r.RaftLog.LastIndex())
 				return
 			}
 		}
@@ -1007,7 +1010,7 @@ func (r *Raft) handleMsgPropose(m pb.Message) {
 				pr.Next = r.RaftLog.LastIndex()
 			}
 		}
-
+		// r.PendingConfIndex = r.RaftLog.LastIndex()
 		// 发起给其他服务器
 		r.bcastAppend()
 	}

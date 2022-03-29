@@ -114,7 +114,7 @@ func (rn *RawNode) Propose(data []byte) error {
 
 // ProposeConfChange proposes a config change.
 func (rn *RawNode) ProposeConfChange(cc pb.ConfChange) error {
-	log.Errorf("%v propose conf change, %s %d", rn.Raft.id, cc.ChangeType.String(), cc.NodeId)
+	log.Errorf("%v propose conf change, %s %d after index %d", rn.Raft.id, cc.ChangeType.String(), cc.NodeId, rn.Raft.RaftLog.LastIndex())
 
 	data, err := cc.Marshal()
 	if err != nil {
@@ -159,6 +159,11 @@ func (rn *RawNode) ApplyConfChange(cc pb.ConfChange) *pb.ConfState {
 	default:
 		panic("unexpected conf type")
 	}
+
+	// for peer := range rn.Raft.Prs {
+	// 	println(peer)
+	// }
+
 	return &pb.ConfState{Nodes: nodes(rn.Raft)}
 }
 
@@ -259,6 +264,8 @@ func (rn *RawNode) Advance(rd Ready) {
 			rn.Raft.RaftLog.pendingSnapshot = nil
 		}
 	}
+
+	// log.Errorf("%d applied %d last %d", rn.Raft.id, r.RaftLog.applied, r.RaftLog.LastIndex())
 
 	rn.Raft.RaftLog.maybeCompact()
 }

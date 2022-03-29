@@ -390,7 +390,6 @@ func (c *Cluster) Scan(start, end []byte) [][]byte {
 			break
 		}
 	}
-
 	return values
 }
 

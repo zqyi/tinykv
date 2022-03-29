@@ -188,6 +188,8 @@ func (d *peerMsgHandler) applyConfChangeEntry(entry *pb.Entry) {
 	d.ctx.storeMeta.Lock()
 	defer d.ctx.storeMeta.Unlock()
 
+	log.Errorf("%v apply confchange %s %d", d.Tag, cc.ChangeType.String(), cc.NodeId)
+
 	// 调用 raft.RawNode 的 ApplyConfChange()
 	d.peer.RaftGroup.ApplyConfChange(cc)
 
@@ -241,11 +243,7 @@ func (d *peerMsgHandler) applyConfChangeEntry(entry *pb.Entry) {
 	d.ctx.storeMeta.regions[d.Region().Id] = d.Region()
 	d.ctx.storeMeta.regionRanges.ReplaceOrInsert(&regionItem{region: d.Region()})
 
-	if d.IsLeader() {
-		d.HeartbeatScheduler(d.ctx.schedulerTaskSender)
-		// Notify scheduler immediately to let it update the region meta.
-	}
-
+	d.notifyHeartbeatScheduler(d.Region(), d.peer)
 }
 
 func (d *peerMsgHandler) applySplitEntry(msg *raft_cmdpb.RaftCmdRequest) {
@@ -316,8 +314,9 @@ func (d *peerMsgHandler) applySplitEntry(msg *raft_cmdpb.RaftCmdRequest) {
 
 	kvWB.MustWriteToDB(d.peerStorage.Engines.Kv)
 
-	d.HeartbeatScheduler(d.ctx.schedulerTaskSender)
-	// Notify scheduler immediately to let it update the region meta.
+	// notify new region created
+	d.notifyHeartbeatScheduler(d.Region(), d.peer)
+	d.notifyHeartbeatScheduler(newRegion, newPeer)
 
 	log.Errorf("%v apply split finished", d.Tag)
 }
@@ -391,9 +390,12 @@ func (d *peerMsgHandler) maybeCallbackEntry(entry *pb.Entry) {
 									proposal.cb.Done(ErrResp(&util.ErrEpochNotMatch{}))
 									return
 								}
+
+								cloneRegion := &metapb.Region{}
+								util.CloneMsg(d.Region(), cloneRegion)
 								resp.Responses = append(resp.Responses, &raft_cmdpb.Response{
 									CmdType: raft_cmdpb.CmdType_Snap,
-									Snap:    &raft_cmdpb.SnapResponse{Region: d.Region()},
+									Snap:    &raft_cmdpb.SnapResponse{Region: cloneRegion},
 								})
 								proposal.cb.Txn = d.peerStorage.Engines.Kv.NewTransaction(false)
 							default:
@@ -403,10 +405,12 @@ func (d *peerMsgHandler) maybeCallbackEntry(entry *pb.Entry) {
 					case msg.AdminRequest != nil:
 						switch msg.AdminRequest.CmdType {
 						case raft_cmdpb.AdminCmdType_Split:
+							cloneRegion := &metapb.Region{}
+							util.CloneMsg(d.Region(), cloneRegion)
 							resp.AdminResponse = &raft_cmdpb.AdminResponse{
 								CmdType: raft_cmdpb.AdminCmdType_Split,
 								Split: &raft_cmdpb.SplitResponse{
-									Regions: append([]*metapb.Region{}, d.Region()),
+									Regions: append([]*metapb.Region{}, cloneRegion),
 								},
 							}
 						default:
@@ -1232,5 +1236,19 @@ func deleteFromRegion(region *metapb.Region, id uint64) {
 			region.Peers = append(region.Peers[:i], region.Peers[i+1:]...)
 			return
 		}
+	}
+}
+
+func (d *peerMsgHandler) notifyHeartbeatScheduler(region *metapb.Region, peer *peer) {
+	clonedRegion := new(metapb.Region)
+	err := util.CloneMsg(region, clonedRegion)
+	if err != nil {
+		return
+	}
+	d.ctx.schedulerTaskSender <- &runner.SchedulerRegionHeartbeatTask{
+		Region:          clonedRegion,
+		Peer:            peer.Meta,
+		PendingPeers:    peer.CollectPendingPeers(),
+		ApproximateSize: peer.ApproximateSize,
 	}
 }

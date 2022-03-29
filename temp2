@@ -1,0 +1,135 @@
+=== RUN   TestSplitConfChangeSnapshotUnreliableRecover3B
+2022/03/29 15:43:11.106392 node.go:193: [info] start raft store node, storeID: 1
+2022/03/29 15:43:11.106961 peer.go:41: [info] region id:1 region_epoch:<conf_ver:1 version:1 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 > peers:<id:5 store_id:5 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 >  create peer with ID 1
+2022/03/29 15:43:11.107134 raftstore.go:175: [info] start store 1, region_count 1, tombstone_count 0, takes 412.43µs
+2022/03/29 15:43:11.107671 node.go:193: [info] start raft store node, storeID: 2
+2022/03/29 15:43:11.107774 peer.go:41: [info] region id:1 region_epoch:<conf_ver:1 version:1 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 > peers:<id:5 store_id:5 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 >  create peer with ID 2
+2022/03/29 15:43:11.107823 raftstore.go:175: [info] start store 2, region_count 1, tombstone_count 0, takes 77.813µs
+2022/03/29 15:43:11.108510 node.go:193: [info] start raft store node, storeID: 3
+2022/03/29 15:43:11.108671 peer.go:41: [info] region id:1 region_epoch:<conf_ver:1 version:1 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 > peers:<id:5 store_id:5 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 >  create peer with ID 3
+2022/03/29 15:43:11.108746 raftstore.go:175: [info] start store 3, region_count 1, tombstone_count 0, takes 128.925µs
+2022/03/29 15:43:11.109425 node.go:193: [info] start raft store node, storeID: 4
+2022/03/29 15:43:11.109585 peer.go:41: [info] region id:1 region_epoch:<conf_ver:1 version:1 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 > peers:<id:5 store_id:5 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 >  create peer with ID 4
+2022/03/29 15:43:11.109663 raftstore.go:175: [info] start store 4, region_count 1, tombstone_count 0, takes 128.818µs
+2022/03/29 15:43:11.110375 node.go:193: [info] start raft store node, storeID: 5
+2022/03/29 15:43:11.110524 peer.go:41: [info] region id:1 region_epoch:<conf_ver:1 version:1 > peers:<id:3 store_id:3 > peers:<id:4 store_id:4 > peers:<id:5 store_id:5 > peers:<id:1 store_id:1 > peers:<id:2 store_id:2 >  create peer with ID 5
+2022/03/29 15:43:11.110601 raftstore.go:175: [info] start store 5, region_count 1, tombstone_count 0, takes 121.402µs
+2022/03/29 15:43:11.665966 raft.go:434: [error] node 4 becomeLeader at term 6 with index 5
+2022/03/29 15:43:11.671343 raft.go:347: [error] leader 4 commit 6
+2022/03/29 15:43:12.117041 raft.go:347: [error] leader 4 commit 7
+2022/03/29 15:43:12.117074 raft.go:347: [error] leader 4 commit 8
+2022/03/29 15:43:12.117081 raft.go:347: [error] leader 4 commit 9
+2022/03/29 15:43:12.145492 raft.go:347: [error] leader 4 commit 10
+2022/03/29 15:43:12.145528 raft.go:347: [error] leader 4 commit 11
+2022/03/29 15:43:12.167673 raft.go:347: [error] leader 4 commit 12
+2022/03/29 15:43:12.167710 raft.go:347: [error] leader 4 commit 13
+2022/03/29 15:43:12.167729 raft.go:347: [error] leader 4 commit 14
+2022/03/29 15:43:12.195682 raft.go:347: [error] leader 4 commit 15
+2022/03/29 15:43:12.195718 raft.go:347: [error] leader 4 commit 16
+2022/03/29 15:43:12.212056 raft.go:347: [error] leader 4 commit 17
+2022/03/29 15:43:12.212090 raft.go:347: [error] leader 4 commit 18
+2022/03/29 15:43:12.212101 raft.go:347: [error] leader 4 commit 19
+2022/03/29 15:43:12.228485 raft.go:347: [error] leader 4 commit 20
+2022/03/29 15:43:12.228530 raft.go:347: [error] leader 4 commit 21
+2022/03/29 15:43:12.245068 raft.go:347: [error] leader 4 commit 22
+2022/03/29 15:43:12.245107 raft.go:347: [error] leader 4 commit 23
+2022/03/29 15:43:12.245121 raft.go:347: [error] leader 4 commit 24
+2022/03/29 15:43:12.256711 raft.go:347: [error] leader 4 commit 25
+2022/03/29 15:43:12.256752 raft.go:347: [error] leader 4 commit 26
+2022/03/29 15:43:12.275029 raft.go:347: [error] leader 4 commit 27
+2022/03/29 15:43:12.275053 raft.go:347: [error] leader 4 commit 28
+2022/03/29 15:43:12.275065 raft.go:347: [error] leader 4 commit 29
+2022/03/29 15:43:12.291333 raft.go:347: [error] leader 4 commit 30
+2022/03/29 15:43:12.291363 raft.go:347: [error] leader 4 commit 31
+2022/03/29 15:43:12.317186 raft.go:347: [error] leader 4 commit 32
+2022/03/29 15:43:12.317251 raft.go:347: [error] leader 4 commit 33
+2022/03/29 15:43:12.317282 raft.go:347: [error] leader 4 commit 34
+2022/03/29 15:43:12.335040 raft.go:347: [error] leader 4 commit 35
+2022/03/29 15:43:12.335074 raft.go:347: [error] leader 4 commit 36
+2022/03/29 15:43:12.346176 raft.go:347: [error] leader 4 commit 37
+2022/03/29 15:43:12.346230 raft.go:347: [error] leader 4 commit 38
+2022/03/29 15:43:12.346294 raft.go:347: [error] leader 4 commit 39
+2022/03/29 15:43:12.368533 raft.go:347: [error] leader 4 commit 40
+2022/03/29 15:43:12.368584 raft.go:347: [error] leader 4 commit 41
+2022/03/29 15:43:12.385491 raft.go:347: [error] leader 4 commit 42
+2022/03/29 15:43:12.385558 raft.go:347: [error] leader 4 commit 43
+2022/03/29 15:43:12.385579 raft.go:347: [error] leader 4 commit 44
+2022/03/29 15:43:12.409344 raft.go:347: [error] leader 4 commit 45
+2022/03/29 15:43:12.409389 raft.go:347: [error] leader 4 commit 46
+2022/03/29 15:43:12.434276 raft.go:347: [error] leader 4 commit 47
+2022/03/29 15:43:12.434314 raft.go:347: [error] leader 4 commit 48
+2022/03/29 15:43:12.434324 raft.go:347: [error] leader 4 commit 49
+2022/03/29 15:43:12.450964 peer_msg_handler.go:576: [error] [region 1] 4 on split with [50 32 48 48 48 48 48 48 48 49]
+2022/03/29 15:43:12.451030 raft.go:347: [error] leader 4 commit 50
+2022/03/29 15:43:12.451043 raft.go:347: [error] leader 4 commit 51
+2022/03/29 15:43:12.463196 peer_msg_handler.go:739: [error] [region 1] 4 propose split msg, msg: 1 1 local region: 1 1
+2022/03/29 15:43:12.463329 raft.go:347: [error] leader 4 commit 52
+2022/03/29 15:43:12.463366 raft.go:347: [error] leader 4 commit 53
+2022/03/29 15:43:12.479598 raft.go:347: [error] leader 4 commit 54
+2022/03/29 15:43:12.495321 raft.go:347: [error] leader 4 commit 57
+2022/03/29 15:43:12.495357 raft.go:347: [error] leader 4 commit 58
+2022/03/29 15:43:12.495391 raft.go:347: [error] leader 4 commit 59
+2022/03/29 15:43:12.500892 peer_msg_handler.go:254: [error] [region 1] 4 apply split begin, split key [50 32 48 48 48 48 48 48 48 49], StartKey [], EndKey []
+2022/03/29 15:43:12.501025 peer.go:41: [info] region id:6 start_key:"2 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:7 store_id:3 > peers:<id:8 store_id:4 > peers:<id:9 store_id:5 > peers:<id:10 store_id:1 > peers:<id:11 store_id:2 >  create peer with ID 8
+2022/03/29 15:43:12.511963 peer_msg_handler.go:254: [error] [region 1] 3 apply split begin, split key [50 32 48 48 48 48 48 48 48 49], StartKey [], EndKey []
+2022/03/29 15:43:12.512002 peer_msg_handler.go:254: [error] [region 1] 1 apply split begin, split key [50 32 48 48 48 48 48 48 48 49], StartKey [], EndKey []
+2022/03/29 15:43:12.512044 peer.go:41: [info] region id:6 start_key:"2 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:7 store_id:3 > peers:<id:8 store_id:4 > peers:<id:9 store_id:5 > peers:<id:10 store_id:1 > peers:<id:11 store_id:2 >  create peer with ID 7
+2022/03/29 15:43:12.511968 peer_msg_handler.go:254: [error] [region 1] 2 apply split begin, split key [50 32 48 48 48 48 48 48 48 49], StartKey [], EndKey []
+2022/03/29 15:43:12.512135 peer.go:41: [info] region id:6 start_key:"2 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:7 store_id:3 > peers:<id:8 store_id:4 > peers:<id:9 store_id:5 > peers:<id:10 store_id:1 > peers:<id:11 store_id:2 >  create peer with ID 10
+2022/03/29 15:43:12.512153 peer.go:41: [info] region id:6 start_key:"2 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:7 store_id:3 > peers:<id:8 store_id:4 > peers:<id:9 store_id:5 > peers:<id:10 store_id:1 > peers:<id:11 store_id:2 >  create peer with ID 11
+2022/03/29 15:43:12.511965 peer_msg_handler.go:254: [error] [region 1] 5 apply split begin, split key [50 32 48 48 48 48 48 48 48 49], StartKey [], EndKey []
+2022/03/29 15:43:12.512360 peer.go:41: [info] region id:6 start_key:"2 00000001" region_epoch:<conf_ver:1 version:1 > peers:<id:7 store_id:3 > peers:<id:8 store_id:4 > peers:<id:9 store_id:5 > peers:<id:10 store_id:1 > peers:<id:11 store_id:2 >  create peer with ID 9
+2022/03/29 15:43:12.522236 peer_msg_handler.go:320: [error] [region 1] 4 apply split finished
+2022/03/29 15:43:12.526801 raft.go:347: [error] leader 4 commit 60
+2022/03/29 15:43:12.526807 peer_msg_handler.go:320: [error] [region 1] 2 apply split finished
+2022/03/29 15:43:12.526893 rawnode.go:117: [error] 4 propose conf change, RemoveNode 3 after index 60
+2022/03/29 15:43:12.530930 peer_msg_handler.go:320: [error] [region 1] 5 apply split finished
+2022/03/29 15:43:12.530967 peer_msg_handler.go:320: [error] [region 1] 1 apply split finished
+2022/03/29 15:43:12.531000 peer_msg_handler.go:320: [error] [region 1] 3 apply split finished
+2022/03/29 15:43:12.533070 rawnode.go:117: [error] 4 propose conf change, RemoveNode 3 after index 61
+2022/03/29 15:43:12.533106 raft.go:982: [error] 4 cant propose confchange, pendingIndex 61, applied 60, last 61
+2022/03/29 15:43:12.533199 raft.go:347: [error] leader 4 commit 61
+2022/03/29 15:43:12.535140 peer_msg_handler.go:193: [error] [region 1] 4 apply confchange RemoveNode 3
+2022/03/29 15:43:12.538675 peer_msg_handler.go:193: [error] [region 1] 1 apply confchange RemoveNode 3
+2022/03/29 15:43:12.538738 peer_msg_handler.go:193: [error] [region 1] 3 apply confchange RemoveNode 3
+2022/03/29 15:43:12.544819 peer_msg_handler.go:193: [error] [region 1] 5 apply confchange RemoveNode 3
+2022/03/29 15:43:12.544831 peer_msg_handler.go:193: [error] [region 1] 2 apply confchange RemoveNode 3
+2022/03/29 15:43:12.544974 peer_msg_handler.go:927: [info] [region 1] raft message MsgAppendResponse is stale, current conf_ver:2 version:2  ignore it
+2022/03/29 15:43:12.551151 peer_msg_handler.go:1015: [info] [region 1] 3 starts destroy
+2022/03/29 15:43:12.709988 rawnode.go:117: [error] 4 propose conf change, RemoveNode 2 after index 61
+2022/03/29 15:43:12.715244 raft.go:347: [error] leader 4 commit 62
+2022/03/29 15:43:12.720952 peer_msg_handler.go:193: [error] [region 1] 4 apply confchange RemoveNode 2
+2022/03/29 15:43:12.729256 peer_msg_handler.go:193: [error] [region 1] 1 apply confchange RemoveNode 2
+2022/03/29 15:43:12.729337 peer_msg_handler.go:193: [error] [region 1] 2 apply confchange RemoveNode 2
+2022/03/29 15:43:12.732074 peer_msg_handler.go:927: [info] [region 1] raft message MsgAppendResponse is stale, current conf_ver:3 version:2  ignore it
+2022/03/29 15:43:12.734879 peer_msg_handler.go:1015: [info] [region 1] 2 starts destroy
+2022/03/29 15:43:12.764170 peer_msg_handler.go:193: [error] [region 1] 5 apply confchange RemoveNode 2
+2022/03/29 15:43:12.910003 rawnode.go:117: [error] 4 propose conf change, AddNode 12 after index 62
+2022/03/29 15:43:12.913187 raft.go:347: [error] leader 4 commit 63
+2022/03/29 15:43:12.918366 peer_msg_handler.go:193: [error] [region 1] 1 apply confchange AddNode 12
+2022/03/29 15:43:12.918402 peer_msg_handler.go:193: [error] [region 1] 5 apply confchange AddNode 12
+2022/03/29 15:43:12.918379 peer_msg_handler.go:193: [error] [region 1] 4 apply confchange AddNode 12
+2022/03/29 15:43:13.110037 rawnode.go:117: [error] 4 propose conf change, RemoveNode 5 after index 63
+2022/03/29 15:43:13.115037 raft.go:347: [error] leader 4 commit 64
+2022/03/29 15:43:13.120243 peer_msg_handler.go:193: [error] [region 1] 4 apply confchange RemoveNode 5
+2022/03/29 15:43:13.125415 peer_msg_handler.go:193: [error] [region 1] 1 apply confchange RemoveNode 5
+2022/03/29 15:43:13.125472 peer_msg_handler.go:193: [error] [region 1] 5 apply confchange RemoveNode 5
+2022/03/29 15:43:13.130668 peer_msg_handler.go:1015: [info] [region 1] 5 starts destroy
+2022/03/29 15:43:13.130857 peer_msg_handler.go:927: [info] [region 1] raft message MsgAppendResponse is stale, current conf_ver:5 version:2  ignore it
+2022/03/29 15:43:13.310005 rawnode.go:117: [error] 4 propose conf change, AddNode 13 after index 64
+2022/03/29 15:43:13.313040 raft.go:347: [error] leader 4 commit 65
+2022/03/29 15:43:13.318325 peer_msg_handler.go:193: [error] [region 1] 1 apply confchange AddNode 13
+2022/03/29 15:43:13.318382 peer_msg_handler.go:193: [error] [region 1] 4 apply confchange AddNode 13
+2022/03/29 15:43:13.510011 rawnode.go:117: [error] 4 propose conf change, AddNode 14 after index 65
+2022/03/29 15:43:13.610008 rawnode.go:117: [error] 4 propose conf change, AddNode 14 after index 66
+2022/03/29 15:43:13.610041 raft.go:982: [error] 4 cant propose confchange, pendingIndex 66, applied 65, last 66
+2022/03/29 15:43:13.710056 rawnode.go:117: [error] 4 propose conf change, AddNode 14 after index 66
+2022/03/29 15:43:13.710093 raft.go:982: [error] 4 cant propose confchange, pendingIndex 66, applied 65, last 66
+2022/03/29 15:43:13.809997 rawnode.go:117: [error] 4 propose conf change, AddNode 14 after index 66
+2022/03/29 15:43:13.810031 raft.go:982: [error] 4 cant propose confchange, pendingIndex 66, applied 65, last 66
+2022/03/29 15:43:13.910103 rawnode.go:117: [error] 4 propose conf change, AddNode 14 after index 66
+2022/03/29 15:43:13.910130 raft.go:982: [error] 4 cant propose confchange, pendingIndex 66, applied 65, last 66
+2022/03/29 15:43:14.010082 rawnode.go:117: [error] 4 propose conf change, AddNode 14 after index 66
+2022/03/29 15:43:14.010104 raft.go:982: [error] 4 cant propose confchange, pendingIndex 66, applied 65, last 66
+2022/03/29 15:43:14.109999 rawnode.go:117: [error] 4 propose conf change, AddNode 14 after index 66
+2022/03/29 15:43:14.110039 raft.go:982: [error] 4 cant propose confchange, pendingIndex 66, applied 65, last 66

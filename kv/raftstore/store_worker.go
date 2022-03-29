@@ -150,14 +150,19 @@ func (d *storeWorker) checkMsg(msg *rspb.RaftMessage) (bool, error) {
 }
 
 func (d *storeWorker) onRaftMessage(msg *rspb.RaftMessage) error {
+
 	regionID := msg.RegionId
+	log.Errorf("get raft message. from_peer:%d, to_peer:%d, store:%d, region:%d, msg:%+v",
+		msg.FromPeer.Id, msg.ToPeer.Id, d.storeState.id, regionID, msg.Message)
+
 	if err := d.ctx.router.send(regionID, message.Msg{Type: message.MsgTypeRaftMessage, Data: msg}); err == nil {
 		return nil
 	}
 	// errPeerNotFound 才会执行以下步骤
 
-	log.Debugf("handle raft message. from_peer:%d, to_peer:%d, store:%d, region:%d, msg:%+v",
+	log.Errorf("process raft message. from_peer:%d, to_peer:%d, store:%d, region:%d, msg:%+v",
 		msg.FromPeer.Id, msg.ToPeer.Id, d.storeState.id, regionID, msg.Message)
+
 	if msg.ToPeer.StoreId != d.ctx.store.Id {
 		log.Warnf("store not match, ignore it. store_id:%d, to_store_id:%d, region_id:%d",
 			d.ctx.store.Id, msg.ToPeer.StoreId, regionID)
@@ -233,6 +238,7 @@ func (d *storeWorker) maybeCreatePeer(regionID uint64, msg *rspb.RaftMessage) (b
 	_ = d.ctx.router.send(regionID, message.Msg{Type: message.MsgTypeStart})
 	// note : 放在peer_msg_handler 完成 apply snapshot时
 	// meta.regionRanges.ReplaceOrInsert(&regionItem{region: peer.Region()})
+	log.Errorf("store %v create peer %d", d.id, peer.PeerId())
 	return true, nil
 }
 
