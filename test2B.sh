@@ -17,7 +17,7 @@ for ((i = 1; i <= 100; i++)); do
 	$(go clean -testcache)
 	clearFunc
 	if [[ $check_results =~ "FAIL" ]]; then
-		echo "$check_results" > ./test3b/out6-"$i".log
+		echo "$check_results" > ./test3b/out2-"$i".log
 		echo "fail->" >> result
 		clearFunc
 		# break

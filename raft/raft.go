@@ -344,7 +344,7 @@ func (r *Raft) tryCommit() {
 			if term == r.Term && r.RaftLog.committed != i {
 				// 只能commit自己的term
 				r.RaftLog.committed = i
-				log.Errorf("leader %d commit %d", r.id, r.RaftLog.committed)
+				// log.Errorf("leader %d commit %d", r.id, r.RaftLog.committed)
 				r.bcastAppend() // TODO 优化： 只向需要推进commit的peer发送
 			}
 			break

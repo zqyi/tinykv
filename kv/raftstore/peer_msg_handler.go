@@ -185,8 +185,8 @@ func (d *peerMsgHandler) applyConfChangeEntry(entry *pb.Entry) {
 		panic(err)
 	}
 
-	d.ctx.storeMeta.Lock()
-	defer d.ctx.storeMeta.Unlock()
+	// d.ctx.storeMeta.Lock()
+	// defer d.ctx.storeMeta.Unlock()
 
 	log.Errorf("%v apply confchange %s %d", d.Tag, cc.ChangeType.String(), cc.NodeId)
 
@@ -239,9 +239,10 @@ func (d *peerMsgHandler) applyConfChangeEntry(entry *pb.Entry) {
 	}
 
 	// 更新 GlobalContext 的 storeMeta 中的 region 状态
-
+	d.ctx.storeMeta.Lock()
 	d.ctx.storeMeta.regions[d.Region().Id] = d.Region()
 	d.ctx.storeMeta.regionRanges.ReplaceOrInsert(&regionItem{region: d.Region()})
+	d.ctx.storeMeta.Unlock()
 
 	d.notifyHeartbeatScheduler(d.Region(), d.peer)
 }
@@ -263,6 +264,12 @@ func (d *peerMsgHandler) applySplitEntry(msg *raft_cmdpb.RaftCmdRequest) {
 	}
 
 	splitReq := req.Split
+
+	if len(d.Region().Peers) != len(splitReq.NewPeerIds) {
+		// panic("分裂后的Region大小与分裂前不同, 如何处理?")
+		return
+	}
+
 	kvWB := new(engine_util.WriteBatch)
 	// 1. 修改旧Region信息
 	oldEndKey := d.Region().EndKey
@@ -282,9 +289,7 @@ func (d *peerMsgHandler) applySplitEntry(msg *raft_cmdpb.RaftCmdRequest) {
 	newRegion.EndKey = oldEndKey
 	newRegion.RegionEpoch.ConfVer = 1
 	newRegion.RegionEpoch.Version = 1
-	if len(d.Region().Peers) != len(splitReq.NewPeerIds) {
-		panic("分裂后的Region大小与分裂前不同, 如何处理?")
-	}
+
 	for i, peer := range d.Region().Peers {
 		newRegion.Peers = append(newRegion.Peers,
 			&metapb.Peer{
