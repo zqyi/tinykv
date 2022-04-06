@@ -280,6 +280,57 @@ func (c *RaftCluster) handleStoreHeartbeat(stats *schedulerpb.StoreStats) error 
 func (c *RaftCluster) processRegionHeartbeat(region *core.RegionInfo) error {
 	// Your Code Here (3C).
 
+	needUpdate := false
+	oldRegion := c.core.Regions.GetRegion(region.GetID())
+	if oldRegion != nil {
+		// 检查本地存储中是否有一个具有相同 Id 的 region。判断版本号
+
+		// 需要更新的前提条件
+		if region.GetRegionEpoch().GetVersion() < oldRegion.GetRegionEpoch().GetVersion() ||
+			region.GetRegionEpoch().GetConfVer() < oldRegion.GetRegionEpoch().GetConfVer() {
+			return ErrRegionIsStale(region.GetMeta(), oldRegion.GetMeta())
+		}
+
+		// 列举所有可能需要更新的所有情况
+		if region.GetRegionEpoch().Version > oldRegion.GetRegionEpoch().Version {
+			needUpdate = true
+		}
+		if region.GetRegionEpoch().ConfVer > oldRegion.GetRegionEpoch().ConfVer {
+			needUpdate = true
+		}
+		if region.GetLeader().GetId() != oldRegion.GetLeader().GetId() {
+			needUpdate = true
+		}
+		if len(region.GetPendingPeers()) != 0 || len(oldRegion.GetPendingPeers()) != 0 {
+			needUpdate = true
+		}
+		if region.GetApproximateSize() != oldRegion.GetApproximateSize() {
+			needUpdate = true
+		}
+		if len(region.GetPeers()) != len(oldRegion.GetPeers()) {
+			needUpdate = true
+		}
+	} else {
+		// 如果没有，则扫描所有与之重叠的区域
+		for _, tempRegion := range c.core.GetOverlaps(region) {
+			if region.GetRegionEpoch().GetVersion() < tempRegion.GetRegionEpoch().GetVersion() {
+				return ErrRegionIsStale(region.GetMeta(), tempRegion.GetMeta())
+			}
+		}
+		needUpdate = true
+	}
+
+	if needUpdate {
+		c.core.PutRegion(region)
+		if oldRegion != nil {
+			for _, p := range oldRegion.GetPeers() {
+				c.updateStoreStatusLocked(p.GetStoreId())
+			}
+		}
+		for _, p := range region.GetPeers() {
+			c.updateStoreStatusLocked(p.GetStoreId())
+		}
+	}
 	return nil
 }
 
