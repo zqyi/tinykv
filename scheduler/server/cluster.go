@@ -279,7 +279,8 @@ func (c *RaftCluster) handleStoreHeartbeat(stats *schedulerpb.StoreStats) error 
 // processRegionHeartbeat updates the region information.
 func (c *RaftCluster) processRegionHeartbeat(region *core.RegionInfo) error {
 	// Your Code Here (3C).
-
+	c.Lock()
+	defer c.Unlock()
 	needUpdate := false
 	oldRegion := c.core.Regions.GetRegion(region.GetID())
 	if oldRegion != nil {

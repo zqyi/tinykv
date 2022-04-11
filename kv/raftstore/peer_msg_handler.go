@@ -188,7 +188,7 @@ func (d *peerMsgHandler) applyConfChangeEntry(entry *pb.Entry) {
 	// d.ctx.storeMeta.Lock()
 	// defer d.ctx.storeMeta.Unlock()
 
-	log.Errorf("%v apply confchange %s %d", d.Tag, cc.ChangeType.String(), cc.NodeId)
+	// log.Errorf("%v apply confchange %s %d", d.Tag, cc.ChangeType.String(), cc.NodeId)
 
 	// 调用 raft.RawNode 的 ApplyConfChange()
 	d.peer.RaftGroup.ApplyConfChange(cc)
@@ -253,10 +253,10 @@ func (d *peerMsgHandler) applySplitEntry(msg *raft_cmdpb.RaftCmdRequest) {
 
 	req := msg.AdminRequest
 
-	log.Errorf("%v apply split begin, split key %d, StartKey %d, EndKey %d", d.Tag,
-		req.Split.SplitKey,
-		d.Region().StartKey,
-		d.Region().EndKey)
+	// log.Errorf("%v apply split begin, split key %d, StartKey %d, EndKey %d", d.Tag,
+	// 	req.Split.SplitKey,
+	// 	d.Region().StartKey,
+	// 	d.Region().EndKey)
 
 	// debug 额外做一次key的检查
 	if nil != util.CheckKeyInRegionExclusive(req.Split.SplitKey, d.Region()) {
@@ -323,7 +323,7 @@ func (d *peerMsgHandler) applySplitEntry(msg *raft_cmdpb.RaftCmdRequest) {
 	d.notifyHeartbeatScheduler(d.Region(), d.peer)
 	d.notifyHeartbeatScheduler(newRegion, newPeer)
 
-	log.Errorf("%v apply split finished", d.Tag)
+	// log.Errorf("%v apply split finished", d.Tag)
 }
 
 // callback if there are matched d.proposals (是否考虑只有leader能够callback)
@@ -579,7 +579,7 @@ func (d *peerMsgHandler) HandleMsg(msg message.Msg) {
 	case message.MsgTypeSplitRegion:
 		split := msg.Data.(*message.MsgSplitRegion)
 		// log.Infof("%s on split with %v", d.Tag, split.SplitKey)
-		log.Errorf("%s on split with %v", d.Tag, split.SplitKey)
+		// log.Errorf("%s on split with %v", d.Tag, split.SplitKey)
 		d.onPrepareSplitRegion(split.RegionEpoch, split.SplitKey, split.Callback)
 	case message.MsgTypeRegionApproximateSize:
 		d.onApproximateRegionSize(msg.Data.(uint64))
@@ -742,8 +742,8 @@ func (d *peerMsgHandler) proposeRaftCommand(msg *raft_cmdpb.RaftCmdRequest, cb *
 				panic("check error")
 			}
 
-			log.Errorf("%v propose split msg, msg: %d %d local region: %d %d", d.Tag, msg.Header.RegionEpoch.ConfVer, msg.Header.RegionEpoch.Version,
-				d.Region().RegionEpoch.ConfVer, d.Region().RegionEpoch.Version)
+			// log.Errorf("%v propose split msg, msg: %d %d local region: %d %d", d.Tag, msg.Header.RegionEpoch.ConfVer, msg.Header.RegionEpoch.Version,
+			// d.Region().RegionEpoch.ConfVer, d.Region().RegionEpoch.Version)
 
 			// get date
 			date, err := msg.Marshal()

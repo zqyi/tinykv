@@ -9,7 +9,7 @@ clearFunc() {
 	done
 }
 echo -e "\n" > result
-for ((i = 1; i <= 100; i++)); do
+for ((i = 1; i <= 500; i++)); do
 	echo "round $i"
 	check_results=$(make project3b)
 	# check_results=$( go test -v -run TestConfChangeRecoverManyClients3B ./kv/test_raftstore )
@@ -17,7 +17,7 @@ for ((i = 1; i <= 100; i++)); do
 	$(go clean -testcache)
 	clearFunc
 	if [[ $check_results =~ "FAIL" ]]; then
-		echo "$check_results" > ./test3b/out2-"$i".log
+		echo "$check_results" > ./test3b/out1-"$i".log
 		echo "fail->" >> result
 		clearFunc
 		# break
