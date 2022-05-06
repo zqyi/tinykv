@@ -82,15 +82,11 @@ func (d *peerMsgHandler) HandleRaftReady() {
 
 		// 2.1 apply and callback(if neccessary)
 		for _, entry := range ready.CommittedEntries {
-
-			// TODO: 检查region，如果错误 Callback ErrResp
-
 			// 检查msg是否过时
 			if err := d.checkRegionAndMaybeyCallback(&entry, d.Region()); err != nil {
 				// log.Errorf("checkEntry when apply err %s", err)
 				continue
 			}
-
 			// apply and persist
 			d.applyCommittedEntry(&entry)
 			// callback if neccessary （每执行一条log进行一次callback）
@@ -98,7 +94,6 @@ func (d *peerMsgHandler) HandleRaftReady() {
 			if d.stopped {
 				return
 			}
-
 		}
 
 		// 2.2 modify apply_state once a ready
@@ -467,29 +462,6 @@ func (d *peerMsgHandler) maybeCallbackEntry(entry *pb.Entry) {
 	}
 }
 
-func (d *peerMsgHandler) maybeCallbackEntryWithResponse(entry *pb.Entry, errorResponse *raft_cmdpb.RaftCmdResponse) {
-	//判断当前msg是否需要callback 根据proposals
-	for len(d.proposals) > 0 {
-		proposal := d.proposals[0]
-		switch {
-		case proposal.index > entry.Index:
-			return
-		case proposal.index < entry.Index:
-			// fmt.Printf("%v callback at index %d with %s\n", d.Tag, proposal.index, err)
-			proposal.cb.Done(ErrResp(&util.ErrStaleCommand{}))
-		case proposal.index == entry.Index:
-			if proposal.term != entry.Term {
-				// fmt.Printf("%v callback at index %d with term err\n", d.Tag, proposal.index)
-				NotifyStaleReq(entry.Term, proposal.cb)
-			} else {
-				proposal.cb.Done(errorResponse)
-			}
-		}
-		// 肯定是处理了一个
-		d.proposals = d.proposals[1:]
-	}
-}
-
 // call it when apply entry
 func (d *peerMsgHandler) checkRegionAndMaybeyCallback(entry *pb.Entry, region *metapb.Region) error {
 	// 解封msg
@@ -562,6 +534,30 @@ func (d *peerMsgHandler) checkRegionAndMaybeyCallback(entry *pb.Entry, region *m
 	}
 
 	return nil
+}
+
+// only used in checkRegionAndMaybeyCallback
+func (d *peerMsgHandler) maybeCallbackEntryWithResponse(entry *pb.Entry, errorResponse *raft_cmdpb.RaftCmdResponse) {
+	//判断当前msg是否需要callback 根据proposals
+	for len(d.proposals) > 0 {
+		proposal := d.proposals[0]
+		switch {
+		case proposal.index > entry.Index:
+			return
+		case proposal.index < entry.Index:
+			// fmt.Printf("%v callback at index %d with %s\n", d.Tag, proposal.index, err)
+			proposal.cb.Done(ErrResp(&util.ErrStaleCommand{}))
+		case proposal.index == entry.Index:
+			if proposal.term != entry.Term {
+				// fmt.Printf("%v callback at index %d with term err\n", d.Tag, proposal.index)
+				NotifyStaleReq(entry.Term, proposal.cb)
+			} else {
+				proposal.cb.Done(errorResponse)
+			}
+		}
+		// 肯定是处理了一个
+		d.proposals = d.proposals[1:]
+	}
 }
 
 func (d *peerMsgHandler) HandleMsg(msg message.Msg) {
